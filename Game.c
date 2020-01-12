@@ -5,7 +5,7 @@
 
 
 void board_print() {
-    int i, j,z;
+    int i, j;
     for (i = 0; i < BOARD_LEN; i++) {
         if(i%BLOCK_LEN==0){
             separator_row();
