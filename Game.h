@@ -31,13 +31,19 @@
  * */
 struct curr_board{
     int** board;
+    int block_width;
+    int block_height;
+    int len;
+    int mark_errors;
 }*curr_board;
 
+enum state{Init, Edit, Solve, Terminate};
+enum state state;
 
-/*
- * Prints the current sudoku board
- * */
-void board_print();
 
 void my_exit();
+int validate_board();
+void create_board(int len);
+void set_values_board();
+
 #endif

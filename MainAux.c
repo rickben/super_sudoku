@@ -1,33 +1,28 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "MainAux.h"
 #include <math.h>
 
 
 
-int* calc_block_size(int len){
-    int root = (int) (sqrt(len));
-    int* arr = calloc(2, sizeof(int*));
+void calc_block_size(){
+    int root = (int) (sqrt(curr_board->len));
     while (root > 0){
-        if(len % root == 0){
-            int n = root;
-            int m = (len / root);
-            arr[0] = n;
-            arr[1] = m;
-            return arr;
+        if(curr_board->len % root == 0){
+            curr_board->block_height = root;
+            curr_board->block_height = (curr_board->len / root);
+            curr_board->block_height = (curr_board->len / root);
         }
         root--;
     }
 }
 
-void separator_row(int height,int width) {
+void separator_row() {
     int i=0,j=0;
-//    printf("%d %d\n", height, width);
     printf("-");
-    for(; i<height; i++){
+    for(; i<curr_board->block_height; i++){
         printf("--");
-        for(; j<width-1; j++){
-        printf("---");
+        for(; j<curr_board->block_width-1; j++){
+        printf("----");
         }
         printf("---");
         j=0;
@@ -35,38 +30,48 @@ void separator_row(int height,int width) {
     printf("\n");
 }
 
+int is_fixed(int row, int col) {
+    return 0;
+}
 
-void board_print(int len) {
-    int* arr = calc_block_size(len);
-    int block_width = arr[0];
-    int block_height = arr[1];
-    int i, j;
-    for (i = 0; i < len; i++) {
-        if(i % block_width==0){
-            separator_row(block_height, block_width);
+int is_erroneous() {
+    return 0;
+}
+
+void cell_row(int* arr, int num_row) {
+    for (int j = 0; j < curr_board->len; j++) {
+        if (j % curr_board->block_width == 0) {
+            printf("|");
         }
-        for (j = 0; j < len; j++) {
-            if(j%block_height==0){
-                if(j==0){
-                    printf("|");}
-                else{
-                    printf(" |");
-                }
+        if(arr[j]==0){
+            printf("   ");
+        } else {
+            printf(" %2d", arr[j]);
+        }
+        if(is_fixed(num_row,j)==1){
+            printf(".");
+        }
+        else if(is_erroneous()==1){
+            printf("*");
+        } else{
+            printf(" ");
+        }
+
+    }
+    printf("|\n");
+
+}
+
+
+void board_print() {
+        int k=0;
+        separator_row(curr_board->block_height, curr_board->block_width);
+        for (int i = 0; i < curr_board->block_width; i++) {
+            for (int j = 0; j < curr_board->block_height; j++) {
+                cell_row(curr_board->board[k],k);
+                k++;
             }
-
-                printf("   ");
-
-
-
+            separator_row(curr_board->block_height, curr_board->block_width);
         }
-        printf(" |\n");
-    }
-    separator_row(block_height, block_width);
 }
 
-void create_board(int len){
-    curr_board->board = calloc(len, sizeof(int*));
-    for (int i = 0; i < len; ++i) {
-        curr_board->board[i] = calloc(len, sizeof(int*));
-    }
-}
