@@ -5,10 +5,14 @@
 #include "Parser.h"
 #include "Solver.h"
 #include "SPBufferset.h"
+#include "MainAux.h"
+#include "FilesAux.h"
 
 
 
 
 int main(int argc, char* argv[]) {
-    board_print(17);
+    state = Edit;
+    trans_file_to_board("C:\\Users\\Ricky Benkovich\\CLionProjects\\super_sudoku\\dog.txt");
+    trans_board_to_file("C:\\Users\\Ricky Benkovich\\CLionProjects\\super_sudoku\\ricky.txt");
 }
