@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 
-void free_mem_board();
 
 int open_new_file(){
 
@@ -14,10 +13,10 @@ int close_all_files(){
 
 
 void free_mem_board() {
-    int i=0;
-    for(i=0; i<curr_board->len; i++)
+    int i,j;
+    for(i=0; i<curr_board->len; i++) {
         free(curr_board->board[i]);
-
+    }
     free(curr_board->board);
     free(curr_board);
 }
@@ -27,11 +26,14 @@ int trans_board_to_file(char* file_name){
     if(state == Solve) {
         FILE *in_file = fopen(file_name, "w");
         fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
-        for (i = 0; i < curr_board->block_height; i++) {
-            for (j = 0; j < curr_board->block_width; j++) {
-                fprintf(in_file, "%d", curr_board->board[i][j]);
-                if (is_fixed(i, j) && curr_board->board[i][j]!=0) {
+        for (i = 0; i < curr_board->len; i++) {
+            for (j = 0; j < curr_board->len; j++) {
+                fprintf(in_file, "%d", curr_board->board[i][j].value);
+                if (curr_board->board[i][j].is_fixed!=0 && curr_board->board[i][j].value!=0) {
                     fprintf(in_file, ".");
+                }
+                else if (curr_board->board[i][j].is_erroneous!=0 && curr_board->board[i][j].value!=0) {
+                    fprintf(in_file, "*");
                 }
                 fprintf(in_file, " ");
             }
@@ -49,10 +51,10 @@ int trans_board_to_file(char* file_name){
         if(state == Edit) {
             FILE *in_file = fopen(file_name, "w");
             fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
-            for (i = 0; i < curr_board->block_height; i++) {
-                for (j = 0; j < curr_board->block_width; j++) {
-                    fprintf(in_file, "%d", curr_board->board[i][j]);
-                    if(curr_board->board[i][j]!=0) {
+            for (i = 0; i < curr_board->len; i++) {
+                for (j = 0; j < curr_board->len; j++) {
+                    fprintf(in_file, "%d", curr_board->board[i][j].value);
+                    if(curr_board->board[i][j].value!=0) {
                         fprintf(in_file, ". ");
                     }
                     else{
@@ -69,13 +71,13 @@ int trans_board_to_file(char* file_name){
 
 
 void create_board_from_file(int len, int width, int height) {
-    curr_board = (struct curr_board *) calloc(len, sizeof(int));
+    curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
     curr_board->block_width = width;
     curr_board->block_height = height;
     curr_board->len = len ;
-    curr_board->board = (int **) calloc(len, sizeof(int *));
+    curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
     for (int i = 0; i < len; ++i) {
-        curr_board->board[i] = (int *) calloc(len, sizeof(int));
+        curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
     }
 }
 
@@ -100,11 +102,20 @@ int scan_size_from_file(FILE* in_file){
 
 int scan_rows_from_file(FILE *in_file) {
     int i,j;
-    for(i=0; i<curr_board->block_height; i++)
-        for(j=0; j<curr_board->block_width; j++)
-            if(fscanf(in_file, "%d", &curr_board->board[i][j]) != 1)
+    for(i=0; i<curr_board->len; i++) {
+        for (j = 0; j < curr_board->len; j++) {
+            if (fscanf(in_file, "%d", &curr_board->board[i][j].value) != 1) {
                 return 0;
+            }if (fscanf(in_file,".")==1){
+                curr_board->board[i][j].is_fixed=1;
+            }if (fscanf(in_file,"*")==1){
+                curr_board->board[i][j].is_erroneous=1;
+            }
+
+        }
+    }
     return 1;
+
 }
 
 int trans_file_to_board(char* file_name){

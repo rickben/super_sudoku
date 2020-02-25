@@ -38,15 +38,15 @@ int is_erroneous() {
     return 0;
 }
 
-void cell_row(int* arr, int num_row) {
+void cell_row(struct cell* arr, int num_row) {
     for (int j = 0; j < curr_board->len; j++) {
         if (j % curr_board->block_width == 0) {
             printf("|");
         }
-        if(arr[j]==0){
+        if(arr[j].value==0){
             printf("   ");
         } else {
-            printf(" %2d", arr[j]);
+            printf(" %2d", arr[j].value);
         }
         if(is_fixed(num_row,j)==1){
             printf(".");

@@ -1,6 +1,7 @@
 #ifndef HW3_GAME_H
 #define HW3_GAME_H
 #include <stdio.h>
+#include "ListActions.h"
 
 /*
  * is_game_over is a flag that
@@ -29,19 +30,37 @@
  *board_restart           - restarts the game
  * board_exit             - prints and exits the game
  * */
+struct cell{
+    int value;
+    int is_fixed;
+    int is_erroneous;
+    int* list_poss_values;
+}*cell;
+
+
 struct curr_board{
-    int** board;
+    struct cell** board;
     int block_width;
     int block_height;
     int len;
     int mark_errors;
 }*curr_board;
 
+
 enum state{Init, Edit, Solve, Terminate};
 enum state state;
-
+Node* last_cmd;
 
 void my_exit();
+void undo();
+void redo(Node* current_cmd);
+void reset();
+void set(int x, int y, int z);
+void hint(int x, int y);
+void guess_hint(int x, int y);
+void validate();
+void num_solutions();
+void autofill();
 int validate_board();
 void create_board(int len);
 void set_values_board();
