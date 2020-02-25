@@ -5,9 +5,8 @@
 #include "MainAux.h"
 
 
-enum state{Init, Edit, Solve, Terminate};
-enum state state;
-Node* last_cmd;
+
+
 
 
 void my_exit(){
@@ -28,7 +27,7 @@ void reset(){
 }
 
 void set(int x, int y, int z){
-    curr_board->board[x][y] = z;
+    curr_board->board[x][y].value = z;
     insert(last_cmd, "set");/*change char*/
     last_cmd = last_cmd->next;
 
@@ -63,13 +62,13 @@ int validate_board(){
 }
 
 void create_board(int len) {
-    curr_board = (struct curr_board *) calloc(len, sizeof(int));
+    curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
     curr_board->len = len;
     curr_board->mark_errors = 0;
     calc_block_size(len);
-    curr_board->board = (int **) calloc(len, sizeof(int *));
+    curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
     for (int i = 0; i < len; ++i) {
-        curr_board->board[i] = (int *) calloc(len, sizeof(int));
+        curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
     }
 }
 
@@ -78,7 +77,7 @@ void create_board(int len) {
 void set_values_board() {
     for (int i = 0; i < curr_board->len; ++i) {
         for (int j = 0; j < curr_board->len; ++j) {
-            curr_board->board[i][j] = 1;
+            curr_board->board[i][j].value = 1;
             ///TODO change the values to match the len
         }
     }
