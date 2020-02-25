@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 
-void free_mem_board();
 
 int open_new_file(){
 

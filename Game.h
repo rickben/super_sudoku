@@ -47,5 +47,6 @@ void my_exit();
 int validate_board();
 void create_board(int len);
 void set_values_board();
+void board_set(int x, int y, int z);
 
 #endif
