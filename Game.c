@@ -57,8 +57,8 @@ void board_set(int x, int y, int z){
     command_data[0] = x;
     command_data[1] = y;
     command_data[2] = z;
-    board_data = curr_board->board[x][y];
-    curr_board->board[x][y] = z;
+    board_data = curr_board->board[x][y].value;
+    curr_board->board[x][y].value = z;
     insert(last_cmd, 5, command_data, board_data);
 }
 
