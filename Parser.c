@@ -26,7 +26,6 @@ int command_to_code(char* input) {
                     else
                         if (str_equals(input, "validate") == 0)
                             return 6;
-
                         else
                             if (str_equals(input, "guess") == 0)
                                 return 7;
@@ -59,22 +58,22 @@ int command_to_code(char* input) {
                                                                     return 17;
                                                                 else
                                                                 if (str_equals(input, "exit") == 0)
-                                                                        return 18;
+                                                                    return 18;
     return 0;
 }
 
-void execute_command(){
+void interpret_command(){
     char* input = malloc(102400* sizeof(char));
     char *token;
     char *rest;
     int command_code = 0;
     int j = 0;
-    char **array = malloc(sizeof(char*)*3);
+    char **command_data = malloc(sizeof(char*) * 3);
     for (; j < 3; ++j) {
-        array[j] = malloc(sizeof(char)*1024);
+        command_data[j] = malloc(sizeof(char) * 1024);
     }
     j=0;
-    while(fgets(input, 1024, stdin)!=NULL){
+    if(fgets(input, 1024, stdin)!=NULL){
 
         /* fix input*/
         size_t len = strlen(input);
@@ -91,14 +90,27 @@ void execute_command(){
         }
         token = strtok_r(rest, " \t\r", &rest);
         while (token!=NULL&& j<3){
-            array[j]=token;
+            command_data[j]=token;
 
-            printf("%s\n", token);
-            token = strtok_r(rest, " ", &rest);
+            token = strtok_r(rest, " \t\r", &rest);
             j++;
         }
         j=0;
-        printf("%d\n", command_code);
     }
+    execute_command(command_code, command_data);
+}
 
+void execute_command(int command_code, char** command_data) {
+
+    switch(command_code)
+    {
+        case 5:
+            board_set(1,1,1);
+            break;
+        case 18:
+            my_exit();
+            break;
+        default:
+            printf("Error: invalid command\n");
+    }
 }
