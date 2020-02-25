@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Game.h"
-#include "ListActions.h"
 #include "MainAux.h"
 
 
-enum state{Init, Edit, Solve, Terminate};
-enum state state;
-Node* last_cmd;
+
+
 
 
 void my_exit(){

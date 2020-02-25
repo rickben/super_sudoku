@@ -1,6 +1,7 @@
 #ifndef HW3_GAME_H
 #define HW3_GAME_H
 #include <stdio.h>
+#include "ListActions.h"
 
 /*
  * is_game_over is a flag that
@@ -39,6 +40,7 @@ struct curr_board{
 
 enum state{Init, Edit, Solve, Terminate};
 enum state state;
+Node* last_cmd;
 
 
 void my_exit();
