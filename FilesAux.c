@@ -21,26 +21,49 @@ void free_mem_board() {
     free(curr_board);
 }
 
+void solve_mode_to_file(char* file_name){
+    int i,j;
+    FILE *in_file = fopen(file_name, "w");
+    fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
+    for (i = 0; i < curr_board->len; i++) {
+        for (j = 0; j < curr_board->len; j++) {
+            fprintf(in_file, "%d", curr_board->board[i][j].value);
+            if (curr_board->board[i][j].is_fixed!=0 && curr_board->board[i][j].value!=0) {
+                fprintf(in_file, ".");
+            }
+            else if (curr_board->board[i][j].is_erroneous!=0 && curr_board->board[i][j].value!=0) {
+                fprintf(in_file, "*");
+            }
+            fprintf(in_file, " ");
+        }
+        fprintf(in_file, "\n");
+    }
+    fclose(in_file);
+    free_mem_board();
+}
+void edit_mode_to_file(char* file_name) {
+    int i,j;
+    FILE *in_file = fopen(file_name, "w");
+    fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
+    for (i = 0; i < curr_board->len; i++) {
+        for (j = 0; j < curr_board->len; j++) {
+            fprintf(in_file, "%d", curr_board->board[i][j].value);
+            if (curr_board->board[i][j].value != 0) {
+                fprintf(in_file, ". ");
+            } else {
+                fprintf(in_file, " ");
+            }
+        }
+        fprintf(in_file, "\n");
+    }
+    fclose(in_file);
+    free_mem_board();
+}
+
 int trans_board_to_file(char* file_name){
     int i, j;
     if(state == Solve) {
-        FILE *in_file = fopen(file_name, "w");
-        fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
-        for (i = 0; i < curr_board->len; i++) {
-            for (j = 0; j < curr_board->len; j++) {
-                fprintf(in_file, "%d", curr_board->board[i][j].value);
-                if (curr_board->board[i][j].is_fixed!=0 && curr_board->board[i][j].value!=0) {
-                    fprintf(in_file, ".");
-                }
-                else if (curr_board->board[i][j].is_erroneous!=0 && curr_board->board[i][j].value!=0) {
-                    fprintf(in_file, "*");
-                }
-                fprintf(in_file, " ");
-            }
-            fprintf(in_file, "\n");
-        }
-        fclose(in_file);
-        free_mem_board();
+        solve_mode_to_file(file_name);
         return 1;
     }
     if(!validate_board()){
@@ -49,24 +72,11 @@ int trans_board_to_file(char* file_name){
     }
     else {
         if(state == Edit) {
-            FILE *in_file = fopen(file_name, "w");
-            fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
-            for (i = 0; i < curr_board->len; i++) {
-                for (j = 0; j < curr_board->len; j++) {
-                    fprintf(in_file, "%d", curr_board->board[i][j].value);
-                    if(curr_board->board[i][j].value!=0) {
-                        fprintf(in_file, ". ");
-                    }
-                    else{
-                        fprintf(in_file, " ");
-                    }
-                }
-                fprintf(in_file, "\n");
-            }
-            fclose(in_file);
-            free_mem_board();
+            edit_mode_to_file(file_name);
+            return 1;
         }
     }
+    return 0;
 }
 
 
@@ -102,13 +112,18 @@ int scan_size_from_file(FILE* in_file){
 
 int scan_rows_from_file(FILE *in_file) {
     int i,j;
+    char c;
     for(i=0; i<curr_board->len; i++) {
         for (j = 0; j < curr_board->len; j++) {
+
             if (fscanf(in_file, "%d", &curr_board->board[i][j].value) != 1) {
                 return 0;
-            }if (fscanf(in_file,".")==1){
+            }
+            fscanf(in_file,"%c",&c);
+            if (c=='.'){
                 curr_board->board[i][j].is_fixed=1;
-            }if (fscanf(in_file,"*")==1){
+            }
+            else if (c=='*'){
                 curr_board->board[i][j].is_erroneous=1;
             }
 

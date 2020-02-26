@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "ListActions.h"
 #include "MainAux.h"
+#include "FilesAux.h"
 
 
 
@@ -14,6 +15,21 @@ void my_exit(){
     printf("Exiting...\n");
     ///TODO release memory
 }
+
+void solve(char* file_name){
+    ///TODO do i need to release memory from before or do i reach here clean?
+    //command always available
+    state = Solve;
+    trans_file_to_board(file_name);
+}
+
+void edit(char* file_name){
+    ///TODO do i need to release memory from before or do i reach here clean?
+    //command always available
+    state = Edit;
+    trans_file_to_board(file_name);
+}
+
 
 void mark_errors(int x){
     if (state != Solve){
