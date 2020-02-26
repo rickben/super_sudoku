@@ -85,6 +85,9 @@ void reset(){
 
 }
 
+/*
+ * x - num of col, y - num of row
+ * */
 void board_set(int x, int y, int z){
     int* command_data = malloc(sizeof(int)*3);
     cell board_data;
@@ -96,8 +99,8 @@ void board_set(int x, int y, int z){
     command_data[0] = x;
     command_data[1] = y;
     command_data[2] = z;
-    board_data.value = curr_board->board[x][y].value;
-    curr_board->board[x][y].value = z;
+    board_data.value = curr_board->board[y][x].value;
+    curr_board->board[y][x].value = z;
     insert_to_undo_lst(5, command_data, board_data);
     redo_head = remove_head(redo_head);
 }
