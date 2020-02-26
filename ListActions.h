@@ -4,14 +4,28 @@
 
 #ifndef HW3_LISTACTIONS_H
 #define HW3_LISTACTIONS_H
+typedef struct cell{
+    int value;
+    int is_fixed;
+    int is_erroneous;
+    int* list_poss_values;
+}cell;
+struct curr_board{
+    struct cell** board;
+    int block_width;
+    int block_height;
+    int len;
+    int mark_errors;
+}*curr_board;
 typedef struct Node {
     int command_code;
     int* command_data;
-    int board_data;
+    cell cell_data;
     struct Node* next; // Pointer to next node in DLL
     struct Node* prev; // Pointer to previous node in DLL
 }Node;
 
-void insert(Node* curr_node, int command_code, int* command_data, int board_data);
+void insert(Node* curr_node, int command_code, int* command_data, cell cell_data);
+Node* remove_head(Node* head);
 Node* get_head(Node* curr_node);
 #endif //HW3_LISTACTIONS_H

@@ -9,6 +9,14 @@
 
 
 
+
+void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
+    insert(undo_head, command_code, command_data, cell_data);
+}
+void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
+    insert(redo_head, command_code, command_data, cell_data);
+}
+
 void my_exit(){
     state =  Terminate;
     printf("Exiting...\n");
@@ -36,10 +44,25 @@ void print_board(){
 }
 
 void undo(){
-
+    int* command_data = undo_head->command_data;
+    cell cell_data = undo_head->cell_data;
+    if(state!=Solve && state != Edit){
+        printf("undo only available in solve or edit mode");
+        return;
+    }
+    if(undo_head->command_code == 5){
+        curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+    }
+    insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
+    undo_head = remove_head(undo_head);
 }
 
 void redo(Node* current_cmd){
+    if(state!=Solve && state != Edit){
+        printf("undo only available in solve or edit mode");
+        return;
+    }
+
 }
 
 void reset(){
@@ -48,7 +71,7 @@ void reset(){
 
 void board_set(int x, int y, int z){
     int* command_data = malloc(sizeof(int)*3);
-    int board_data=0;
+    cell board_data;
     if(state!=Solve && state != Edit){
         printf("set only available in solve or edit mode");
         return;
@@ -57,15 +80,36 @@ void board_set(int x, int y, int z){
     command_data[0] = x;
     command_data[1] = y;
     command_data[2] = z;
-    board_data = curr_board->board[x][y].value;
+    board_data.value = curr_board->board[x][y].value;
     curr_board->board[x][y].value = z;
-    insert(last_cmd, 5, command_data, board_data);
+    insert_to_undo_lst(5, command_data, board_data);
+    redo_head = remove_head(redo_head);
 }
 
 void hint(int x, int y){
+    int is_erroneous = 0;
+    if(state!=Solve){
+        printf("hint only available in solve mode");
+        return;
+    }
+    if(is_erroneous){
+        printf("Error");
+        return;
+    }
+    printf("%d", curr_board->board[x][y].value);
 }
 
 void guess_hint(int x, int y){
+    int is_erroneous = 0;
+    if(state!=Solve){
+        printf("hint only available in solve mode");
+        return;
+    }
+    if(is_erroneous){
+        printf("Error");
+        return;
+    }
+    printf("%d", curr_board->board[x][y].value);
 }
 
 void validate(){
@@ -84,6 +128,10 @@ void validate(){
 }
 
 void num_solutions(){
+    if(state!=Solve && state != Edit){
+        printf("num_solutions only available in solve or edit mode");
+        return;
+    }
 }
 
 void autofill(){
