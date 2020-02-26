@@ -4,7 +4,6 @@
 
 #ifndef HW3_LISTACTIONS_H
 #define HW3_LISTACTIONS_H
-/**/
 typedef struct cell{
     int value;
     int is_fixed;
