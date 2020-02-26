@@ -1,3 +1,0 @@
-C:/Users/User/CLionProjects/super_sudoku/cmake-build-debug/CMakeFiles/super_sudoku.dir
-C:/Users/User/CLionProjects/super_sudoku/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/User/CLionProjects/super_sudoku/cmake-build-debug/CMakeFiles/rebuild_cache.dir

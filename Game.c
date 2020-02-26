@@ -12,10 +12,10 @@
 
 
 void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
-    insert(undo_head, command_code, command_data, cell_data);
+    undo_head = insert(undo_head, command_code, command_data, cell_data);
 }
 void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
-    insert(redo_head, command_code, command_data, cell_data);
+    redo_head = insert(redo_head, command_code, command_data, cell_data);
 }
 
 void my_exit(){
@@ -60,17 +60,20 @@ void print_board(){
 }
 
 void undo(){
-    int* command_data = undo_head->command_data;
-    cell cell_data = undo_head->cell_data;
-    if(state!=Solve && state != Edit){
-        printf("undo only available in solve or edit mode");
-        return;
+    if(undo_head!=NULL){
+        int* command_data = undo_head->command_data;
+        cell cell_data = undo_head->cell_data;
+        if(state!=Solve && state != Edit){
+            printf("undo only available in solve or edit mode");
+            return;
+        }
+        if(undo_head->command_code == 5){
+            cell_data.value = curr_board->board[command_data[0]][command_data[1]].value;
+            curr_board->board[command_data[0]][command_data[1]].value = undo_head->cell_data.value;
+        }
+        insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
+        undo_head = remove_head(undo_head);
     }
-    if(undo_head->command_code == 5){
-        curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-    }
-    insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
-    undo_head = remove_head(undo_head);
 }
 
 void redo(Node* current_cmd){
@@ -102,7 +105,7 @@ void board_set(int x, int y, int z){
     board_data.value = curr_board->board[y][x].value;
     curr_board->board[y][x].value = z;
     insert_to_undo_lst(5, command_data, board_data);
-    redo_head = remove_head(redo_head);
+    clear_list(redo_head);
 }
 
 void hint(int x, int y){

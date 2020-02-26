@@ -25,8 +25,9 @@ typedef struct Node {
     struct Node* prev; // Pointer to previous node in DLL
 }Node;
 
-void insert(Node* curr_node, int command_code, int* command_data, cell cell_data);
+Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_data);
 Node* remove_head(Node* head);
 Node* get_head(Node* curr_node);
+void clear_list(Node* head);
 int arr_len(int* arr);
 #endif //HW3_LISTACTIONS_H

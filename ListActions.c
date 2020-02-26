@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 
-void insert(Node* curr_node, int command_code, int* command_data, cell cell_data) {
+Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_data) {
     /* 1. allocate new node */
     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
 
@@ -12,26 +12,27 @@ void insert(Node* curr_node, int command_code, int* command_data, cell cell_data
     new_node->command_code = command_code;
     new_node->command_data = command_data;
     new_node->cell_data = cell_data;
+    new_node->next = NULL;
+    new_node->prev = NULL;
     /*3. check if the given prev_node is NULL */
-    if (undo_head == NULL) {
-        undo_head = new_node;
-        return;
+    if (curr_node == NULL) {
+        return new_node;
     }
 
     /* 4. Make next of new node as next of prev_node */
-    new_node->next = undo_head->next;
+    new_node->next = NULL;
 
     /* 5. Make the next of prev_node as new_node */
-    undo_head->next = new_node;
+    curr_node->next = new_node;
 
     /* 6. Make prev_node as previous of new_node */
-    new_node->prev = undo_head;
+    new_node->prev = curr_node;
 
 //    /* 7. Change previous of new_node's next node */
 //    if (new_node->next != NULL)
 //        new_node->next->prev = new_node;
 
-    undo_head = new_node;
+    return new_node;
 
 
 }
@@ -82,7 +83,19 @@ Node* remove_head(Node* head){
     // Change next of second last
     second_last->next = NULL;
 
-    return head;
+    return second_last;
+}
+
+void clear_list(Node* head){
+    if(head == NULL)
+        return;
+
+    while (head->prev!=NULL){
+        head = head->prev;
+        free(head->next);
+    }
+
+    free(head);
 }
 int arr_len(int* arr){
     int i=0;

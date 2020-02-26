@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2019.3.2\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\super_sudoku.dir/objects.a
-C:\PROGRA~2\MINGW-~1\I686-8~1.0-P\mingw32\bin\ar.exe cr CMakeFiles\super_sudoku.dir/objects.a @CMakeFiles\super_sudoku.dir\objects1.rsp
-C:\PROGRA~2\MINGW-~1\I686-8~1.0-P\mingw32\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\super_sudoku.dir/objects.a -Wl,--no-whole-archive  -o super_sudoku.exe -Wl,--out-implib,libsuper_sudoku.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\super_sudoku.dir\linklibs.rsp
