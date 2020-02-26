@@ -6,67 +6,19 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/User/CLionProjects/super_sudoku/FilesAux.c
-Game.h
-C:/Users/User/CLionProjects/super_sudoku/Game.h
-MainAux.h
-C:/Users/User/CLionProjects/super_sudoku/MainAux.h
-stdlib.h
--
-
 C:/Users/User/CLionProjects/super_sudoku/FilesAux.h
 
-C:/Users/User/CLionProjects/super_sudoku/Game.c
-stdio.h
--
-stdlib.h
--
-Game.h
-C:/Users/User/CLionProjects/super_sudoku/Game.h
-ListActions.h
-C:/Users/User/CLionProjects/super_sudoku/ListActions.h
-MainAux.h
-C:/Users/User/CLionProjects/super_sudoku/MainAux.h
-
 C:/Users/User/CLionProjects/super_sudoku/Game.h
 stdio.h
 -
 ListActions.h
 C:/Users/User/CLionProjects/super_sudoku/ListActions.h
 
-C:/Users/User/CLionProjects/super_sudoku/ListActions.c
-ListActions.h
 C:/Users/User/CLionProjects/super_sudoku/ListActions.h
-Game.h
-C:/Users/User/CLionProjects/super_sudoku/Game.h
-stdio.h
--
-stdlib.h
--
-
-C:/Users/User/CLionProjects/super_sudoku/ListActions.h
-
-C:/Users/User/CLionProjects/super_sudoku/MainAux.c
-stdio.h
--
-MainAux.h
-C:/Users/User/CLionProjects/super_sudoku/MainAux.h
-math.h
--
 
 C:/Users/User/CLionProjects/super_sudoku/MainAux.h
 Game.h
 C:/Users/User/CLionProjects/super_sudoku/Game.h
-
-C:/Users/User/CLionProjects/super_sudoku/Parser.c
-Parser.h
-C:/Users/User/CLionProjects/super_sudoku/Parser.h
-stdio.h
--
-string.h
--
-stdlib.h
--
 
 C:/Users/User/CLionProjects/super_sudoku/Parser.h
 MainAux.h
@@ -77,12 +29,6 @@ string.h
 C:/Users/User/CLionProjects/super_sudoku/SPBufferset.h
 stdio.h
 -
-
-C:/Users/User/CLionProjects/super_sudoku/Solver.c
-stdlib.h
--
-Solver.h
-C:/Users/User/CLionProjects/super_sudoku/Solver.h
 
 C:/Users/User/CLionProjects/super_sudoku/Solver.h
 MainAux.h

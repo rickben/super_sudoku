@@ -84,4 +84,10 @@ Node* remove_head(Node* head){
 
     return head;
 }
+int arr_len(int* arr){
+    int i=0;
+    while(arr[i]!=0 && i < 9)
+        i++;
+    return i;
+}
 

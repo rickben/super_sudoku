@@ -87,12 +87,12 @@ void board_set(int x, int y, int z){
 }
 
 void hint(int x, int y){
-    int is_erroneous = 0;
     if(state!=Solve){
         printf("hint only available in solve mode");
         return;
     }
-    if(is_erroneous){
+    cell hint_cell = curr_board->board[x][y];
+    if(hint_cell.is_erroneous || hint_cell.is_fixed || hint_cell.value != 0){
         printf("Error");
         return;
     }
@@ -135,6 +135,19 @@ void num_solutions(){
 }
 
 void autofill(){
+    if(state!=Solve){
+        printf("autofill only available in solve mode");
+        return;
+    }
+    int i=0, j=0;
+    for(;i<curr_board->len;i++){
+        for (; j < curr_board->len; j++) {
+            if(curr_board->board[i][j].value==0 && arr_len(curr_board->board[i][j].list_poss_values)==1){
+                curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
+                /*add to undo*/
+            }
+        }
+    }
 }
 
 int validate_board(){

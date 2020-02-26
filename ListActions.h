@@ -28,4 +28,5 @@ typedef struct Node {
 void insert(Node* curr_node, int command_code, int* command_data, cell cell_data);
 Node* remove_head(Node* head);
 Node* get_head(Node* curr_node);
+int arr_len(int* arr);
 #endif //HW3_LISTACTIONS_H
