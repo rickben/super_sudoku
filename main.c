@@ -3,16 +3,17 @@
 #include <time.h>
 #include "Game.h"
 #include "Parser.h"
-#include "Solver.h"
 #include "SPBufferset.h"
 #include "MainAux.h"
-#include "FilesAux.h"
 
 
 
 
 int main(int argc, char* argv[]) {
-    state = Solve;
-    trans_file_to_board("C:\\Users\\Ricky Benkovich\\CLionProjects\\super_sudoku\\dog.txt");
-    trans_board_to_file("C:\\Users\\Ricky Benkovich\\CLionProjects\\super_sudoku\\ricky.txt");
+    int flag = 1;
+    state = Init;
+    print_start_program();
+    while (flag){
+        interpret_command();
+    }
 }

@@ -66,7 +66,7 @@ int trans_board_to_file(char* file_name){
         solve_mode_to_file(file_name);
         return 1;
     }
-    if(!validate_board()){
+    if(!validate()){
         printf("board isn't valid!\n");
         return 0;
     }
@@ -109,11 +109,14 @@ int scan_size_from_file(FILE* in_file){
     return 1;
 }
 
-
+/*
+ * TODO need to change - to fgets, to check if the file in the right format
+ * */
 int scan_rows_from_file(FILE *in_file) {
     int i,j;
     char c;
     for(i=0; i<curr_board->len; i++) {
+        
         for (j = 0; j < curr_board->len; j++) {
 
             if (fscanf(in_file, "%d", &curr_board->board[i][j].value) != 1) {
@@ -128,6 +131,7 @@ int scan_rows_from_file(FILE *in_file) {
             }
 
         }
+
     }
     return 1;
 

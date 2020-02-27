@@ -1,7 +1,37 @@
 #include <stdio.h>
+#include <string.h>
 #include "MainAux.h"
 #include <math.h>
 
+void print_start_program(){
+    printf("Welcome to Sudoku puzzle game!\nYou may enter either Solve or Edit mode\nby typing the name of the mode:\n");
+}
+
+int check_correct_file_format(){
+    //TODO
+}
+
+int check_erroneous_board(){
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i)
+        for (j = 0; j < curr_board->len ; ++j)
+            if(curr_board->board[i][j].is_erroneous)
+                return 1;
+
+    return 0;
+}
+
+void fill_board_random(int x){
+//TODO
+}
+
+void clear_cells_random(int y){
+//TODO
+}
+
+int check_if_number_float(int x){
+    //TODO
+}
 
 
 void calc_block_size(){
@@ -30,13 +60,7 @@ void separator_row() {
     printf("\n");
 }
 
-int is_fixed(int row, int col) {
-    return 0;
-}
 
-int is_erroneous() {
-    return 0;
-}
 
 void cell_row(struct cell* arr, int num_row) {
     for (int j = 0; j < curr_board->len; j++) {
@@ -48,10 +72,10 @@ void cell_row(struct cell* arr, int num_row) {
         } else {
             printf(" %2d", arr[j].value);
         }
-        if(is_fixed(num_row,j)==1){
+        if(curr_board->board[num_row][j].is_fixed == 1){
             printf(".");
         }
-        else if(is_erroneous()==1){
+        if(curr_board->board[num_row][j].is_erroneous == 1){
             printf("*");
         } else{
             printf(" ");
