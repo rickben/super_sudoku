@@ -10,16 +10,11 @@
 #include <stdbool.h>
 
 
-const int len=5;
-const int block_width=5;
-const int block_height=1;
+const int len=9;
+const int block_width=3;
+const int block_height=3;
 int** board_game;
 
-int MAX(int a,int b){
-    if (a>b)
-        return a;
-    return b;
-}
 bool find_empty_cell(int* row_pos, int* col_pos, int** matrix ) {
     {
         int i, j;
@@ -127,9 +122,9 @@ bool is_valid_board(int** matrix){
     return true;
 }
 
-int num_solutions_main(){
+long num_solutions_main(){
     int i=1;
-    int count = 0;
+    long count = 0;
     int row=0,col=0;
     int temp = 0;
 
@@ -154,6 +149,6 @@ int main(int argc, char* argv[]) {
     board_game = calloc(len, sizeof(int*));
     for (int j = 0; j < len; ++j)
         board_game[j] = calloc(len, sizeof(int));
-    printf("%d\n", num_solutions_main());
+    printf("%ld\n", num_solutions_main());
 //    trans_board_to_file("C:\Users\User\CLionProjects\super_sudoku\\ricky.txt");
 }
