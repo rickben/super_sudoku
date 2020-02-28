@@ -14,6 +14,8 @@ void my_exit(){
 
 /*command always available*/
 void solve(char* file_name){
+    ///TODO do i need to release memory from before or do i reach here clean?
+    //command always available
     state = Solve;
     trans_file_to_board(file_name);
 }
@@ -52,20 +54,24 @@ void print_board(){
 }
 
 void undo(){
-
+    int* command_data = undo_head->command_data;
+    cell cell_data = undo_head->cell_data;
+    if(state!=Solve && state != Edit){
+        printf("undo only available in solve or edit mode");
+        return;
+    }
+    if(undo_head->command_code == 5){
+        curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+    }
+    insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
+    undo_head = remove_head(undo_head);
 }
 
 void redo(Node* current_cmd){
-}
-
-void reset(){
-    if(state != Solve && state != Edit){
-        printf("print board only available in solve or edit mode");
+    if(state!=Solve && state != Edit){
+        printf("undo only available in solve or edit mode");
         return;
-    }else{
-
     }
-}
 
 void generate(int x, int y){
     if (state == Edit){
@@ -216,13 +222,29 @@ int validate(){
     }
 }
 
-void num_solutions() {
-    if (state == Solve || state == Edit) {
-        //TODO
-    } else {
-        printf("This command is only available in Solve or Edit mode");
-        return;
+long num_solutions(){
+    if(state!=Solve && state != Edit){
+        printf("num_solutions only available in solve or edit mode");
+        return -1;
     }
+    int i=1;
+    long count = 0;
+    int row=0,col=0;
+    int temp = 0;
+
+    if(!is_valid_board(curr_board->board))
+        return 0;
+
+    if(!find_empty_cell(&row,&col, curr_board->board)){
+        return 1;
+    }
+    for(;i<=curr_board->len;i++){
+        temp = curr_board->board[row][col].value;
+        curr_board->board[row][col].value = i;
+        count += num_solutions();
+        curr_board->board[row][col].value = temp;
+    }
+    return count;
 }
 
 void autofill(){
