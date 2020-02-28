@@ -51,7 +51,7 @@ void reset();
 void board_set(int x, int y, int z);
 void hint(int x, int y);
 void guess_hint(int x, int y);
-void num_solutions();
+long num_solutions();
 void autofill();
 int validate_board();
 void create_board(int len);

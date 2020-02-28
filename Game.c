@@ -146,11 +146,29 @@ void validate(){
     }
 }
 
-void num_solutions(){
+long num_solutions(){
     if(state!=Solve && state != Edit){
         printf("num_solutions only available in solve or edit mode");
-        return;
+        return -1;
     }
+    int i=1;
+    long count = 0;
+    int row=0,col=0;
+    int temp = 0;
+
+    if(!is_valid_board(curr_board->board))
+        return 0;
+
+    if(!find_empty_cell(&row,&col, curr_board->board)){
+        return 1;
+    }
+    for(;i<=curr_board->len;i++){
+        temp = curr_board->board[row][col].value;
+        curr_board->board[row][col].value = i;
+        count += num_solutions();
+        curr_board->board[row][col].value = temp;
+    }
+    return count;
 }
 
 void autofill(){
