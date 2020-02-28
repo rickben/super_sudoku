@@ -53,7 +53,7 @@ void mark_errors(int x){
 
 void print_board(){
     if(state!=Solve && state != Edit){
-        printf("print board only available in solve or edit mode");
+        printf("print board_game only available in solve or edit mode");
         return;
     }
     board_print();
@@ -141,11 +141,11 @@ void validate(){
     }
     int is_valid = 1;
     if(is_valid){
-        printf("Validation passed: board is solvable\n");
+        printf("Validation passed: board_game is solvable\n");
     }
     else{
 
-        printf("Validation failed: board is unsolvable\n");
+        printf("Validation failed: board_game is unsolvable\n");
     }
 }
 

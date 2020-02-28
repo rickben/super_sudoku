@@ -6,10 +6,10 @@
 
 /*
  * is_game_over is a flag that
- * represents if the board is solved,
+ * represents if the board_game is solved,
  * board_game is the multi-dimensional array that
  * represents this board_game
- * board : the board_game which the player gets and changes
+ * board_game : the board_game which the player gets and changes
  * fixed_board : the board_game after the clean of leaving only
  * the number of cells, received by the user.
  * solution: the board_game after getting the same values as
@@ -19,15 +19,15 @@
 /*
  *Game Summary:
  *
- *A BOARDLEN X BOARDLEN (rows X columns) puzzle board with only one player.
+ *A BOARDLEN X BOARDLEN (rows X columns) puzzle board_game with only one player.
  *
  *It supports the following functions:
  *
- *board_create            - creates a new game board
+ *board_create            - creates a new game board_game
  *board_destroy           - free all memory of game
- *board_set               - sets a move on game board
+ *board_set               - sets a move on game board_game
  *board_valid             - checks if a move is valid
- *board_print             - prints the current board
+ *board_print             - prints the current board_game
  *board_restart           - restarts the game
  * board_exit             - prints and exits the game
  * */

@@ -10,10 +10,16 @@
 #include <stdbool.h>
 
 
-const int len=9;
-const int block_width=3;
-const int block_height=3;
+const int len=5;
+const int block_width=5;
+const int block_height=1;
+int** board_game;
 
+int MAX(int a,int b){
+    if (a>b)
+        return a;
+    return b;
+}
 bool find_empty_cell(int* row_pos, int* col_pos, int** matrix ) {
     {
         int i, j;
@@ -75,8 +81,8 @@ bool in_col(int col, int num, int** matrix) {
  * */
 bool in_block(int x, int y, int num, int** matrix) {
     int i, j;
-    for (i = 0; i < len; ++i) {
-        for (j = 0; j < len; ++j) {
+    for (i = 0; i < block_height; ++i) {
+        for (j = 0; j < block_width; ++j) {
             if (matrix[i+x][j+y] == num) {
                 if(num!=0) {
                     return true;
@@ -89,82 +95,55 @@ bool in_block(int x, int y, int num, int** matrix) {
     }
     return false;
 }
+
+
 /*
  * Returns whether a cell in position <x,y>:
  * means not valid (FALSE)
  * means valid (TRUE)
  * */
 bool is_valid_set(int x, int y, int num, int** matrix) {
-    int block_x = (x/block_width) * block_height;
-    int block_y = (y/block_width) * block_height;
+    int block_x = (x/block_height)*block_height;
+    int block_y = (y/block_width)*block_width;
     return (!in_row(x,num,matrix) && !in_col(y,num,matrix) &&
             !in_block(block_x,block_y,num,matrix) && matrix[x][y]==0);
 }
 
-int* get_first_empty_cell(int** board){
-    int* arr = malloc(2* sizeof(int));
-    for(int i=0;i<len;i++)
-        for(int j=0;j<len;j++){
-            if( board[i][j]==0){
-                arr[0] = i;
-                arr[1] = j;
-                return arr;
+bool is_valid_board(int** matrix){
+    int temp = 0;
+    for (int i = 0; i < len; ++i) {
+        for (int j = 0; j < len; ++j) {
+            if(matrix[i][j]!=0){
+                temp = matrix[i][j];
+                matrix[i][j] = 0;
+                if(!is_valid_set(i,j,temp,matrix)) {
+                    matrix[i][j] = temp;
+                    return false;
+                }
+                matrix[i][j] = temp;
             }
         }
-    return NULL;
-}
-
-bool determ_backtrack(int** board) {
-    int row1;
-    int col1;
-    int num;
-
-    if(find_empty_cell(&row1, &col1,board) == 0)
-        return true;
-    for(num=1;num<=len;num++)
-    {
-
-        if(is_valid_set(row1, col1, num, board))
-        {
-            board[row1][col1] = num;
-            if(determ_backtrack(board))
-                return true;
-            board[row1][col1]=0;
-        }
     }
-    return false;
+    return true;
 }
 
-int num_solutions_main(int** board){
-    int i=0;
+int num_solutions_main(){
+    int i=1;
     int count = 0;
-    int* arr = malloc(2* sizeof(int));
-    arr = get_first_empty_cell(board);
+    int row=0,col=0;
+    int temp = 0;
 
-    /*allocate new mem and free to determ backtrack*/
-    int** board_copy = calloc(len, sizeof(int*));
-    for (int j = 0; j < len; ++j) {
-        board_copy[j] = calloc(len, sizeof(int));
-    }
-    for (int j = 0; j < len;j++) {
-        for(int k=0;k<len;k++)
-            board_copy[j][k] = board[j][k];
-    }
-
-    if(!determ_backtrack(board_copy))
+    if(!is_valid_board(board_game))
         return 0;
 
-    /*allocate new mem and free to determ backtrack*/
-    for (int j = 0; j < len; ++j)
-        free(board_copy[j]);
-    free(board_copy);
-
-    if(arr == NULL){
+    if(!find_empty_cell(&row,&col, board_game)){
         return 1;
     }
-    for(;i<len;i++){
-        board[arr[0]][arr[1]] = i;
-        count += num_solutions_main(board);
+    for(;i<=len;i++){
+        temp = board_game[row][col];
+        board_game[row][col] = i;
+        count += num_solutions_main();
+        board_game[row][col] = temp;
     }
     return count;
 }
@@ -172,9 +151,9 @@ int num_solutions_main(int** board){
 int main(int argc, char* argv[]) {
     state = Solve;
     trans_file_to_board("C:\\Users\\User\\CLionProjects\\super_sudoku\\dog.txt");
-    int** board = calloc(len, sizeof(int*));
+    board_game = calloc(len, sizeof(int*));
     for (int j = 0; j < len; ++j)
-        board[j] = calloc(len, sizeof(int));
-    printf("%d", num_solutions_main(board));
+        board_game[j] = calloc(len, sizeof(int));
+    printf("%d\n", num_solutions_main());
 //    trans_board_to_file("C:\Users\User\CLionProjects\super_sudoku\\ricky.txt");
 }

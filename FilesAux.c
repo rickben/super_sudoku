@@ -67,7 +67,7 @@ int trans_board_to_file(char* file_name){
         return 1;
     }
     if(!validate_board()){
-        printf("board isn't valid!\n");
+        printf("board_game isn't valid!\n");
         return 0;
     }
     else {
