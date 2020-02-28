@@ -65,15 +65,21 @@ int trans_board_to_file(char* file_name){
     if(state == Solve) {
         solve_mode_to_file(file_name);
         return 1;
+    } else if(state == Edit && check_erroneous_board()){
+        printf("Erroneous board cannot be saved!\n");
+        return 0;
     }
-    if(!validate()){
-        printf("board isn't valid!\n");
+    else if(!validate() && state == Edit){
+        printf("Invalid board cannot be saved!\n");
         return 0;
     }
     else {
         if(state == Edit) {
             edit_mode_to_file(file_name);
             return 1;
+        }
+        else{
+            printf("save command is only available in solve or edit mode");
         }
     }
     return 0;
@@ -85,6 +91,7 @@ void create_board_from_file(int len, int width, int height) {
     curr_board->block_width = width;
     curr_board->block_height = height;
     curr_board->len = len ;
+    curr_board->mark_errors = 1;
     curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
     for (int i = 0; i < len; ++i) {
         curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));

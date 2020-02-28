@@ -14,6 +14,19 @@ int main(int argc, char* argv[]) {
     state = Init;
     print_start_program();
     while (flag){
+        printf("Please enter a command:\n");
         interpret_command();
+        if(state == Solve){
+            if(check_board_solved()){
+                if(check_erroneous_board()){
+                    printf("The solution is erroneous!\n");
+                }
+                else{
+                    printf("The puzzle was solved successfully!\n");
+                    restart_to_init();
+                }
+            }
+        } else if (state == Edit){
+        }
     }
 }

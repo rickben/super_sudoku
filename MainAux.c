@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include "MainAux.h"
+#include "FilesAux.h"
 #include <math.h>
 
+void restart_to_init(){
+    state = Init;
+    free_mem_board();
+}
+
 void print_start_program(){
-    printf("Welcome to Sudoku puzzle game!\nYou may enter either Solve or Edit mode\nby typing the name of the mode:\n");
+    printf("Welcome to Sudoku puzzle game!\n");
 }
 
 int check_correct_file_format(){
@@ -34,6 +40,96 @@ int check_if_number_float(int x){
 }
 
 
+/*
+ * Return false if there's a cell in the same row
+ * with the same value, otherwise, returns true
+ * */
+int in_row(int row, int num) {
+    int j;
+    for (j = 0; j < curr_board->len; ++j) {
+        if (curr_board->board[row][j].value == num) {
+            if(num!=0) {
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+ * Return false if there's a cell in the same column
+ * with the same value, otherwise, returns true
+ * */
+int in_col(int col, int num) {
+    int j;
+    for (j = 0; j < curr_board->len; ++j) {
+        if (curr_board->board[j][col].value == num) {
+            if (num != 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+ * Return false if there's a cell in the same block
+ * with the same value, otherwise, returns true
+ * */
+int in_block(int x, int y, int num) {
+    int i, j;
+    for (i = 0; i < curr_board->block_height; ++i) {
+        for (j = 0; j < curr_board->block_width; ++j) {
+            if (curr_board->board[i+x][j+y].value == num) {
+                if(num!=0) {
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+
+int is_valid_set(int x, int y, int num) {
+    int block_x = (x / (curr_board->block_height))*(curr_board->block_height);
+    int block_y = (y / (curr_board->block_width))*(curr_board->block_width);
+    return (!in_row(x,num) && !in_col(y,num) &&
+            !in_block(block_x,block_y,num));
+}
+
+int update_all_invalid_cells(){
+    int i,j,tmp;
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            tmp = curr_board->board[i][j].value;
+            curr_board->board[i][j].value = 0;
+            if(! is_valid_set(i, j, tmp)){
+                curr_board->board[i][j].is_erroneous = 1;
+            }
+            curr_board->board[i][j].value = tmp;
+        }
+    }
+}
+
+int check_board_solved(){
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i)
+        for (j = 0; j < curr_board->len ; ++j)
+            if(curr_board->board[i][j].value == 0)
+                return 0;
+
+    return 1;
+}
+
 void calc_block_size(){
     int root = (int) (sqrt(curr_board->len));
     while (root > 0){
@@ -60,9 +156,16 @@ void separator_row() {
     printf("\n");
 }
 
+void update_erroneous_cells(){
+
+}
+
 
 
 void cell_row(struct cell* arr, int num_row) {
+    if(state == Edit || (state == Solve && curr_board->mark_errors)){
+        update_erroneous_cells();
+    }
     for (int j = 0; j < curr_board->len; j++) {
         if (j % curr_board->block_width == 0) {
             printf("|");
@@ -72,12 +175,16 @@ void cell_row(struct cell* arr, int num_row) {
         } else {
             printf(" %2d", arr[j].value);
         }
-        if(curr_board->board[num_row][j].is_fixed == 1){
+        if(curr_board->board[num_row][j].is_fixed){
             printf(".");
         }
-        if(curr_board->board[num_row][j].is_erroneous == 1){
+        if((curr_board->board[num_row][j].is_erroneous) && (curr_board->mark_errors) && (state == Solve)){
             printf("*");
-        } else{
+        }
+        if((curr_board->board[num_row][j].is_erroneous) && (state == Edit)){
+            printf("*");
+        }
+        else{
             printf(" ");
         }
 

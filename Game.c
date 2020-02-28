@@ -6,11 +6,6 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 
-
-
-
-
-
 void my_exit(){
     printf("Exiting...\n");
     free_mem_board();
@@ -41,7 +36,7 @@ void mark_errors(int x){
         printf("mark errors only available in solve mode");
         return;
     }
-    if (x!=0&&x!=1) {
+    if (x != 0 && x != 1) {
         printf("mark errors only accepts 0 or 1");
         return;
     }
@@ -49,7 +44,7 @@ void mark_errors(int x){
 }
 
 void print_board(){
-    if(state!=Solve && state != Edit){
+    if(state != Solve && state != Edit){
         printf("print board only available in solve or edit mode");
         return;
     }
@@ -64,7 +59,7 @@ void redo(Node* current_cmd){
 }
 
 void reset(){
-    if(state!=Solve && state != Edit){
+    if(state != Solve && state != Edit){
         printf("print board only available in solve or edit mode");
         return;
     }else{
@@ -91,22 +86,16 @@ void generate(int x, int y){
         return;
     }
 }
-/*
- * x - num of col, y - num of row
- * */
+
+
 void board_set(int x, int y, int z) {
-    /*
-     * check if x y z are numbers, an if x y are in the range of N
-     * and check if board[y][x].isfixed==1
-     * */
     int *command_data = malloc(sizeof(int) * 3);
     int board_data = 0;
-    if (state != Solve && state != Edit) {
         if (state != Solve && state != Edit) {
             printf("set only available in solve or edit mode\n");
             return;
         }
-        if (x < 1 || y < 1 || z < 1) {
+        if (x < 1 || y < 1 || z < 0) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
         } else if (x > curr_board->len || y > curr_board->len || z > curr_board->len) {
@@ -116,16 +105,17 @@ void board_set(int x, int y, int z) {
             printf("This position is fixed!\n");
             return;
         } else {
-            command_data[0] = x;
-            command_data[1] = y;
+            command_data[0] = x-1;
+            command_data[1] = y-1;
             command_data[2] = z;
-            board_data = curr_board->board[y][x].value;
-            curr_board->board[y][x].value = z;
+            board_data = curr_board->board[y-1][x-1].value;
+            if(!is_valid_set(y-1,x-1,z)){
+                curr_board->board[y-1][x-1].is_erroneous = 1;
+            }
+            curr_board->board[y-1][x-1].value = z;
             insert(last_cmd, 5, command_data, board_data);
         }
-    }
 }
-
 
 void guess(int x){
     if(state != Solve){
@@ -259,7 +249,7 @@ void autofill(){
 void create_board(int len) {
     curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
     curr_board->len = len;
-    curr_board->mark_errors = 0;
+    curr_board->mark_errors = 1;
     calc_block_size(len);
     curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
     for (int i = 0; i < len; ++i) {
