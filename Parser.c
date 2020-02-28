@@ -1,6 +1,5 @@
 #include "Parser.h"
 #include "Game.h"
-#include "MainAux.h"
 #include "FilesAux.h"
 #include <stdio.h>
 #include <string.h>

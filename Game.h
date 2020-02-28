@@ -37,7 +37,8 @@
 
 enum state{Init, Edit, Solve};
 enum state state;
-Node* last_cmd;
+Node* undo_head;
+Node* redo_head;
 
 void solve();
 void edit();

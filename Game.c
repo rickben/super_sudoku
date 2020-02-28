@@ -6,6 +6,13 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 
+
+void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
+    insert(undo_head, command_code, command_data, cell_data);
+}
+void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
+    insert(redo_head, command_code, command_data, cell_data);
+}
 void my_exit(){
     printf("Exiting...\n");
     free_mem_board();
@@ -67,11 +74,15 @@ void undo(){
     undo_head = remove_head(undo_head);
 }
 
-void redo(Node* current_cmd){
-    if(state!=Solve && state != Edit){
+void redo(Node* current_cmd) {
+    if (state != Solve && state != Edit) {
         printf("undo only available in solve or edit mode");
         return;
     }
+}
+
+void reset(){}
+
 
 void generate(int x, int y){
     if (state == Edit){
@@ -119,9 +130,10 @@ void board_set(int x, int y, int z) {
             curr_board->board[y-1][x-1].is_erroneous = 1;
         }
         curr_board->board[y-1][x-1].value = z;
-        insert(last_cmd, 5, command_data, board_data);
+        insert(undo_head, 5, command_data, board_data);
     }
 }
+
 
 void guess(int x){
     if(state != Solve){
@@ -232,7 +244,7 @@ long num_solutions(){
     int row=0,col=0;
     int temp = 0;
 
-    if(!is_valid_board(curr_board->board))
+    if(!is_valid_board())
         return 0;
 
     if(!find_empty_cell(&row,&col, curr_board->board)){
