@@ -8,6 +8,7 @@ typedef struct cell{
     int value;
     int is_fixed;
     int is_erroneous;
+    int list_poss_values_len;
     int* list_poss_values;
 }cell;
 struct curr_board{

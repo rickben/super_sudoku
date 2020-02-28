@@ -6,7 +6,7 @@ int close_all_files();
 int trans_board_to_file();
 int trans_file_to_board(char* file_name);
 /*
- * Returns 1 if manged to save the board_game in a file,
+ * Returns 1 if manged to save the board in a file,
  * Otherwise, returns 0.
  * */
 int save_file();
