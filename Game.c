@@ -107,7 +107,7 @@ void generate(int x, int y){
 
 void board_set(int x, int y, int z) {
     int *command_data = malloc(sizeof(int) * 3);
-    cell board_data;
+    cell cell_data;
     if (state != Solve && state != Edit) {
         printf("set only available in solve or edit mode\n");
         return;
@@ -125,12 +125,12 @@ void board_set(int x, int y, int z) {
         command_data[0] = x-1;
         command_data[1] = y-1;
         command_data[2] = z;
-        board_data = curr_board->board[y-1][x-1];
+        cell_data = curr_board->board[y - 1][x - 1];
         if(!is_valid_set(y-1,x-1,z)){
             curr_board->board[y-1][x-1].is_erroneous = 1;
         }
         curr_board->board[y-1][x-1].value = z;
-        insert(undo_head, 5, command_data, board_data);
+        insert_to_undo_lst(5, command_data, cell_data);
     }
 }
 
