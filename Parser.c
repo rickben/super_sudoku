@@ -64,18 +64,19 @@ int command_to_code(char* input) {
 }
 //TODO change the size of input, because the address is bigger
 void interpret_command(){
-    char* input = malloc(102400* sizeof(char));
+    int input_len = 256;
+    char* input = malloc(input_len* sizeof(char));
     char *token;
     char *rest;
     int command_code = 0;
     int j = 0;
     char **command_data = malloc(sizeof(char*) * 3);
     for (; j < 3; ++j) {
-        command_data[j] = malloc(sizeof(char) * 1024);
+        command_data[j] = malloc(sizeof(char) * input_len);
         command_data[j][0]='\0';
     }
     j=0;
-    if(fgets(input, 1024, stdin)!=NULL){
+    if(fgets(input, input_len, stdin)!=NULL){
 
         /* fix input*/
         size_t len = strlen(input);
@@ -141,7 +142,7 @@ void execute_command(int command_code, char** command_data) {
             undo();
             break;
         case 10:
-            //redo(); how to get the current node?
+            redo();
             break;
         case 11:
             trans_board_to_file(command_data[0]);

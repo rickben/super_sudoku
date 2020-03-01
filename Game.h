@@ -45,7 +45,7 @@ void edit();
 void mark_errors(int x);
 void print_board();
 void undo();
-void redo(Node* current_cmd);
+void redo();
 void reset();
 void board_set(int x, int y, int z);
 void hint(int x, int y);
