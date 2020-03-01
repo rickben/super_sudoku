@@ -45,25 +45,25 @@ bool is_double(char* s){
 bool is_valid_param(int command_code, char** command_data){
     if(command_code==5){
         if(strlen(command_data[3])>0){
-            printf("To many parameters given");
+            printf("To many parameters given\n");
             return false;
         }
     }
     if(command_code==8||command_code==12||command_code==13){
         if(strlen(command_data[2])>0){
-            printf("To many parameters given");
+            printf("To many parameters given\n");
             return false;
         }
     }
     if (command_code==1||command_code==2||command_code==3||command_code==7||command_code==11){
         if(strlen(command_data[1])>0){
-            printf("To many parameters given");
+            printf("To many parameters given\n");
             return false;
         }
     }
     if (command_code==4||command_code==6||command_code==9||command_code==10||command_code==14||command_code==15||command_code==16||command_code==17){
         if(strlen(command_data[0])>0){
-            printf("To many parameters given");
+            printf("To many parameters given\n");
             return false;
         }
     }

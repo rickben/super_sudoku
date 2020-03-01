@@ -8,10 +8,10 @@
 
 
 void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
-    insert(undo_head, command_code, command_data, cell_data);
+    undo_head = insert(undo_head, command_code, command_data, cell_data);
 }
 void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
-    insert(redo_head, command_code, command_data, cell_data);
+    redo_head = insert(redo_head, command_code, command_data, cell_data);
 }
 void my_exit(){
     printf("Exiting...\n");
@@ -42,11 +42,11 @@ void edit(char* file_name){
 
 void mark_errors(int x){
     if (state != Solve){
-        printf("mark errors only available in solve mode");
+        printf("mark errors only available in solve mode\n");
         return;
     }
     if (x != 0 && x != 1) {
-        printf("mark errors only accepts 0 or 1");
+        printf("mark errors only accepts 0 or 1\n");
         return;
     }
     curr_board->mark_errors = x;
@@ -54,7 +54,7 @@ void mark_errors(int x){
 
 void print_board(){
     if(state != Solve && state != Edit){
-        printf("print board only available in solve or edit mode");
+        printf("print board only available in solve or edit mode\n");
         return;
     }
     board_print();
@@ -62,11 +62,11 @@ void print_board(){
 
 void undo(){
     if(state!=Solve && state != Edit){
-        printf("undo only available in solve or edit mode");
+        printf("undo only available in solve or edit mode\n");
         return;
     }
     if(undo_head==NULL){
-        printf("noting to undo");
+        printf("noting to undo\n");
         return;
     }
     int* command_data;
@@ -97,11 +97,11 @@ void undo(){
 
 void redo() {
     if (state != Solve && state != Edit) {
-        printf("undo only available in solve or edit mode");
+        printf("undo only available in solve or edit mode\n");
         return;
     }
     if(redo_head==NULL){
-        printf("noting to redo");
+        printf("noting to redo\n");
         return;
     }
     int* command_data;
@@ -126,7 +126,7 @@ void redo() {
 
 void reset(){
     if (state != Solve && state != Edit) {
-        printf("reset only available in solve or edit mode");
+        printf("reset only available in solve or edit mode\n");
         return;
     }
     while(undo_head!=NULL)
@@ -188,11 +188,11 @@ void board_set(int x, int y, int z) {
 
 void guess(double x){
     if(state != Solve){
-        printf("This command is only available in Solve mode");
+        printf("This command is only available in Solve mode\n");
         return;
     } else {
         if (check_erroneous_board()){
-            printf("The board is erroneous");
+            printf("The board is erroneous\n");
             return;
         } else{
             solver_LP();
@@ -204,7 +204,7 @@ void guess(double x){
 
 void hint(int x, int y){
     if(state != Solve){
-        printf("This command is only available in Solve mode");
+        printf("This command is only available in Solve mode\n");
         return;
     } else {
         if (x < 1 || y < 1) {
@@ -214,7 +214,7 @@ void hint(int x, int y){
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
         }else if(check_erroneous_board()){
-            printf("The board is erroneous");
+            printf("The board is erroneous\n");
         }else if (curr_board->board[y][x].is_fixed) {
             printf("This position is fixed!\n");
             return;
@@ -237,7 +237,7 @@ void hint(int x, int y){
  * */
 void guess_hint(int x, int y){
     if(state != Solve){
-        printf("This command is only available in Solve mode");
+        printf("This command is only available in Solve mode\n");
         return;
     } else {
         if (x < 1 || y < 1) {
@@ -247,7 +247,7 @@ void guess_hint(int x, int y){
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
         }else if(check_erroneous_board()){
-            printf("The board is erroneous");
+            printf("The board is erroneous\n");
         }else if (curr_board->board[y][x].is_fixed) {
             printf("This position is fixed!\n");
             return;
@@ -267,7 +267,7 @@ void guess_hint(int x, int y){
 
 int validate(){
     if(state!=Solve && state != Edit){
-        printf("validate only available in solve or edit mode");
+        printf("validate only available in solve or edit mode\n");
         return 0;
     }
     int is_valid = 1;
@@ -284,7 +284,7 @@ int validate(){
 
 long num_solutions(){
     if(state!=Solve && state != Edit){
-        printf("num_solutions only available in solve or edit mode");
+        printf("num_solutions only available in solve or edit mode\n");
         return -1;
     }
     int i=1;
@@ -311,7 +311,7 @@ void autofill(){
     int i,j;
     if (state == Solve) {
         if(check_erroneous_board()){
-            printf("The board is erroneous");
+            printf("The board is erroneous\n");
             return;
         }
         int *command_data = malloc(sizeof(int) * 3);
@@ -324,7 +324,7 @@ void autofill(){
                     command_data[2] = curr_board->board[i][j].value;
                     cell_data = curr_board->board[i][j];
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
-                    printf("single possible value for <%d,%d> updated: %d",i,j,curr_board->board[i][j].value);
+                    printf("single possible value for <%d,%d> updated: %d\n",i,j,curr_board->board[i][j].value);
                     undo_head = insert(undo_head, 15, command_data, cell_data);
                 }
             }
@@ -332,7 +332,7 @@ void autofill(){
         undo_head = insert(undo_head, -1, command_data, cell_data);
         clear_list(redo_head);
     } else {
-        printf("This command is only available in Solve or Edit mode");
+        printf("This command is only available in Solve or Edit mode\n");
         return;
     }
 }
