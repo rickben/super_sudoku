@@ -104,12 +104,24 @@ void redo() {
         printf("noting to redo");
         return;
     }
-    int* command_data = redo_head->command_data;
-    cell cell_data = redo_head->cell_data;
+    int* command_data;
+    cell cell_data;
     if(redo_head->command_code == 5){
+        command_data = redo_head->command_data;
+        cell_data = redo_head->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+        redo_head = remove_head(redo_head);
     }
-    redo_head = remove_head(redo_head);
+    if(redo_head->command_code == 15 || redo_head->command_code == -1){
+        while (redo_head->command_code != -1){
+            command_data = redo_head->command_data;
+            cell_data = redo_head->cell_data;
+            curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+            redo_head = remove_head(redo_head);
+        }
+        redo_head = remove_head(redo_head);
+        return;
+    }
 }
 
 void reset(){
