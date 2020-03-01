@@ -174,15 +174,12 @@ void board_set(int x, int y, int z) {
 }
 
 
-void guess(int x){
+void guess(double x){
     if(state != Solve){
         printf("This command is only available in Solve mode");
         return;
     } else {
-        if (check_if_number_float(x)==0){
-            printf("The parameter isn't legal (not float)");
-            return;
-        } else if (check_erroneous_board()){
+        if (check_erroneous_board()){
             printf("The board is erroneous");
             return;
         } else{

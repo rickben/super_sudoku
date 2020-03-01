@@ -9,6 +9,39 @@ int str_equals(char *str1, char *str2) {
     return strcmp(str1, str2);
 }
 
+
+bool is_digit(char c){
+    return c>=48&&c<=57;
+}
+bool is_dot(char c){
+    return c==46;
+}
+
+bool is_integer(char* s){
+    for (int i = 0; i < strlen(s); i++)
+        if (is_digit(s[i]) == false)
+            return false;
+    return true;
+}
+
+bool is_double(char* s){
+    int dot_counter = 0;
+    int digit_counter = 0;
+    for (int i = 0; i < strlen(s); i++){
+        if (is_digit(s[i]) == false && !is_dot(s[i]))
+            return false;
+        if(is_dot(s[i]))
+            dot_counter++;
+        else
+            digit_counter++;
+    }
+    if(dot_counter==0)
+        return true;
+    if (dot_counter==1&&digit_counter>=1)
+        return true;
+    return false;
+}
+
 int command_to_code(char* input) {
     if (str_equals(input, "solve") == 0)
         return 1;
@@ -104,7 +137,8 @@ void interpret_command(){
 
 void execute_command(int command_code, char** command_data) {
     int x,y,z;
-
+    double d;
+    char* stop_string;
     switch(command_code)
     {
         case 1:
@@ -120,6 +154,10 @@ void execute_command(int command_code, char** command_data) {
             print_board();
             break;
         case 5:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1]) || !is_integer(command_data[2])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             /* translate strings of numbers to integers */
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
@@ -130,10 +168,18 @@ void execute_command(int command_code, char** command_data) {
             validate();
             break;
         case 7:
-            x = (command_data[0][0] - '0');
-            guess(x);
+            if (!is_double(command_data[0])){
+                printf("The parameter isn't legal (not double)\n");
+                break;
+            }
+            d = strtod(command_data[0], &stop_string);
+            guess(d);
             break;
         case 8:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
             generate(x,y);
@@ -148,11 +194,19 @@ void execute_command(int command_code, char** command_data) {
             trans_board_to_file(command_data[0]);
             break;
         case 12:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
             hint(x,y);
             break;
         case 13:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
             guess_hint(x,y);

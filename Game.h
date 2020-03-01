@@ -57,6 +57,6 @@ void my_exit();
 void create_board(int len);
 void board_set(int x, int y, int z);
 void generate(int x, int y);
-void guess(int x);
+void guess(double x);
 
 #endif
