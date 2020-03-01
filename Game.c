@@ -315,7 +315,7 @@ void autofill(){
             return;
         }
         int *command_data = malloc(sizeof(int) * 3);
-        cell cell_data;
+        cell cell_data = {0,0,0,0, NULL};
         for (i = 0; i < curr_board->len ; ++i) {
             for (j = 0; j < curr_board->len ; ++j) {
                 if (curr_board->board[i][j].list_poss_values_len==1){
