@@ -145,7 +145,7 @@ void generate(int x, int y){
         }
         else{
             fill_board_random(x);
-            solver_ILP();
+            solver_ILP();//fills the curr->board
             clear_cells_random(y);
 
         }} else{

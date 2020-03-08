@@ -123,7 +123,7 @@ int command_to_code(char* input) {
         return 17;
     return 0;
 }
-//TODO change the size of input, because the address is bigger
+
 void interpret_command(){
     int input_len = 256;
     char* input = malloc(input_len* sizeof(char));

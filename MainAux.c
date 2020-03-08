@@ -4,6 +4,7 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 #include <math.h>
+#include <stdlib.h>
 
 void restart_to_init(){
     state = Init;
@@ -28,12 +29,31 @@ int check_erroneous_board(){
     return 0;
 }
 
+/*
+ * col->row->value
+ * */
 void fill_board_random(int x){
-//TODO
+    int col,row,val;
+while (x>0){
+    col = rand()%curr_board->len;
+    row = rand()%curr_board->len;
+    val = rand()%curr_board->len;
+    curr_board->board[row][col].value = val;
+    //TODO:
+    //curr_board->board[row][col].is_fixed = 1;??
+    --x;
+}
 }
 
 void clear_cells_random(int y){
-//TODO
+    int col, row;
+    while (y>0){
+        col = rand()%curr_board->len;
+        row = rand()%curr_board->len;
+        curr_board->board[row][col].value = 0;
+        curr_board->board[row][col].is_fixed = 0;
+        --y;
+    }
 }
 
 int check_if_number_float(int x){
