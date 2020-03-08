@@ -123,7 +123,7 @@ int scan_rows_from_file(FILE *in_file) {
     int i,j;
     char c;
     for(i=0; i<curr_board->len; i++) {
-        
+
         for (j = 0; j < curr_board->len; j++) {
 
             if (fscanf(in_file, "%d", &curr_board->board[i][j].value) != 1) {

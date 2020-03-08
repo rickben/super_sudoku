@@ -31,26 +31,14 @@
  *board_restart           - restarts the game
  * board_exit             - prints and exits the game
  * */
-struct cell{
-    int value;
-    int is_fixed;
-    int is_erroneous;
-    int list_poss_values_len;
-    int* list_poss_values;
-};
-struct curr_board{
-    struct cell** board;
-    int block_width;
-    int block_height;
-    int len;
-    int mark_errors;
-}*curr_board;
+
 
 
 
 enum state{Init, Edit, Solve};
 enum state state;
-Node* last_cmd;
+Node* undo_head;
+Node* redo_head;
 
 void solve();
 void edit();
@@ -62,7 +50,7 @@ void reset();
 void board_set(int x, int y, int z);
 void hint(int x, int y);
 void guess_hint(int x, int y);
-void num_solutions();
+long num_solutions();
 void autofill();
 int validate();
 void my_exit();

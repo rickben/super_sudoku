@@ -1,6 +1,5 @@
 #include "Parser.h"
 #include "Game.h"
-#include "MainAux.h"
 #include "FilesAux.h"
 #include <stdio.h>
 #include <string.h>
@@ -14,53 +13,53 @@ int command_to_code(char* input) {
     if (str_equals(input, "solve") == 0)
         return 1;
     else
-        if (str_equals(input, "edit") == 0)
-            return 2;
-        else
-            if (str_equals(input, "mark_errors") == 0)
-                return 3;
-            else
-                if (str_equals(input, "print_board") == 0)
-                    return 4;
-                else
-                    if (str_equals(input, "set") == 0)
-                        return 5;
-                    else
-                        if (str_equals(input, "validate") == 0)
-                            return 6;
-                        else
-                            if (str_equals(input, "guess") == 0)
-                                return 7;
-                            else
-                                if (str_equals(input, "generate") == 0)
-                                    return 8;
-                                else
-                                    if (str_equals(input, "undo") == 0)
-                                        return 9;
-                                    else
-                                        if (str_equals(input, "redo") == 0)
-                                            return 10;
-                                        else
-                                            if (str_equals(input, "save") == 0)
-                                                return 11;
-                                            else
-                                                if (str_equals(input, "hint") == 0)
-                                                    return 12;
-                                                else
-                                                    if (str_equals(input, "guess_hint") == 0)
-                                                        return 13;
-                                                    else
-                                                        if (str_equals(input, "num_solutions") == 0)
-                                                            return 14;
-                                                        else
-                                                            if (str_equals(input, "autofill") == 0)
-                                                                return 15;
-                                                            else
-                                                                if (str_equals(input, "reset") == 0)
-                                                                    return 16;
-                                                                else
-                                                                if (str_equals(input, "exit") == 0)
-                                                                    return 17;
+    if (str_equals(input, "edit") == 0)
+        return 2;
+    else
+    if (str_equals(input, "mark_errors") == 0)
+        return 3;
+    else
+    if (str_equals(input, "print_board") == 0)
+        return 4;
+    else
+    if (str_equals(input, "set") == 0)
+        return 5;
+    else
+    if (str_equals(input, "validate") == 0)
+        return 6;
+    else
+    if (str_equals(input, "guess") == 0)
+        return 7;
+    else
+    if (str_equals(input, "generate") == 0)
+        return 8;
+    else
+    if (str_equals(input, "undo") == 0)
+        return 9;
+    else
+    if (str_equals(input, "redo") == 0)
+        return 10;
+    else
+    if (str_equals(input, "save") == 0)
+        return 11;
+    else
+    if (str_equals(input, "hint") == 0)
+        return 12;
+    else
+    if (str_equals(input, "guess_hint") == 0)
+        return 13;
+    else
+    if (str_equals(input, "num_solutions") == 0)
+        return 14;
+    else
+    if (str_equals(input, "autofill") == 0)
+        return 15;
+    else
+    if (str_equals(input, "reset") == 0)
+        return 16;
+    else
+    if (str_equals(input, "exit") == 0)
+        return 17;
     return 0;
 }
 //TODO change the size of input, because the address is bigger

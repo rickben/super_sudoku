@@ -6,6 +6,13 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 
+
+void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
+    insert(undo_head, command_code, command_data, cell_data);
+}
+void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
+    insert(redo_head, command_code, command_data, cell_data);
+}
 void my_exit(){
     printf("Exiting...\n");
     free_mem_board();
@@ -14,6 +21,8 @@ void my_exit(){
 
 /*command always available*/
 void solve(char* file_name){
+    ///TODO do i need to release memory from before or do i reach here clean?
+    //command always available
     state = Solve;
     trans_file_to_board(file_name);
 }
@@ -52,36 +61,44 @@ void print_board(){
 }
 
 void undo(){
-
-}
-
-void redo(Node* current_cmd){
-}
-
-void reset(){
-    if(state != Solve && state != Edit){
-        printf("print board only available in solve or edit mode");
+    int* command_data = undo_head->command_data;
+    cell cell_data = undo_head->cell_data;
+    if(state!=Solve && state != Edit){
+        printf("undo only available in solve or edit mode");
         return;
-    }else{
+    }
+    if(undo_head->command_code == 5){
+        curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+    }
+    insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
+    undo_head = remove_head(undo_head);
+}
 
+void redo(Node* current_cmd) {
+    if (state != Solve && state != Edit) {
+        printf("undo only available in solve or edit mode");
+        return;
     }
 }
+
+void reset(){}
+
 
 void generate(int x, int y){
     if (state == Edit){
-    if (x < 0 || y < 0) {
-        printf("Error, a number out of range (0,%d)!\n", curr_board->len);
-        return;
-    } else if (x > curr_board->len || y > curr_board->len) {
-        printf("Error, a number out of range (0,%d)!\n", curr_board->len);
-        return;
-    }
-    else{
-        fill_board_random(x);
-        solver_ILP();
-        clear_cells_random(y);
+        if (x < 0 || y < 0) {
+            printf("Error, a number out of range (0,%d)!\n", curr_board->len);
+            return;
+        } else if (x > curr_board->len || y > curr_board->len) {
+            printf("Error, a number out of range (0,%d)!\n", curr_board->len);
+            return;
+        }
+        else{
+            fill_board_random(x);
+            solver_ILP();
+            clear_cells_random(y);
 
-    }} else{
+        }} else{
         printf("This command is available only in Edit mode!\n");
         return;
     }
@@ -90,32 +107,33 @@ void generate(int x, int y){
 
 void board_set(int x, int y, int z) {
     int *command_data = malloc(sizeof(int) * 3);
-    int board_data = 0;
-        if (state != Solve && state != Edit) {
-            printf("set only available in solve or edit mode\n");
-            return;
+    cell cell_data;
+    if (state != Solve && state != Edit) {
+        printf("set only available in solve or edit mode\n");
+        return;
+    }
+    if (x < 1 || y < 1 || z < 0) {
+        printf("Error, a number out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else if (x > curr_board->len || y > curr_board->len || z > curr_board->len) {
+        printf("Error, a number out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else if (curr_board->board[y][x].is_fixed) {
+        printf("This position is fixed!\n");
+        return;
+    } else {
+        command_data[0] = x-1;
+        command_data[1] = y-1;
+        command_data[2] = z;
+        cell_data = curr_board->board[y - 1][x - 1];
+        if(!is_valid_set(y-1,x-1,z)){
+            curr_board->board[y-1][x-1].is_erroneous = 1;
         }
-        if (x < 1 || y < 1 || z < 0) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
-        } else if (x > curr_board->len || y > curr_board->len || z > curr_board->len) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
-        } else if (curr_board->board[y][x].is_fixed) {
-            printf("This position is fixed!\n");
-            return;
-        } else {
-            command_data[0] = x-1;
-            command_data[1] = y-1;
-            command_data[2] = z;
-            board_data = curr_board->board[y-1][x-1].value;
-            if(!is_valid_set(y-1,x-1,z)){
-                curr_board->board[y-1][x-1].is_erroneous = 1;
-            }
-            curr_board->board[y-1][x-1].value = z;
-            insert(last_cmd, 5, command_data, board_data);
-        }
+        curr_board->board[y-1][x-1].value = z;
+        insert_to_undo_lst(5, command_data, cell_data);
+    }
 }
+
 
 void guess(int x){
     if(state != Solve){
@@ -216,13 +234,29 @@ int validate(){
     }
 }
 
-void num_solutions() {
-    if (state == Solve || state == Edit) {
-        //TODO
-    } else {
-        printf("This command is only available in Solve or Edit mode");
-        return;
+long num_solutions(){
+    if(state!=Solve && state != Edit){
+        printf("num_solutions only available in solve or edit mode");
+        return -1;
     }
+    int i=1;
+    long count = 0;
+    int row=0,col=0;
+    int temp = 0;
+
+    if(!is_valid_board())
+        return 0;
+
+    if(!find_empty_cell(&row,&col, curr_board->board)){
+        return 1;
+    }
+    for(;i<=curr_board->len;i++){
+        temp = curr_board->board[row][col].value;
+        curr_board->board[row][col].value = i;
+        count += num_solutions();
+        curr_board->board[row][col].value = temp;
+    }
+    return count;
 }
 
 void autofill(){

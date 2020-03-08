@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include "MainAux.h"
 #include "FilesAux.h"
 #include <math.h>
@@ -148,7 +149,7 @@ void separator_row() {
     for(; i<curr_board->block_height; i++){
         printf("--");
         for(; j<curr_board->block_width-1; j++){
-        printf("----");
+            printf("----");
         }
         printf("---");
         j=0;
@@ -195,14 +196,51 @@ void cell_row(struct cell* arr, int num_row) {
 
 
 void board_print() {
-        int k=0;
-        separator_row(curr_board->block_height, curr_board->block_width);
-        for (int i = 0; i < curr_board->block_width; i++) {
-            for (int j = 0; j < curr_board->block_height; j++) {
-                cell_row(curr_board->board[k],k);
-                k++;
-            }
-            separator_row(curr_board->block_height, curr_board->block_width);
+    int k=0;
+    separator_row(curr_board->block_height, curr_board->block_width);
+    for (int i = 0; i < curr_board->block_width; i++) {
+        for (int j = 0; j < curr_board->block_height; j++) {
+            cell_row(curr_board->board[k],k);
+            k++;
         }
+        separator_row(curr_board->block_height, curr_board->block_width);
+    }
+}
+
+bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix ) {
+    {
+        int i, j;
+        for(i=0;i<curr_board->len;i++)
+        {
+            for(j=0;j<curr_board->len;j++)
+            {
+                if(matrix[i][j].value == 0)
+                {
+                    *row_pos = i;
+                    *col_pos = j;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+bool is_valid_board(){
+    int temp = 0;
+    for (int i = 0; i < curr_board->len; ++i) {
+        for (int j = 0; j < curr_board->len; ++j) {
+            if(curr_board->board[i][j].value!=0){
+                temp = curr_board->board[i][j].value;
+                curr_board->board[i][j].value = 0;
+                if(!is_valid_set(i,j,temp)) {
+                    curr_board->board[i][j].value = temp;
+                    return false;
+                }
+                curr_board->board[i][j].value = temp;
+            }
+        }
+    }
+    return true;
 }
 
