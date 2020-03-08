@@ -9,6 +9,67 @@ int str_equals(char *str1, char *str2) {
     return strcmp(str1, str2);
 }
 
+
+bool is_digit(char c){
+    return c>=48&&c<=57;
+}
+bool is_dot(char c){
+    return c==46;
+}
+
+bool is_integer(char* s){
+    for (int i = 0; i < strlen(s); i++)
+        if (is_digit(s[i]) == false)
+            return false;
+    return true;
+}
+
+bool is_double(char* s){
+    int dot_counter = 0;
+    int digit_counter = 0;
+    for (int i = 0; i < strlen(s); i++){
+        if (is_digit(s[i]) == false && !is_dot(s[i]))
+            return false;
+        if(is_dot(s[i]))
+            dot_counter++;
+        else
+            digit_counter++;
+    }
+    if(dot_counter==0)
+        return true;
+    if (dot_counter==1&&digit_counter>=1)
+        return true;
+    return false;
+}
+
+bool is_valid_param(int command_code, char** command_data){
+    if(command_code==5){
+        if(strlen(command_data[3])>0){
+            printf("To many parameters given\n");
+            return false;
+        }
+    }
+    if(command_code==8||command_code==12||command_code==13){
+        if(strlen(command_data[2])>0){
+            printf("To many parameters given\n");
+            return false;
+        }
+    }
+    if (command_code==1||command_code==2||command_code==3||command_code==7||command_code==11){
+        if(strlen(command_data[1])>0){
+            printf("To many parameters given\n");
+            return false;
+        }
+    }
+    if (command_code==4||command_code==6||command_code==9||command_code==10||command_code==14||command_code==15||command_code==16||command_code==17){
+        if(strlen(command_data[0])>0){
+            printf("To many parameters given\n");
+            return false;
+        }
+    }
+    return true;
+}
+
 int command_to_code(char* input) {
     if (str_equals(input, "solve") == 0)
         return 1;
@@ -64,18 +125,19 @@ int command_to_code(char* input) {
 }
 //TODO change the size of input, because the address is bigger
 void interpret_command(){
-    char* input = malloc(102400* sizeof(char));
+    int input_len = 256;
+    char* input = malloc(input_len* sizeof(char));
     char *token;
     char *rest;
     int command_code = 0;
     int j = 0;
-    char **command_data = malloc(sizeof(char*) * 3);
-    for (; j < 3; ++j) {
-        command_data[j] = malloc(sizeof(char) * 1024);
+    char **command_data = malloc(sizeof(char*) * 4);
+    for (; j < 4; ++j) {
+        command_data[j] = malloc(sizeof(char) * input_len);
         command_data[j][0]='\0';
     }
     j=0;
-    if(fgets(input, 1024, stdin)!=NULL){
+    if(fgets(input, input_len, stdin)!=NULL){
 
         /* fix input*/
         size_t len = strlen(input);
@@ -91,7 +153,7 @@ void interpret_command(){
             command_code = command_to_code(token);
         }
         token = strtok_r(rest, " \t\r", &rest);
-        while (token!=NULL&& j<3){
+        while (token!=NULL&& j<4){
             command_data[j]=token;
             token = strtok_r(rest, " \t\r", &rest);
             j++;
@@ -103,7 +165,10 @@ void interpret_command(){
 
 void execute_command(int command_code, char** command_data) {
     int x,y,z;
-
+    double d;
+    char* stop_string;
+    if(!is_valid_param(command_code, command_data))
+        return;
     switch(command_code)
     {
         case 1:
@@ -119,6 +184,10 @@ void execute_command(int command_code, char** command_data) {
             print_board();
             break;
         case 5:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1]) || !is_integer(command_data[2])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             /* translate strings of numbers to integers */
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
@@ -129,10 +198,18 @@ void execute_command(int command_code, char** command_data) {
             validate();
             break;
         case 7:
-            x = (command_data[0][0] - '0');
-            guess(x);
+            if (!is_double(command_data[0])){
+                printf("The parameter isn't legal (not double)\n");
+                break;
+            }
+            d = strtod(command_data[0], &stop_string);
+            guess(d);
             break;
         case 8:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
             generate(x,y);
@@ -141,17 +218,25 @@ void execute_command(int command_code, char** command_data) {
             undo();
             break;
         case 10:
-            //redo(); how to get the current node?
+            redo();
             break;
         case 11:
             trans_board_to_file(command_data[0]);
             break;
         case 12:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
             hint(x,y);
             break;
         case 13:
+            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             x = (command_data[0][0] - '0');
             y = (command_data[1][0] - '0');
             guess_hint(x,y);
