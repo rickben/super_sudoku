@@ -5,6 +5,7 @@
 #include "ListActions.h"
 #include "MainAux.h"
 #include "FilesAux.h"
+#include "Stack.h"
 
 
 void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
@@ -176,7 +177,7 @@ void board_set(int x, int y, int z) {
         command_data[1] = y-1;
         command_data[2] = z;
         cell_data = curr_board->board[y - 1][x - 1];
-        if(!is_valid_set(y-1,x-1,z)){
+        if(!is_valid_set(y-1,x-1,z,curr_board)){
             curr_board->board[y-1][x-1].is_erroneous = 1;
         }
         curr_board->board[y-1][x-1].value = z;
@@ -282,30 +283,215 @@ int validate(){
     }
 }
 
-long num_solutions(){
-    if(state!=Solve && state != Edit){
+
+cell** put_1_in_all_unfixed_cells(cell** board){
+    int i,j;
+    for (i = 0; i < curr_board->len; ++i)
+        for (j = 0; j < curr_board->len ; ++j)
+            if (board[i][j].is_fixed == 0)
+                board[i][j].value = 1;
+    return board;
+}
+
+cell** put_1_in_all_unfixed_cells_right(int row, int col, cell** board){
+    int i,j;
+    for (i = curr_board->len -1; i >= 0 ; --i) {
+        for (j = curr_board->len -1; j >= 0; --j) {
+            if (i == row && j == col) {
+                return board;
+            } else {
+                if (!board[i][j].is_fixed && board[i][j].value != 0){ // board[i][j].value == len
+                    board[i][j].value = 1;
+                }
+            }
+        }
+    }
+    return board;
+ }
+
+
+
+int find_last_unfixed_un_eq_len(int* row, int* col, struct curr_board new_board){
+    int i,j;
+    for (i = curr_board->len -1; i >= 0 ; --i) {
+        for (j = curr_board->len -1; j >= 0; --j) {
+            if (!new_board.board[i][j].is_fixed) {
+                if (new_board.board[i][j].value != 0 && new_board.board[i][j].value != curr_board->len) {
+                    *row = i;
+                    *col = j;
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+void save_all_curr_cells_fixed(cell** board){
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i)
+        for (j = 0; j < curr_board->len ; ++j)
+            if(board[i][j].value != 0)
+                board[i][j].is_fixed = 1;
+            else{
+                board[i][j].is_fixed = 0;
+            }
+}
+
+int check_board_full(cell** board){
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i)
+        for (j = 0; j < curr_board->len ; ++j)
+            if(board[i][j].value == 0)
+                return 0;
+
+    return 1;
+}
+
+struct curr_board update_next_sol(struct curr_board new_board){
+    int row = 0, col = 0;
+    if (find_last_unfixed_un_eq_len(&row,&col,new_board)){
+        new_board.board = put_1_in_all_unfixed_cells_right(row,col,new_board.board);
+        new_board.board[row][col].value++;
+        new_board.board[row][col].is_fixed = 0;
+    }
+    else{ //all cells unfixed !=0 are equal to len
+        find_empty_cell(&row,&col,new_board.board);
+        new_board.board = put_1_in_all_unfixed_cells(new_board.board);
+        new_board.board[row][col].value = 1;
+        new_board.board[row][col].is_fixed = 0;
+    }
+    return new_board;
+}
+
+void new_board_print(struct curr_board new_board){
+    int k = 0;
+    separator_row(curr_board->block_height, curr_board->block_width);
+    for (int i = 0; i < curr_board->block_width; i++) {
+        for (int j = 0; j < curr_board->block_height; j++) {
+            cell_row(new_board.board[k],k);
+            k++;
+        }
+        separator_row(curr_board->block_height, curr_board->block_width);
+    }
+}
+
+int check_board_finished(struct curr_board new_board){//for a board we know is full
+    int i,j;
+    for (i = 0; i < curr_board->block_width; i++) {
+        for (j = 0; j < curr_board->block_height; j++) {
+            if (!new_board.board[i][j].is_fixed) {
+                if (new_board.board[i][j].value != curr_board->len) {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+long num_solutions() {
+    if (state != Solve && state != Edit) {
         printf("num_solutions only available in solve or edit mode\n");
         return -1;
     }
-    int i=1;
     long count = 0;
-    int row=0,col=0;
-    int temp = 0;
 
-    if(!is_valid_board())
-        return 0;
+    struct curr_board new_board;
+    new_board.board = curr_board->board;
+    new_board.len = curr_board->len;
+    new_board.block_width = curr_board->block_width;
+    new_board.block_height = curr_board->block_height;
+    new_board.mark_errors = new_board.mark_errors;
+    save_all_curr_cells_fixed(new_board.board);
 
-    if(!find_empty_cell(&row,&col, curr_board->board)){
-        return 1;
-    }
-    for(;i<=curr_board->len;i++){
-        temp = curr_board->board[row][col].value;
-        curr_board->board[row][col].value = i;
-        count += num_solutions();
-        curr_board->board[row][col].value = temp;
+    push_ele(new_board);
+
+    while (stack != NULL) {
+        //printf("start:%d:",new_board.board[0][0].value);
+        //new_board_print(new_board);
+        if (check_board_full(stack->top.board)) {
+            //printf("if:%d:",new_board.board[0][0].value);
+            if (check_board_solved(new_board)) { //checks if solved correctly
+                //printf(":%d:",new_board.board[0][0].value);
+                //printf("count");
+                new_board_print(new_board);
+                count++;
+                pop_ele();
+                if(check_board_finished(new_board)){
+                    return count;
+                }
+                new_board = update_next_sol(new_board);
+                push_ele(new_board);
+            } else {
+                if(check_board_finished(new_board)){
+                    return count;
+                }
+//                printf("else1:%d:",new_board.board[0][0].value);
+//                printf("stack:%d",stack !=NULL);
+                pop_ele();
+                new_board = update_next_sol(new_board);
+                push_ele(new_board);
+//                printf("stack:%d",stack !=NULL);
+//                printf("else1:%d:",new_board.board[0][0].value);
+            }
+        } else {
+            pop_ele();
+//            printf("else2:%d:",new_board.board[0][0].value);
+            new_board = update_next_sol(new_board);
+//            printf("else3:%d:",new_board.board[0][0].value);
+            push_ele(new_board);
+        }
+//        printf("stack:%d",stack !=NULL);
     }
     return count;
 }
+
+
+
+//    i = 1;
+//    int row=0,col=0;
+//    int temp = 0;
+//    push_ele(0);
+//
+//
+//    for (int i = 0; i < new_board.len; ++i) {
+//        for (int j = 0; j < new_board.len; ++j) {
+//            if (new_board.board[i][j].value == 0){
+//                new_board.board[i][j].value = 1;
+//            } else{
+//                new_board.board[i][j].is_fixed=1;
+//            }
+//        }
+//    }
+//
+//    while (stack != NULL) {
+//        check_valid_board();
+//    }
+//
+//        while (find_empty_cell(&row, &col, curr_board->board);)
+////TODO save current board here to another variable!! so we can change the variables of the board
+//    while (stack != NULL) {
+//
+//        //count += pop_ele();
+//        int find = find_empty_cell(&row, &col, curr_board->board);
+//        for (; i <= curr_board->len; i++) {
+//            curr_board->board[row][col].value = i;
+//            print_board();
+//            display_ele();
+//            if (!find && is_valid_board()) {
+//                count = pop_ele();
+//                push_ele(count+1);
+//                printf("full");
+//            }
+//            else{
+//                count = pop_ele();
+//                push_ele(count+0);
+//            }
+//        }
+//    }
+//    return count;
+//}
 
 void autofill(){
     int i,j;

@@ -6,8 +6,7 @@
 #include "SPBufferset.h"
 #include "MainAux.h"
 #include "Stack.h"
-
-
+#include "FilesAux.h"
 
 
 int main(int argc, char* argv[]) {
@@ -33,10 +32,8 @@ int main(int argc, char* argv[]) {
         } else if (state == Edit){
         }
     }*/
-push_ele(3);
-display_ele();
-push_ele(71);
-display_ele();
-pop_ele();
-display_ele();
+    state = Solve;
+    trans_file_to_board("dog.txt");
+    print_board();
+    printf("%ld",num_solutions());
 }

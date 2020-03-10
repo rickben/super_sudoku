@@ -1,16 +1,17 @@
 #ifndef HW3_STACK_H
 #define HW3_STACK_H
+#include "ListActions.h"
 
 struct rec_stack{
-    int top;
+    struct curr_board top;
     struct rec_stack *next_stack;
 }*stack;
 
-int i;
+struct curr_board i;
 
-void push_ele(int j);
+void push_ele(struct curr_board j);
 
-int pop_ele();
+void pop_ele();
 
 void display_ele();
 

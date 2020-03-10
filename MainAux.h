@@ -4,14 +4,14 @@
 #include <stdbool.h>
 
 int check_if_number_float(int x);
-int check_board_solved();
+int check_board_solved(struct curr_board new_board);
 void restart_to_init();
 void update_erroneous_cells();
 int check_erroneous_board();
-int in_row(int row, int num);
-int in_col(int col, int num);
-int in_block(int block_x, int block_y , int num);
-int is_valid_set(int x, int y, int num);
+int in_row(int row, int num, struct curr_board* curr_board);
+int in_col(int col, int num, struct curr_board* curr_board);
+int in_block(int block_x, int block_y , int num, struct curr_board* curr_board);
+int is_valid_set(int x, int y, int num, struct curr_board* curr_board);
 int check_correct_file_format();
 void fill_board_random(int x);
 void clear_cells_random(int y);

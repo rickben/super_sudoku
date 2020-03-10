@@ -65,7 +65,7 @@ int check_if_number_float(int x){
  * Return false if there's a cell in the same row
  * with the same value, otherwise, returns true
  * */
-int in_row(int row, int num) {
+int in_row(int row, int num, struct curr_board* curr_board) {
     int j;
     for (j = 0; j < curr_board->len; ++j) {
         if (curr_board->board[row][j].value == num) {
@@ -84,7 +84,7 @@ int in_row(int row, int num) {
  * Return false if there's a cell in the same column
  * with the same value, otherwise, returns true
  * */
-int in_col(int col, int num) {
+int in_col(int col, int num, struct curr_board* curr_board) {
     int j;
     for (j = 0; j < curr_board->len; ++j) {
         if (curr_board->board[j][col].value == num) {
@@ -102,7 +102,7 @@ int in_col(int col, int num) {
  * Return false if there's a cell in the same block
  * with the same value, otherwise, returns true
  * */
-int in_block(int x, int y, int num) {
+int in_block(int x, int y, int num,  struct curr_board* curr_board) {
     int i, j;
     for (i = 0; i < curr_board->block_height; ++i) {
         for (j = 0; j < curr_board->block_width; ++j) {
@@ -120,11 +120,11 @@ int in_block(int x, int y, int num) {
 }
 
 
-int is_valid_set(int x, int y, int num) {
+int is_valid_set(int x, int y, int num , struct curr_board* curr_board) {
     int block_x = (x / (curr_board->block_height))*(curr_board->block_height);
     int block_y = (y / (curr_board->block_width))*(curr_board->block_width);
-    return (!in_row(x,num) && !in_col(y,num) &&
-            !in_block(block_x,block_y,num));
+    return (!in_row(x,num,curr_board) && !in_col(y,num,curr_board) &&
+            !in_block(block_x,block_y,num,curr_board));
 }
 
 int update_all_invalid_cells(){
@@ -133,7 +133,7 @@ int update_all_invalid_cells(){
         for (j = 0; j < curr_board->len; ++j) {
             tmp = curr_board->board[i][j].value;
             curr_board->board[i][j].value = 0;
-            if(! is_valid_set(i, j, tmp)){
+            if(! is_valid_set(i, j, tmp,curr_board)){
                 curr_board->board[i][j].is_erroneous = 1;
             }
             curr_board->board[i][j].value = tmp;
@@ -141,15 +141,27 @@ int update_all_invalid_cells(){
     }
 }
 
-int check_board_solved(){
-    int i,j;
-    for (i = 0; i < curr_board->len ; ++i)
-        for (j = 0; j < curr_board->len ; ++j)
-            if(curr_board->board[i][j].value == 0)
-                return 0;
 
-    return 1;
+int check_board_solved(struct curr_board new_board){
+    if(!check_board_full(new_board.board)){
+        return 0;
+    }
+    else {
+        for (int x = 0; x < curr_board->len; ++x) {
+            for (int y = 0; y < curr_board->len; ++y) {
+                int temp = new_board.board[x][y].value;
+                new_board.board[x][y].value = 0;
+                int found_valid = is_valid_set(x, y, temp, &new_board);
+                new_board.board[x][y].value = temp;
+                if (!found_valid) {
+                    return 0;
+                }
+            }
+        }
+        return 1;
+    }
 }
+
 
 void calc_block_size(){
     int root = (int) (sqrt(curr_board->len));
@@ -216,7 +228,7 @@ void cell_row(struct cell* arr, int num_row) {
 
 
 void board_print() {
-    int k=0;
+    int k = 0;
     separator_row(curr_board->block_height, curr_board->block_width);
     for (int i = 0; i < curr_board->block_width; i++) {
         for (int j = 0; j < curr_board->block_height; j++) {
@@ -253,7 +265,7 @@ bool is_valid_board(){
             if(curr_board->board[i][j].value!=0){
                 temp = curr_board->board[i][j].value;
                 curr_board->board[i][j].value = 0;
-                if(!is_valid_set(i,j,temp)) {
+                if(!is_valid_set(i,j,temp,curr_board)) {
                     curr_board->board[i][j].value = temp;
                     return false;
                 }
