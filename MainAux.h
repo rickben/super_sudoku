@@ -24,6 +24,6 @@ void set_values_board();
 int is_fixed(int row, int col);
 int is_erroneous();
 bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix );
-bool is_valid_board();
+bool is_valid_board(struct curr_board* my_board);
 
 #endif

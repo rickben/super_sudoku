@@ -7,11 +7,9 @@ struct rec_stack{
     struct rec_stack *next_stack;
 }*stack;
 
-struct curr_board i;
+void push_ele(struct curr_board next_board);
 
-void push_ele(struct curr_board j);
-
-void pop_ele();
+struct curr_board pop_ele();
 
 void display_ele();
 

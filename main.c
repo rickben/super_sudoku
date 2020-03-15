@@ -33,7 +33,11 @@ int main(int argc, char* argv[]) {
         }
     }*/
     state = Solve;
-    trans_file_to_board("dog.txt");
+    trans_file_to_board("C:\\cat.txt");
     print_board();
-    printf("%ld",num_solutions());
+    while (1){
+        printf("Please enter a command:\n");
+        interpret_command();
+        print_board();
+    }
 }

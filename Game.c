@@ -394,108 +394,49 @@ int check_board_finished(struct curr_board new_board){//for a board we know is f
     return 1;
 }
 
-long num_solutions() {
+long num_solutions(){
     if (state != Solve && state != Edit) {
         printf("num_solutions only available in solve or edit mode\n");
         return -1;
     }
+    int row = 0, col = 0;
     long count = 0;
 
     struct curr_board new_board;
-    new_board.board = curr_board->board;
     new_board.len = curr_board->len;
     new_board.block_width = curr_board->block_width;
     new_board.block_height = curr_board->block_height;
     new_board.mark_errors = new_board.mark_errors;
+    new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
+    for (int j = 0; j < new_board.len; ++j) {
+        new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));
+    }
+    for (int j = 0; j < new_board.len; ++j) {
+        for (int k = 0; k < new_board.len; ++k)
+            new_board.board[j][k] = curr_board->board[j][k];
+    }
+
     save_all_curr_cells_fixed(new_board.board);
 
     push_ele(new_board);
-
-    while (stack != NULL) {
-        //printf("start:%d:",new_board.board[0][0].value);
-        //new_board_print(new_board);
-        if (check_board_full(stack->top.board)) {
-            //printf("if:%d:",new_board.board[0][0].value);
-            if (check_board_solved(new_board)) { //checks if solved correctly
-                //printf(":%d:",new_board.board[0][0].value);
-                //printf("count");
-                new_board_print(new_board);
-                count++;
-                pop_ele();
-                if(check_board_finished(new_board)){
-                    return count;
+    while (stack != NULL){
+        new_board = pop_ele();
+        if(find_empty_cell(&row,&col, new_board.board)){
+            for(int i=1;i<=new_board.len;i++){
+                new_board.board[row][col].value = i;
+                if(is_valid_board(&new_board)){
+                    push_ele(new_board);
                 }
-                new_board = update_next_sol(new_board);
-                push_ele(new_board);
-            } else {
-                if(check_board_finished(new_board)){
-                    return count;
-                }
-//                printf("else1:%d:",new_board.board[0][0].value);
-//                printf("stack:%d",stack !=NULL);
-                pop_ele();
-                new_board = update_next_sol(new_board);
-                push_ele(new_board);
-//                printf("stack:%d",stack !=NULL);
-//                printf("else1:%d:",new_board.board[0][0].value);
             }
-        } else {
-            pop_ele();
-//            printf("else2:%d:",new_board.board[0][0].value);
-            new_board = update_next_sol(new_board);
-//            printf("else3:%d:",new_board.board[0][0].value);
-            push_ele(new_board);
         }
-//        printf("stack:%d",stack !=NULL);
+        else{
+            if(is_valid_board(&new_board)){
+                count++;
+            }
+        }
     }
     return count;
 }
-
-
-
-//    i = 1;
-//    int row=0,col=0;
-//    int temp = 0;
-//    push_ele(0);
-//
-//
-//    for (int i = 0; i < new_board.len; ++i) {
-//        for (int j = 0; j < new_board.len; ++j) {
-//            if (new_board.board[i][j].value == 0){
-//                new_board.board[i][j].value = 1;
-//            } else{
-//                new_board.board[i][j].is_fixed=1;
-//            }
-//        }
-//    }
-//
-//    while (stack != NULL) {
-//        check_valid_board();
-//    }
-//
-//        while (find_empty_cell(&row, &col, curr_board->board);)
-////TODO save current board here to another variable!! so we can change the variables of the board
-//    while (stack != NULL) {
-//
-//        //count += pop_ele();
-//        int find = find_empty_cell(&row, &col, curr_board->board);
-//        for (; i <= curr_board->len; i++) {
-//            curr_board->board[row][col].value = i;
-//            print_board();
-//            display_ele();
-//            if (!find && is_valid_board()) {
-//                count = pop_ele();
-//                push_ele(count+1);
-//                printf("full");
-//            }
-//            else{
-//                count = pop_ele();
-//                push_ele(count+0);
-//            }
-//        }
-//    }
-//    return count;
-//}
 
 void autofill(){
     int i,j;

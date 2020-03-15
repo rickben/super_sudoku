@@ -258,18 +258,18 @@ bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix ) {
     }
 }
 
-bool is_valid_board(){
+bool is_valid_board(struct curr_board* my_board){
     int temp = 0;
-    for (int i = 0; i < curr_board->len; ++i) {
-        for (int j = 0; j < curr_board->len; ++j) {
-            if(curr_board->board[i][j].value!=0){
-                temp = curr_board->board[i][j].value;
-                curr_board->board[i][j].value = 0;
-                if(!is_valid_set(i,j,temp,curr_board)) {
-                    curr_board->board[i][j].value = temp;
+    for (int i = 0; i < my_board->len; ++i) {
+        for (int j = 0; j < my_board->len; ++j) {
+            if(my_board->board[i][j].value!=0){
+                temp = my_board->board[i][j].value;
+                my_board->board[i][j].value = 0;
+                if(!is_valid_set(i,j,temp,my_board)) {
+                    my_board->board[i][j].value = temp;
                     return false;
                 }
-                curr_board->board[i][j].value = temp;
+                my_board->board[i][j].value = temp;
             }
         }
     }
