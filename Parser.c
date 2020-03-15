@@ -242,7 +242,7 @@ void execute_command(int command_code, char** command_data) {
             guess_hint(x,y);
             break;
         case 14:
-            num_solutions();
+            printf("The number of solutions for the current board is %ld\n",num_solutions());
             break;
         case 15:
             autofill();
