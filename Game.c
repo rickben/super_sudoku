@@ -110,8 +110,9 @@ void redo() {
     if(redo_head->command_code == 5){
         command_data = redo_head->command_data;
         cell_data = redo_head->cell_data;
-        curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+        curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
         redo_head = remove_head(redo_head);
+        return;
     }
     if(redo_head->command_code == 15 || redo_head->command_code == -1){
         while (redo_head->command_code != -1){
@@ -166,23 +167,26 @@ void board_set(int x, int y, int z) {
     if (x < 1 || y < 1 || z < 0) {
         printf("Error, a number out of range (1,%d)!\n", curr_board->len);
         return;
-    } else if (x > curr_board->len || y > curr_board->len || z > curr_board->len) {
+    } else if (x > curr_board->len  || y > curr_board->len || z > curr_board->len) {
         printf("Error, a number out of range (1,%d)!\n", curr_board->len);
         return;
-    } else if (curr_board->board[y][x].is_fixed) {
+    } else if (curr_board->board[y-1][x-1].is_fixed) {
         printf("This position is fixed!\n");
         return;
-    } else {
-        command_data[0] = x-1;
-        command_data[1] = y-1;
-        command_data[2] = z;
-        cell_data = curr_board->board[y - 1][x - 1];
-        if(!is_valid_set(y-1,x-1,z,curr_board)){
-            curr_board->board[y-1][x-1].is_erroneous = 1;
-        }
-        curr_board->board[y-1][x-1].value = z;
-        insert_to_undo_lst(5, command_data, cell_data);
-        clear_list(redo_head);
+    } else { if(curr_board->board[y-1][x-1].value==z){
+            return;
+    } else{
+            command_data[0] = y-1;
+            command_data[1] = x-1;
+            command_data[2] = z;
+            cell_data = curr_board->board[y - 1][x - 1];
+            if(!is_valid_set(y-1,x-1,z,curr_board)){
+                curr_board->board[y-1][x-1].is_erroneous = 1;
+            }
+            curr_board->board[y-1][x-1].value = z;
+            insert_to_undo_lst(5, command_data, cell_data);
+            clear_list(redo_head);
+    }
     }
 }
 
