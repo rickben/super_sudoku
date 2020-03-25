@@ -9,7 +9,7 @@ void push_ele(struct curr_board j)
     struct rec_stack *m;
     m = (struct rec_stack*) malloc(sizeof( struct rec_stack));
     m->top = j;
-    m->next_stack = stack; //receives all previous elements stack
+    m->next_stack = stack; /* Receives all previous elements stack */
     stack = m;
 }
 
@@ -24,7 +24,7 @@ void pop_ele()
         stack = stack->next_stack;
     }
 }
-//
+/*
 //
 //void display_ele() {
 //    struct rec_stack *pointer = NULL;
@@ -36,4 +36,4 @@ void pop_ele()
 //        pointer = pointer->next_stack;
 //    }
 //    printf("]");
-//}
+}*/

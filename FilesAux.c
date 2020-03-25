@@ -13,7 +13,7 @@ int close_all_files(){
 
 
 void free_mem_board() {
-    int i,j;
+    int i;
     for(i=0; i<curr_board->len; i++) {
         free(curr_board->board[i]);
     }
@@ -61,7 +61,6 @@ void edit_mode_to_file(char* file_name) {
 }
 
 int trans_board_to_file(char* file_name){
-    int i, j;
     if(state == Solve) {
         solve_mode_to_file(file_name);
         return 1;
@@ -136,7 +135,6 @@ int scan_rows_from_file(FILE *in_file) {
             else if (c=='*'){
                 curr_board->board[i][j].is_erroneous=1;
             }
-
         }
 
     }

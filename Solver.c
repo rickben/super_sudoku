@@ -1,228 +1,443 @@
-////#include <stdlib.h>
-////#include "Solver.h"
-//
-///*
-//  Sudoku example.
-//
-//  The Sudoku board is a NxN grid, which is further divided into a m*n grids.
-//  Each cell in the grid must take a value from 0 to N.
-//  No two grid cells in the same row, column, or m*n subgrid may take the
-//  same value.
-//
-//  In the MIP formulation, binary variables x[i,j,v] indicate whether
-//  cell <i,j> takes value 'v'.  The constraints are as follows:
-//    1. Each cell must take exactly one value (sum_v x[i,j,v] = 1)
-//    2. Each value is used exactly once per row (sum_i x[i,j,v] = 1)
-//    3. Each value is used exactly once per column (sum_j x[i,j,v] = 1)
-//    4. Each value is used exactly once per m*n subgrid (sum_grid x[i,j,v] = 1)
-//
-//  Input datasets for this example can be found in examples/data/sudoku*.
-//*/
-//
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <string.h>
-//#include "gurobi_c.h"
-//
-//
-//
-//
-///*
-// * for curr_board->board, solves  the board
-// * */
-//int solver_ILP()
-//{
-//    FILE     *fp    = NULL;
-//    int DIM = curr_board->len;
-//    GRBenv   *env   = NULL;
-//    GRBmodel *model = NULL;
-//    int       board[DIM][DIM];
-//    char      inputline[100];
-//    int       ind[DIM];
-//    double    val[DIM];
-//    double    lb[DIM*DIM*DIM];
-//    double    sol[DIM*DIM*DIM];
-//    char      vtype[DIM*DIM*DIM];
-//    char     *names[DIM*DIM*DIM];
-//    char      namestorage[10*DIM*DIM*DIM];
-//    char     *cursor;
-//    int       optimstatus;
-//    double    objval;
-//    int       i, j, v, ig, jg, count;
-//    int       error = 0;
-//
-//
-//
-//    /* Create environment - log file is mip1.log */
-//    error = GRBloadenv(&env, "mip1.log");
-//    if (error) {
-//        printf("ERROR %d GRBloadenv(): %s\n", error, GRBgeterrormsg(env));
-//        return -1;
-//    }
-//
-//    error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
-//    if (error) {
-//        printf("ERROR %d GRBsetintattr(): %s\n", error, GRBgeterrormsg(env));
-//        return -1;
-//    }
-//
-//    /* Create an empty model named "mip1" */
-//    error = GRBnewmodel(env, &model, "mip1", 0, NULL, NULL, NULL, NULL, NULL);
-//    if (error) {
-//        printf("ERROR %d GRBnewmodel(): %s\n", error, GRBgeterrormsg(env));
-//        return -1;
-//    }
-//    /* Create an empty model */
-//
-//    cursor = namestorage;
-//    for (i = 0; i < DIM; i++) {
-//        for (j = 0; j < DIM; j++) {
-//            for (v = 0; v < DIM; v++) {
-//                if (board[i][j] == v)
-//                    lb[i*DIM*DIM+j*DIM+v] = 1;
-//                else
-//                    lb[i*DIM*DIM+j*DIM+v] = 0;
-//                vtype[i*DIM*DIM+j*DIM+v] = GRB_BINARY;
-//
-//                names[i*DIM*DIM+j*DIM+v] = cursor;
-//                sprintf(names[i*DIM*DIM+j*DIM+v], "x[%d,%d,%d]", i, j, v+1);
-//                cursor += strlen(names[i*DIM*DIM+j*DIM+v]) + 1;
-//            }
-//        }
-//    }
-//
-//    /* Create environment */
-//
-//    error = GRBloadenv(&env, "sudoku.log");
-//    if (error) goto QUIT;
-//
-//    /* Create new model */
-//
-//    error = GRBnewmodel(env, &model, "sudoku", DIM*DIM*DIM, NULL, lb, NULL,
-//                        vtype, names);
-//    if (error) goto QUIT;
-//
-//    /* Each cell gets a value */
-//
-//    for (i = 0; i < DIM; i++) {
-//        for (j = 0; j < DIM; j++) {
-//            for (v = 0; v < DIM; v++) {
-//                ind[v] = i*DIM*DIM + j*DIM + v;
-//                val[v] = 1.0;
-//            }
-//
-//            error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-//            if (error) goto QUIT;
-//        }
-//    }
-//
-//    /* Each value must appear once in each row */
-//
-//    for (v = 0; v < DIM; v++) {
-//        for (j = 0; j < DIM; j++) {
-//            for (i = 0; i < DIM; i++) {
-//                ind[i] = i*DIM*DIM + j*DIM + v;
-//                val[i] = 1.0;
-//            }
-//
-//            error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-//            if (error) goto QUIT;
-//        }
-//    }
-//
-//    /* Each value must appear once in each column */
-//
-//    for (v = 0; v < DIM; v++) {
-//        for (i = 0; i < DIM; i++) {
-//            for (j = 0; j < DIM; j++) {
-//                ind[j] = i*DIM*DIM + j*DIM + v;
-//                val[j] = 1.0;
-//            }
-//
-//            error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-//            if (error) goto QUIT;
-//        }
-//    }
-//
-//    /* Each value must appear once in each subgrid */
-//
-//    for (v = 0; v < DIM; v++) {
-//        for (ig = 0; ig < curr_board->block_height; ig++) {
-//            for (jg = 0; jg < curr_board->block_width; jg++) {
-//                count = 0;
-//                for (i = ig*(curr_board->block_height); i < (ig+1)*(curr_board->block_height); i++) {
-//                    for (j = jg*(curr_board->block_height); j < (jg+1)*(curr_board->block_height); j++) {
-//                        ind[count] = i*DIM*DIM + j*DIM + v;
-//                        val[count] = 1.0;
-//                        count++;
-//                    }
-//                }
-//
-//                error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-//                if (error) goto QUIT;
-//            }
-//        }
-//    }
-//
-//    /* Optimize model */
-//
-//    error = GRBoptimize(model);
-//    if (error) goto QUIT;
-//
-//    /* Write model to 'sudoku.lp' */
-//
-//    error = GRBwrite(model, "sudoku.lp");
-//    if (error) goto QUIT;
-//
-//    /* Capture solution information */
-//
-//    error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
-//    if (error) goto QUIT;
-//
-//    error = GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
-//    if (error) goto QUIT;
-//
-//    error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0,DIM*DIM*DIM, sol);
-//    if (error) {
-//        printf("ERROR %d GRBgetdblattrarray(): %s\n", error, GRBgeterrormsg(env));
-//        return -1;
-//    }
-//
-//    printf("\nOptimization complete\n");
-//    if (optimstatus == GRB_OPTIMAL)
-//        printf("Optimal objective: %.4e\n", objval);
-//    else if (optimstatus == GRB_INF_OR_UNBD)
-//        printf("Model is infeasible or unbounded\n");
-//    else
-//        printf("Optimization was stopped early\n");
-//    printf("\n");
-//
-//    QUIT:
-//
-//    /* Error reporting */
-//
-//    if (error) {
-//        printf("ERROR: %s\n", GRBgeterrormsg(env));
-//        exit(1);
-//    }
-//
-//    fclose(fp);
-//
-//    /* Free model */
-//
-//    GRBfreemodel(model);
-//
-//    /* Free environment */
-//
-//    GRBfreeenv(env);
-//
-//    return 0;
-//}
-//
-int solver_LP()
-{
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <string.h>
+#include "ListActions.h"
+#include "gurobi_c.h"
+
+
+#define EMPTY 0
+int       flag;
+double    num,sum,start;
+GRBenv   *env   = NULL;
+GRBmodel *model = NULL;
+double    sol;
+/*double   *all_pos_sol;*/
+double   *all_poss_scores;
+int       var_size, res;
+int       *ind_save;
+int       *ind;
+int	      const_size;
+double    *val;
+double   *obj;
+double   *lb;
+double   *ub;
+char     *vtype;
+char     **names;
+char      *namestorage;
+char     *cursor;
+int       optimstatus;
+double    objval;
+int       i, j, v, ig, jg, count;
+int       error = 0;
+
+
+
+/*
+ * Return false if there's a cell in the same row
+ * with the same value, otherwise, returns true
+ * */
+int in_row_gurobi(int row, int num) {
+    for (j = 0; j < gurobi_board->len; ++j) {
+        if (gurobi_board->board[row][j].value == num) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/*
+ * Return false if there's a cell in the same column
+ * with the same value, otherwise, returns true
+ * */
+int in_col_gurobi(int col, int num) {
+    for (j = 0; j < gurobi_board->len; ++j) {
+        if (gurobi_board->board[j][col].value == num) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/*
+ * Return false if there's a cell in the same block
+ * with the same value, otherwise, returns true
+ * */
+int in_block_gurobi(int x, int y, int num) {
+    for (i = 0; i < gurobi_board->block_height; ++i) {
+        for (j = 0; j < gurobi_board->block_width; ++j) {
+            if (gurobi_board->board[i+x][j+y].value == num) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+
+int is_valid_set_gurobi(int x, int y, int num) {
+    int block_x = (x / (gurobi_board->block_height))*(gurobi_board->block_height);
+    int block_y = (y / (gurobi_board->block_width))*(gurobi_board->block_width);
+    return (!in_row_gurobi(x,num) && !in_col_gurobi(y,num) &&
+            !in_block_gurobi(block_x,block_y,num));
+}
+
+
+int check_num_var(){
+    int count = 0;
+    for (i = 0; i < gurobi_board->len; i++) {
+        for (j = 0; j < gurobi_board->len; j++) {
+            for (v = 0; v < gurobi_board->len; v++) {
+                if (gurobi_board->board[i][j].value == EMPTY && is_valid_set_gurobi(i,j,v+1)){
+                    count++;
+                }
+            }}}
+    return count;
+}
+
+
+
+
+
+void create_empty_model(int is_LP){
+    count = 0;
+    cursor = namestorage;
+    for (i = 0; i < gurobi_board->len; i++) {
+        for (j = 0; j < gurobi_board->len; j++) {
+            for (v = 0; v < gurobi_board->len; v++) {
+                if (gurobi_board->board[i][j].value == EMPTY && is_valid_set_gurobi(i,j,v+1)){ /* valid_set: v not in row, col, block*/
+                    lb[count] = 0;
+                    ub[count] = 1;
+                    obj[count] = is_LP ? (rand() % DIM + 1) : 0;
+                    vtype[count] = is_LP ? GRB_CONTINUOUS : GRB_BINARY;
+                    ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v] = count ;
+                    names[count] = cursor;
+                    sprintf(names[count], "x[%d,%d,%d]", i, j, v+1);
+                    cursor += strlen(names[count]) + 1;
+                    count++;
+                }
+                else{
+                    ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v] = EMPTY;
+                }
+            }
+        }
+    }
+}
+
+int create_env(){
+    error = GRBloadenv(&env, "sudoku.log");
+    return error;
+}
+
+int create_new_model(){
+    error = GRBnewmodel(env, &model, "sudoku", var_size, obj , lb, ub,
+                        vtype, names);
+    return error;
+}
+
+
+/* Each cell gets a value */
+int each_cell_value(){
+    const_size = 0;
+    for (i = 0; i < gurobi_board->len; i++) {
+        for (j = 0; j < gurobi_board->len; j++) {
+            for (v = 0; v < gurobi_board->len; v++) {
+                if(ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v]!= EMPTY){
+                    ind[const_size] = ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v];
+                    val[const_size] = 1.0;
+                    const_size++;
+                }
+            }
+            if (const_size > 0){
+                error = GRBaddconstr(model, const_size, ind, val, GRB_EQUAL, 1.0, NULL);
+                if (error) return 1;
+            }
+            const_size = 0;
+        }
+    }
+    return 0;
+}
+
+/* Each value must appear once in each row */
+
+int each_row_value(){
+    const_size = 0;
+    for (v = 0; v < gurobi_board->len; v++) {
+        for (j = 0; j < gurobi_board->len; j++) {
+            for (i = 0; i < gurobi_board->len; i++) {
+                if(ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v]!= EMPTY){
+                    ind[const_size] = ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v];
+                    val[const_size] = 1.0;
+                    const_size++;
+                }
+            }
+
+            if (const_size > 0){
+                error = GRBaddconstr(model, const_size, ind, val, GRB_EQUAL, 1.0, NULL);
+                if (error) return 1;
+            }
+            const_size = 0;
+        }
+    }
+    return 0;
+}
+
+/* Each value must appear once in each column */
+
+int each_col_value(){
+    const_size = 0;
+    for (v = 0; v < gurobi_board->len; v++) {
+        for (i = 0; i < gurobi_board->len; i++) {
+            for (j = 0; j < gurobi_board->len; j++) {
+                if(ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v] != EMPTY){
+                    ind[const_size] = ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v];
+                    val[const_size] = 1.0;
+                    const_size++;
+                }
+            }
+            if (const_size > 0){
+                error = GRBaddconstr(model, const_size, ind, val, GRB_EQUAL, 1.0, NULL);
+                if (error) return 1;
+            }
+            const_size = 0;
+        }
+    }
+    return 0;
+}
+
+/* Each value must appear once in each sub-grid */
+
+int each_sub_grid_value(){
+    for (v = 0; v < (gurobi_board->len); v++) {
+        for (ig = 0; ig < gurobi_board->block_width; ig++) {
+            for (jg = 0; jg < gurobi_board->block_height; jg++) {
+                count = 0;
+                for (i = ig*(gurobi_board->block_height); i < (ig+1)*(gurobi_board->block_height); i++) {
+                    for (j = jg*(gurobi_board->block_width); j < (jg+1)*(gurobi_board->block_width); j++) {
+                        if(ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v]!= EMPTY){
+                            ind[count] = ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v];
+                            val[count] = 1.0;
+                            count++;
+                        }
+                    }
+                }
+                if (count > 0){
+                    error = GRBaddconstr(model, count, ind, val, GRB_EQUAL, 1.0, NULL);
+                    if (error) return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int optimum_state_ilp(){
+    printf("Optimal objective: %.4e\n", objval);
+    for (i = 0; i < gurobi_board->len; i++) {
+        for (j = 0; j < gurobi_board->len; j++) {
+            for (v = 0; v < gurobi_board->len; v++) {
+                if (ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v] != EMPTY){
+                    error = GRBgetdblattrelement(model, "X", ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v], &sol);
+                    if ((int)sol == 1){
+                        printf("x[%d,%d,%d]=%d\n",i,j,v+1,(int)sol);
+                        gurobi_board->board[i][j].value = v+1;
+                    }
+                }
+            }}}
+    return error;
+}
+
+int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, int y){
+    flag = 0;
+    printf("Optimal objective: %.4e\n", objval);
+    for (i = 0; i < gurobi_board->len; i++) {
+        for (j = 0; j < gurobi_board->len; j++) {
+            for (v = 0; v < gurobi_board->len; v++) {
+                if (ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v] != EMPTY){
+                    error = GRBgetdblattrelement(model, "X", ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v], &sol);
+                    if (is_guess){
+                        all_poss_scores[v] = sol;
+                    }
+                    else if (is_guess_hint) {
+                        if (i == y && j == x){ /* x,y=col,row*/
+                            flag = 1;
+                            all_poss_scores[v] = sol;
+                        }
+                    }
+                    else
+                        return 1;/* ERROR */
+                }else{
+                    all_poss_scores[v] = -1;
+                }
+            }
+            if (is_guess_hint && flag){
+                flag = 0;
+                for (v = 0; v < gurobi_board->len; ++v) {
+                    if (all_poss_scores[v] > 0){
+                        printf("value = %d : prob = %f\n",v+1,all_poss_scores[v]);
+                    }
+                }
+                return error;
+            }
+            else if (is_guess && gurobi_board->board[i][j].value == 0) {
+                count = 0;
+                num = 0;
+                sum = 0;
+                start = 0;
+                for (v = 0; v < gurobi_board->len; ++v) {
+                    if (all_poss_scores[v] >= thresholdX) {
+                        sum += all_poss_scores[v];
+                    }
+                }
+                printf("sum :%f\n",sum);
+                num = (((double) rand()) / RAND_MAX) * sum;
+                for (v = 0; v < gurobi_board->len; ++v) {
+                    if (all_poss_scores[v] >= thresholdX) {
+                        if (num >= start && num < (start + all_poss_scores[v])) {
+                            printf("num =%f, str:%f, end:%f, score:%f\n",num,start,start + all_poss_scores[v],all_poss_scores[v]);
+                            gurobi_board->board[i][j].value = v+1;
+                            break;
+                        } else if ((start + all_poss_scores[v]) == sum){
+                            gurobi_board->board[i][j].value = v+1;
+                        }
+                        start += all_poss_scores[v];
+                    }
+                }
+            }
+            /* choose randomly the value for x[i,j] from all_poss_scores */
+            /* here */
+        }}
+    return error;
+}
+
+int optimization_complete(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y){
+    printf("\nOptimization complete\n");
+    if (optimstatus == GRB_OPTIMAL){
+        error = is_LP ? optimum_state_lp(is_guess, thresholdX, is_guess_hint, x, y) : optimum_state_ilp();
+        printf("\n");
+        return !error;
+    }
+    else if (optimstatus == GRB_INF_OR_UNBD)
+        printf("Model is infeasible or unbounded\n");
+    else
+        printf("Optimization was stopped early\n");
+    printf("\n");
+    return 0;
+}
+
+
+void error_report(){
+    if (error) {
+        printf("ERROR: %s\n", GRBgeterrormsg(env));
+        exit(1);
+    }
+}
+
+int optimize_model(){
+    return GRBoptimize(model);
+}
+
+/* Write model to 'sudoku.lp' */
+
+int write_model(){
+    return GRBwrite(model, "sudoku.lp");
+}
+
+int capture_sol_info(){
+    return GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus) || GRBgetdblattr(model, GRB_DBL_ATTR_OBJVAL, &objval);
+}
+
+void free_model(){
+    GRBfreemodel(model);
+}
+
+void free_env(){
+    GRBfreeenv(env);
+}
+
+
+int set_obj_max(){
+    error = GRBsetintattr(model, GRB_INT_ATTR_MODELSENSE, GRB_MAXIMIZE);
+    return error;
+}
+
+void copy_curr_board_to_gurobi_board(){
+    gurobi_board =  (struct curr_board *) calloc(curr_board->len, sizeof(struct cell));
+    gurobi_board->block_width = curr_board->block_width;
+    gurobi_board->block_height = curr_board->block_height;
+    gurobi_board->len = curr_board->len ;
+    gurobi_board->mark_errors = 1;
+    gurobi_board->board = (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
+    for (i = 0; i < curr_board->len; ++i) {
+        gurobi_board->board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
+    }
 
 }
-int solver_ILP(){
 
+int check_gurobi_board_full(){
+    for (i = 0; i < gurobi_board->len; ++i) {
+        for (j = 0; j < gurobi_board->len; ++j) {
+            if (gurobi_board->board[i][j].value == 0){
+                return 0;
+            }
+        }
+    }
+    return 1;
 }
+
+
+int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y, int is_generate){
+    int DIM = curr_board->len;
+    copy_curr_board_to_gurobi_board();
+    var_size = check_num_var();
+
+    namestorage= (char*)malloc(sizeof(char)*(10*DIM*DIM*DIM));
+    val = (double*)malloc(sizeof(double)*DIM);
+    ind_save = (int*)malloc(sizeof(int)*(DIM*DIM*DIM));
+    ind = (int*)malloc(sizeof(int)*DIM);
+    lb = (double*)malloc(sizeof(double)*var_size);
+    ub = (double*)malloc(sizeof(double)*var_size);
+    obj = (double*)malloc(sizeof(double)*var_size);
+    vtype = (char*)malloc(sizeof(char)*var_size);
+    names = (char**)malloc(sizeof(char*)*var_size);
+    if (is_LP){
+        all_poss_scores = (double*)malloc(sizeof(double)*DIM);
+    }
+
+    create_empty_model(is_LP);
+    if (create_env()) goto QUIT;
+    if (create_new_model()) goto QUIT;
+
+    if (each_cell_value()) goto QUIT;
+    if (each_row_value()) goto QUIT;
+    if (each_col_value()) goto QUIT;
+    if (each_sub_grid_value()) goto QUIT;
+    if (set_obj_max()) goto QUIT;
+
+    if (optimize_model()) goto QUIT;
+    if (write_model()) goto QUIT;
+    if (capture_sol_info()) goto QUIT;
+
+    res = optimization_complete(is_LP, is_guess, thresholdX, is_guess_hint, x, y);
+    if(is_LP && is_guess || is_generate){
+        curr_board->board = gurobi_board->board;
+    }
+
+    QUIT:
+    error_report();
+    free_model();
+    free_env();
+    free(namestorage);
+    free(val);
+    free(ind_save);
+    free(ind);
+    free(lb);
+    free(ub);
+    free(obj);
+    free(vtype);
+    free(names);
+    free(all_poss_scores);
+    return res;
+}
+
+

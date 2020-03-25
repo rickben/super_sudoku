@@ -7,9 +7,11 @@
 #include "MainAux.h"
 #include "Stack.h"
 #include "FilesAux.h"
+#include "Solver.h"
 
 
 int main(int argc, char* argv[]) {
+    srand(time(0));
     /*
     int flag = 1;
     int seed = atoi(argv[argc-1]);
@@ -35,5 +37,5 @@ int main(int argc, char* argv[]) {
     state = Solve;
     trans_file_to_board("dog.txt");
     print_board();
-    printf("%ld",num_solutions());
+
 }
