@@ -15,9 +15,6 @@ void print_start_program(){
     printf("Welcome to Sudoku puzzle game!\n");
 }
 
-int check_correct_file_format(){
-    //TODO
-}
 
 int check_erroneous_board(){
     int i,j;
@@ -39,8 +36,8 @@ while (x>0){
     row = rand()%curr_board->len;
     val = rand()%curr_board->len;
     curr_board->board[row][col].value = val;
-    //TODO:
-    //curr_board->board[row][col].is_fixed = 1;??
+    /*
+    //curr_board->board[row][col].is_fixed = 1;??*/
     --x;
 }
 }
@@ -56,9 +53,10 @@ void clear_cells_random(int y){
     }
 }
 
+/*
 int check_if_number_float(int x){
-    //TODO
-}
+
+ }*/
 
 
 /*
@@ -258,18 +256,18 @@ bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix ) {
     }
 }
 
-bool is_valid_board(struct curr_board* my_board){
+bool is_valid_board(){
     int temp = 0;
-    for (int i = 0; i < my_board->len; ++i) {
-        for (int j = 0; j < my_board->len; ++j) {
-            if(my_board->board[i][j].value!=0){
-                temp = my_board->board[i][j].value;
-                my_board->board[i][j].value = 0;
-                if(!is_valid_set(i,j,temp,my_board)) {
-                    my_board->board[i][j].value = temp;
+    for (int i = 0; i < curr_board->len; ++i) {
+        for (int j = 0; j < curr_board->len; ++j) {
+            if(curr_board->board[i][j].value!=0){
+                temp = curr_board->board[i][j].value;
+                curr_board->board[i][j].value = 0;
+                if(!is_valid_set(i,j,temp,curr_board)) {
+                    curr_board->board[i][j].value = temp;
                     return false;
                 }
-                my_board->board[i][j].value = temp;
+                curr_board->board[i][j].value = temp;
             }
         }
     }

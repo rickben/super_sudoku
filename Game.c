@@ -6,6 +6,7 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 #include "Stack.h"
+#include "Solver.h"
 
 
 void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
@@ -147,7 +148,7 @@ void generate(int x, int y){
         }
         else{
             fill_board_random(x);
-            solver_ILP();//fills the curr->board
+            solver(0,0,0,0,0,0,1);
             clear_cells_random(y);
 
         }} else{
@@ -196,12 +197,11 @@ void guess(double x){
         printf("This command is only available in Solve mode\n");
         return;
     } else {
-        if (check_erroneous_board()){
+        if (check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
             return;
         } else{
-            solver_LP();
-            //TODO complete
+            solver(1,1,x,0,0,0,0);
         }
     }
 }
@@ -218,7 +218,7 @@ void hint(int x, int y){
         } else if (x > curr_board->len || y > curr_board->len) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
-        }else if(check_erroneous_board()){
+        }else if(check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
         }else if (curr_board->board[y][x].is_fixed) {
             printf("This position is fixed!\n");
@@ -227,11 +227,11 @@ void hint(int x, int y){
             printf("This position already has a value!\n");
             return;
         } else{
-            if(solver_ILP() == 0){ //unsolvable TODO - needs to run on a copy of the bord so it wont be filled?
+            if(solver(0,0,0,0,0,0,0) == 0){
                 printf("This board is unsolvable!\n");
                 return;
             } else{
-                //TODO return the value of board[y][x] from the ILP solver
+                printf("The value of cell <%d,%d> = %d",x,y,gurobi_board->board[y][x].value);
             }
         }
     }
@@ -251,7 +251,7 @@ void guess_hint(int x, int y){
         } else if (x > curr_board->len || y > curr_board->len) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
-        }else if(check_erroneous_board()){
+        }else if(check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
         }else if (curr_board->board[y][x].is_fixed) {
             printf("This position is fixed!\n");
@@ -260,11 +260,9 @@ void guess_hint(int x, int y){
             printf("This position already has a value!\n");
             return;
         } else{
-            if(solver_LP() == 0){ //unsolvable TODO - needs to run on a copy of the bord so it wont be filled?
+            if(solver(1,0,0,1,x,y,0) == 0) { /* prints the scores in solver */
                 printf("This board is unsolvable!\n");
                 return;
-            } else{
-                //TODO print all the legal values for board[y][x] from the LP solver that >0 (bigger than)
             }
         }
     }
@@ -275,13 +273,15 @@ int validate(){
         printf("validate only available in solve or edit mode\n");
         return 0;
     }
-    int is_valid = 1;
-    if(is_valid){
+    if (check_erroneous_board() || !is_valid_board()){
+        printf("validate not available in erroneous board\n");
+    }
+    solver(0,0,0,0,0,0,0);
+    if(check_gurobi_board_full()){
         printf("Validation passed: board is solvable\n");
         return 1;
     }
     else{
-
         printf("Validation failed: board is unsolvable\n");
         return 0;
     }
@@ -441,7 +441,7 @@ long num_solutions(){
 void autofill(){
     int i,j;
     if (state == Solve) {
-        if(check_erroneous_board()){
+        if(check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
             return;
         }

@@ -7,9 +7,11 @@
 #include "MainAux.h"
 #include "Stack.h"
 #include "FilesAux.h"
+#include "Solver.h"
 
 
 int main(int argc, char* argv[]) {
+    srand(time(0));
     /*
     int flag = 1;
     int seed = atoi(argv[argc-1]);
@@ -32,12 +34,4 @@ int main(int argc, char* argv[]) {
         } else if (state == Edit){
         }
     }*/
-    state = Solve;
-    trans_file_to_board("C:\\cat.txt");
-    print_board();
-    while (1){
-        printf("Please enter a command:\n");
-        interpret_command();
-        print_board();
-    }
 }
