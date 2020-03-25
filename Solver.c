@@ -206,7 +206,7 @@ int each_col_value(){
 }
 
 /* Each value must appear once in each sub-grid */
-
+/**/
 int each_sub_grid_value(){
     for (v = 0; v < (gurobi_board->len); v++) {
         for (ig = 0; ig < gurobi_board->block_width; ig++) {
