@@ -11,15 +11,14 @@
 #include "FilesAux.h"
 #include "Solver.h"
 
-
-int main(int argc, char* argv[]) {
+int main() {
     srand(time(0));
-    int flag = 1;
     state = Init;
     print_start_program();
-    while (flag){
+    while (1){
         printf("Please enter a command:\n");
         interpret_command();
+	board_print();
         if(state == Solve){
             if(check_board_solved()){
                 if(check_erroneous_board()){
