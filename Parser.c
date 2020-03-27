@@ -11,18 +11,44 @@ int str_equals(char *str1, char *str2) {
 
 
 bool is_digit(char c){
-    return c>=48&&c<=57;
+    return c>='0'&&c<='9';
 }
 bool is_dot(char c){
     return c==46;
 }
 
-bool is_integer(char* s){
+bool is_valid_path(char* path){
     int i;
-    for (i = 0; i < (int) strlen(s); i++)
-        if (is_digit(s[i]) == false)
+    for(i=0;i<(int) strlen(path);i++){
+        if(path[i]=='|'||path[i]=='<'||path[i]=='>'||path[i]=='"'||path[i]=='?'||path[i]==':'||path[i]=='\\'){
             return false;
+        }
+    }
     return true;
+}
+
+int my_pow(int a, int b){
+    int i;
+    int ret = 1;
+    for (i=0;i<b;i++){
+        ret = ret*a;
+    }
+    return ret;
+}
+
+/*gets a string, and returns the number the string represents.
+ * if the string does not represent a number, returns -1*/
+int is_integer(char* s){
+    int i;
+    int coordinate = 0;
+    for (i = 0; i<(int) strlen(s) ; i++){
+        if (is_digit(s[i]) == false)
+            return -1;
+        else{
+            coordinate+=(s[i]-'0')*my_pow(10, strlen(s) - i -1);
+        }
+    }
+    return coordinate;
 }
 
 bool is_double(char* s){
@@ -166,7 +192,7 @@ void interpret_command(){
 }
 
 void execute_command(int command_code, char** command_data) {
-    int x,y,z;
+    int x=0,y=0,z=0;
     double d;
     char* stop_string;
     if(!is_valid_param(command_code, command_data))
@@ -174,9 +200,22 @@ void execute_command(int command_code, char** command_data) {
     switch(command_code)
     {
         case 1:
+            if(command_data[0][0]=='\0'){
+                printf("No path given\n");
+                break;
+            }
+            if(!is_valid_path(command_data[0])){
+                printf("The parameter isn't legal (invalid path)\n");
+                break;
+            }
             solve(command_data[0]);
             break;
         case 2:
+            if(command_data[0][0]=='\0'){
+                /*create 9*9 board*/
+                break;
+            }
+            printf("%s\n", command_data[0]);
             edit(command_data[0]);
             break;
         case 3:
@@ -186,14 +225,18 @@ void execute_command(int command_code, char** command_data) {
             print_board();
             break;
         case 5:
-            if(!is_integer(command_data[0]) || !is_integer(command_data[1]) || !is_integer(command_data[2])){
-                printf("The parameter isn't legal (not int)\n");
+            if(command_data[0][0]=='\0'){
+                printf("No coordinates given\n");
                 break;
             }
             /* translate strings of numbers to integers */
-            x = (command_data[0][0] - '0');
-            y = (command_data[1][0] - '0');
-            z = (command_data[2][0] - '0');
+            x = is_integer(command_data[0]);
+            y = is_integer(command_data[1]);
+            z = is_integer(command_data[2]);
+            if(x == -1 || y == -1 || z == -1){
+                printf("The parameter isn't legal (not int)\n");
+                break;
+            }
             board_set(x,y,z);
             break;
         case 6:
@@ -208,7 +251,7 @@ void execute_command(int command_code, char** command_data) {
             guess(d);
             break;
         case 8:
-            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+            if(is_integer(command_data[0])  == -1|| is_integer(command_data[1]) == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
@@ -226,7 +269,11 @@ void execute_command(int command_code, char** command_data) {
             trans_board_to_file(command_data[0]);
             break;
         case 12:
-            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+            if(command_data[0][0]=='\0'){
+                printf("No coordinates given\n");
+                break;
+            }
+            if(is_integer(command_data[0]) == -1 || is_integer(command_data[1]) == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
@@ -235,7 +282,11 @@ void execute_command(int command_code, char** command_data) {
             hint(x,y);
             break;
         case 13:
-            if(!is_integer(command_data[0]) || !is_integer(command_data[1])){
+            if(command_data[0][0]=='\0'){
+                printf("No coordinates given\n");
+                break;
+            }
+            if(is_integer(command_data[0]) || is_integer(command_data[1]) == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
