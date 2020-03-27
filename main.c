@@ -5,6 +5,8 @@
 #include "Parser.h"
 #include "SPBufferset.h"
 #include "MainAux.h"
+#include "ListActions.h"
+#include "Solver.h"
 #include "Stack.h"
 #include "FilesAux.h"
 #include "Solver.h"
@@ -12,11 +14,8 @@
 
 int main(int argc, char* argv[]) {
     srand(time(0));
-    /*
     int flag = 1;
-    int seed = atoi(argv[argc-1]);
     state = Init;
-    srand(seed);
     print_start_program();
     while (flag){
         printf("Please enter a command:\n");
@@ -33,5 +32,5 @@ int main(int argc, char* argv[]) {
             }
         } else if (state == Edit){
         }
-    }*/
+    }
 }

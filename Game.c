@@ -22,9 +22,8 @@ void my_exit(){
 }
 
 /*command always available*/
+/*TODO :My assumption is i reach here clean?*/
 void solve(char* file_name){
-    ///TODO do i need to release memory from before or do i reach here clean?
-    //command always available
     state = Solve;
     trans_file_to_board(file_name);
 }
@@ -63,6 +62,8 @@ void print_board(){
 }
 
 void undo(){
+    int* command_data;
+    cell cell_data;
     if(state!=Solve && state != Edit){
         printf("undo only available in solve or edit mode\n");
         return;
@@ -71,8 +72,6 @@ void undo(){
         printf("noting to undo\n");
         return;
     }
-    int* command_data;
-    cell cell_data;
     if(undo_head->command_code == 5){
         command_data = undo_head->command_data;
         cell_data = undo_head->cell_data;
@@ -98,6 +97,8 @@ void undo(){
 }
 
 void redo() {
+    int* command_data;
+    cell cell_data;
     if (state != Solve && state != Edit) {
         printf("undo only available in solve or edit mode\n");
         return;
@@ -106,8 +107,6 @@ void redo() {
         printf("noting to redo\n");
         return;
     }
-    int* command_data;
-    cell cell_data;
     if(redo_head->command_code == 5){
         command_data = redo_head->command_data;
         cell_data = redo_head->cell_data;
@@ -304,7 +303,7 @@ cell** put_1_in_all_unfixed_cells_right(int row, int col, cell** board){
             if (i == row && j == col) {
                 return board;
             } else {
-                if (!board[i][j].is_fixed && board[i][j].value != 0){ // board[i][j].value == len
+                if (!board[i][j].is_fixed && board[i][j].value != 0){
                     board[i][j].value = 1;
                 }
             }
@@ -359,7 +358,7 @@ struct curr_board update_next_sol(struct curr_board new_board){
         new_board.board[row][col].value++;
         new_board.board[row][col].is_fixed = 0;
     }
-    else{ //all cells unfixed !=0 are equal to len
+    else{
         find_empty_cell(&row,&col,new_board.board);
         new_board.board = put_1_in_all_unfixed_cells(new_board.board);
         new_board.board[row][col].value = 1;
@@ -369,10 +368,10 @@ struct curr_board update_next_sol(struct curr_board new_board){
 }
 
 void new_board_print(struct curr_board new_board){
-    int k = 0;
+    int i,j,k = 0;
     separator_row(curr_board->block_height, curr_board->block_width);
-    for (int i = 0; i < curr_board->block_width; i++) {
-        for (int j = 0; j < curr_board->block_height; j++) {
+    for (i = 0; i < curr_board->block_width; i++) {
+        for (j = 0; j < curr_board->block_height; j++) {
             cell_row(new_board.board[k],k);
             k++;
         }
@@ -380,7 +379,7 @@ void new_board_print(struct curr_board new_board){
     }
 }
 
-int check_board_finished(struct curr_board new_board){//for a board we know is full
+int check_board_finished(){
     int i,j;
     for (i = 0; i < curr_board->block_width; i++) {
         for (j = 0; j < curr_board->block_height; j++) {
@@ -395,34 +394,32 @@ int check_board_finished(struct curr_board new_board){//for a board we know is f
 }
 
 long num_solutions(){
+    int row = 0, col = 0;
+    long count = 0;
+    int i,j,k;
     if (state != Solve && state != Edit) {
         printf("num_solutions only available in solve or edit mode\n");
         return -1;
     }
-    int row = 0, col = 0;
-    long count = 0;
-
-    struct curr_board new_board;
     new_board.len = curr_board->len;
     new_board.block_width = curr_board->block_width;
     new_board.block_height = curr_board->block_height;
     new_board.mark_errors = new_board.mark_errors;
     new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
-    for (int j = 0; j < new_board.len; ++j) {
+    for (j = 0; j < new_board.len; ++j) {
         new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));
     }
-    for (int j = 0; j < new_board.len; ++j) {
-        for (int k = 0; k < new_board.len; ++k)
+    for (j = 0; j < new_board.len; ++j) {
+        for (k = 0; k < new_board.len; ++k)
             new_board.board[j][k] = curr_board->board[j][k];
     }
 
     save_all_curr_cells_fixed(new_board.board);
-
     push_ele(new_board);
     while (stack != NULL){
         new_board = pop_ele();
         if(find_empty_cell(&row,&col, new_board.board)){
-            for(int i=1;i<=new_board.len;i++){
+            for(i = 1;i <= new_board.len ;i++){
                 new_board.board[row][col].value = i;
                 if(is_valid_board(&new_board)){
                     push_ele(new_board);
@@ -440,13 +437,13 @@ long num_solutions(){
 
 void autofill(){
     int i,j;
+    int *command_data = malloc(sizeof(int) * 3);
+    cell cell_data = {0,0,0,0, NULL};
     if (state == Solve) {
         if(check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
             return;
         }
-        int *command_data = malloc(sizeof(int) * 3);
-        cell cell_data = {0,0,0,0, NULL};
         for (i = 0; i < curr_board->len ; ++i) {
             for (j = 0; j < curr_board->len ; ++j) {
                 if (curr_board->board[i][j].list_poss_values_len==1){
@@ -471,12 +468,13 @@ void autofill(){
 
 
 void create_board(int len) {
+    int i;
     curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
     curr_board->len = len;
     curr_board->mark_errors = 1;
     calc_block_size(len);
     curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
-    for (int i = 0; i < len; ++i) {
+    for (i = 0; i < len; ++i) {
         curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
     }
 }

@@ -125,31 +125,24 @@ int is_valid_set(int x, int y, int num , struct curr_board* curr_board) {
             !in_block(block_x,block_y,num,curr_board));
 }
 
-int update_all_invalid_cells(){
-    int i,j,tmp;
-    for (i = 0; i < curr_board->len; ++i) {
-        for (j = 0; j < curr_board->len; ++j) {
-            tmp = curr_board->board[i][j].value;
-            curr_board->board[i][j].value = 0;
-            if(! is_valid_set(i, j, tmp,curr_board)){
-                curr_board->board[i][j].is_erroneous = 1;
-            }
-            curr_board->board[i][j].value = tmp;
-        }
-    }
-}
 
 
-int check_board_solved(struct curr_board new_board){
+
+int check_board_solved(){
+    int x,y,temp,found_valid;
+    new_board.board = curr_board->board;
+    new_board.len = curr_board->len;
+    new_board.block_width = curr_board->block_width;
+    new_board.block_height = curr_board->block_height;
     if(!check_board_full(new_board.board)){
         return 0;
     }
     else {
-        for (int x = 0; x < curr_board->len; ++x) {
-            for (int y = 0; y < curr_board->len; ++y) {
-                int temp = new_board.board[x][y].value;
+        for (x = 0; x < curr_board->len; ++x) {
+            for (y = 0; y < curr_board->len; ++y) {
+                temp = new_board.board[x][y].value;
                 new_board.board[x][y].value = 0;
-                int found_valid = is_valid_set(x, y, temp, &new_board);
+                found_valid = is_valid_set(x, y, temp, &new_board);
                 new_board.board[x][y].value = temp;
                 if (!found_valid) {
                     return 0;
@@ -194,10 +187,11 @@ void update_erroneous_cells(){
 
 
 void cell_row(struct cell* arr, int num_row) {
+    int j;
     if(state == Edit || (state == Solve && curr_board->mark_errors)){
         update_erroneous_cells();
     }
-    for (int j = 0; j < curr_board->len; j++) {
+    for (j = 0; j < curr_board->len; j++) {
         if (j % curr_board->block_width == 0) {
             printf("|");
         }
@@ -226,10 +220,10 @@ void cell_row(struct cell* arr, int num_row) {
 
 
 void board_print() {
-    int k = 0;
+    int k = 0, i, j;
     separator_row(curr_board->block_height, curr_board->block_width);
-    for (int i = 0; i < curr_board->block_width; i++) {
-        for (int j = 0; j < curr_board->block_height; j++) {
+    for (i = 0; i < curr_board->block_width; i++) {
+        for (j = 0; j < curr_board->block_height; j++) {
             cell_row(curr_board->board[k],k);
             k++;
         }
@@ -257,9 +251,9 @@ bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix ) {
 }
 
 bool is_valid_board(){
-    int temp = 0;
-    for (int i = 0; i < curr_board->len; ++i) {
-        for (int j = 0; j < curr_board->len; ++j) {
+    int temp = 0, i, j;
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
             if(curr_board->board[i][j].value!=0){
                 temp = curr_board->board[i][j].value;
                 curr_board->board[i][j].value = 0;

@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 int check_if_number_float(int x);
-int check_board_solved(struct curr_board new_board);
+int check_board_solved();
 void restart_to_init();
 void update_erroneous_cells();
 int check_erroneous_board();

@@ -15,7 +15,7 @@ struct curr_board{
     int block_height;
     int len;
     int mark_errors;
-}*curr_board, *gurobi_board;
+}*curr_board, *gurobi_board, new_board;
 
 typedef struct Node {
     int command_code;

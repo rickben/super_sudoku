@@ -4,14 +4,6 @@
 
 
 
-int open_new_file(){
-
-}
-int close_all_files(){
-
-}
-
-
 void free_mem_board() {
     int i;
     for(i=0; i<curr_board->len; i++) {
@@ -86,13 +78,14 @@ int trans_board_to_file(char* file_name){
 
 
 void create_board_from_file(int len, int width, int height) {
+    int i;
     curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
     curr_board->block_width = width;
     curr_board->block_height = height;
     curr_board->len = len ;
     curr_board->mark_errors = 1;
     curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
-    for (int i = 0; i < len; ++i) {
+    for (i = 0; i < len; ++i) {
         curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
     }
 }
@@ -128,12 +121,12 @@ int scan_rows_from_file(FILE *in_file) {
             if (fscanf(in_file, "%d", &curr_board->board[i][j].value) != 1) {
                 return 0;
             }
-            fscanf(in_file,"%c",&c);
-            if (c=='.'){
-                curr_board->board[i][j].is_fixed=1;
-            }
-            else if (c=='*'){
-                curr_board->board[i][j].is_erroneous=1;
+            if (fscanf(in_file,"%c",&c)) {
+                if (c == '.') {
+                    curr_board->board[i][j].is_fixed = 1;
+                } else if (c == '*') {
+                    curr_board->board[i][j].is_erroneous = 1;
+                }
             }
         }
 
@@ -163,10 +156,6 @@ int trans_file_to_board(char* file_name){
     return 1;
 }
 
-
-int save_file(){
-
-}
 
 
 

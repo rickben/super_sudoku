@@ -50,6 +50,7 @@ void reset();
 void board_set(int x, int y, int z);
 void hint(int x, int y);
 void guess_hint(int x, int y);
+int check_board_finished();
 int check_board_full(cell** board);
 void save_all_curr_cells_fixed(cell** board);
 int find_last_unfixed_un_eq_len(int* row, int* col, struct curr_board new_board);

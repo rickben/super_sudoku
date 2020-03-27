@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+extern char *strtok_r(char *, const char *, char **);
+
 bool is_digit(char c);
 bool is_dot(char c);
 bool is_integer(char* s);

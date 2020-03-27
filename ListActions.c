@@ -28,9 +28,10 @@ Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_dat
     /* 6. Make prev_node as previous of new_node */
     new_node->prev = curr_node;
 
-//    /* 7. Change previous of new_node's next node */
-//    if (new_node->next != NULL)
-//        new_node->next->prev = new_node;
+/* 7. Change previous of new_node's next node
+    if (new_node->next != NULL)
+        new_node->next->prev = new_node;
+*/
 
     return new_node;
 
@@ -38,12 +39,13 @@ Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_dat
 }
 
 Node* get_head(Node* curr_node){
+    Node* head;
     /*1. check if the given prev_node is NULL */
     if (curr_node == NULL) {
         /*Error*/
         return NULL;
     }
-    Node* head = curr_node;
+    head = curr_node;
     while(head->prev != NULL){
         head = head->prev;
     }
@@ -51,12 +53,13 @@ Node* get_head(Node* curr_node){
 }
 
 Node* get_tail(Node* curr_node){
+    Node* head;
     /*1. check if the given prev_node is NULL */
     if (curr_node == NULL) {
         /*Error*/
         return NULL;
     }
-    Node* head = curr_node;
+    head = curr_node;
     while(head->prev != NULL){
         head = head->prev;
     }
@@ -64,6 +67,7 @@ Node* get_tail(Node* curr_node){
 }
 
 Node* remove_head(Node* head){
+    Node* second_last;
     if (head == NULL)
         return NULL;
 
@@ -72,15 +76,15 @@ Node* remove_head(Node* head){
         return NULL;
     }
 
-    // Find the second last node
-    Node* second_last = head;
+    /* Find the second last node*/
+    second_last = head;
     while (second_last->next == NULL)
         second_last = second_last->prev;
 
-    // Delete last node
+    /* Delete last node*/
     free (second_last->next);
 
-    // Change next of second last
+    /* Change next of second last*/
     second_last->next = NULL;
 
     return second_last;

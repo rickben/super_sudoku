@@ -18,16 +18,18 @@ bool is_dot(char c){
 }
 
 bool is_integer(char* s){
-    for (int i = 0; i < strlen(s); i++)
+    int i;
+    for (i = 0; i < (int) strlen(s); i++)
         if (is_digit(s[i]) == false)
             return false;
     return true;
 }
 
 bool is_double(char* s){
+    int i;
     int dot_counter = 0;
     int digit_counter = 0;
-    for (int i = 0; i < strlen(s); i++){
+    for (i = 0; i < (int)strlen(s); i++){
         if (is_digit(s[i]) == false && !is_dot(s[i]))
             return false;
         if(is_dot(s[i]))

@@ -108,7 +108,7 @@ void create_empty_model(int is_LP){
                 if (gurobi_board->board[i][j].value == EMPTY && is_valid_set_gurobi(i,j,v+1)){ /* valid_set: v not in row, col, block*/
                     lb[count] = 0;
                     ub[count] = 1;
-                    obj[count] = is_LP ? (rand() % DIM + 1) : 0;
+                    obj[count] = is_LP ? (rand() % gurobi_board->len + 1) : 0;
                     vtype[count] = is_LP ? GRB_CONTINUOUS : GRB_BINARY;
                     ind_save[i*(gurobi_board->len)*(gurobi_board->len)+j*(gurobi_board->len)+v] = count ;
                     names[count] = cursor;
@@ -419,7 +419,7 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     if (capture_sol_info()) goto QUIT;
 
     res = optimization_complete(is_LP, is_guess, thresholdX, is_guess_hint, x, y);
-    if(is_LP && is_guess || is_generate){
+    if((is_LP && is_guess) || is_generate){
         curr_board->board = gurobi_board->board;
     }
 
