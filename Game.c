@@ -72,17 +72,16 @@ void print_board(){
     }
     board_print();
 }
-
-void undo(){
+int undo_action(){
     int* command_data;
     cell cell_data;
     if(state!=Solve && state != Edit){
         printf("undo only available in solve or edit mode\n");
-        return;
+        return 0;
     }
     if(undo_head==NULL){
         printf("noting to undo\n");
-        return;
+        return 0;
     }
     if(undo_head->command_code == 5){
         command_data = undo_head->command_data;
@@ -90,7 +89,7 @@ void undo(){
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
         insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
         undo_head = remove_head(undo_head);
-        return;
+        return 1;
     }
     if(undo_head->command_code == 15 || undo_head->command_code == -1){
         while (undo_head->command_code != -1){
@@ -104,27 +103,32 @@ void undo(){
         cell_data = undo_head->cell_data;
         insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
         undo_head = remove_head(undo_head);
-        return;
+        return 1;
     }
+    return 0;
+}
+void undo(){
+    if(undo_action())
+        print_board();
 }
 
-void redo() {
+int redo_action(){
     int* command_data;
     cell cell_data;
     if (state != Solve && state != Edit) {
         printf("undo only available in solve or edit mode\n");
-        return;
+        return 0;
     }
     if(redo_head==NULL){
         printf("noting to redo\n");
-        return;
+        return 0;
     }
     if(redo_head->command_code == 5){
         command_data = redo_head->command_data;
         cell_data = redo_head->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
         redo_head = remove_head(redo_head);
-        return;
+        return 1;
     }
     if(redo_head->command_code == 15 || redo_head->command_code == -1){
         while (redo_head->command_code != -1){
@@ -134,18 +138,25 @@ void redo() {
             redo_head = remove_head(redo_head);
         }
         redo_head = remove_head(redo_head);
-        return;
+        return 1;
     }
+    return 0;
+}
+void redo() {
+    if (redo_action())
+        print_board();
 }
 
 void reset(){
+    int b = 0;
     if (state != Solve && state != Edit) {
         printf("reset only available in solve or edit mode\n");
         return;
     }
     while(undo_head!=NULL)
-        undo();
-
+        b += undo_action();
+    if (b>0)
+        print_board();
 }
 
 void copy_curr_to_board() {
