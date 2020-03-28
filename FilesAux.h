@@ -1,7 +1,8 @@
 #ifndef HW3_FILESAUX_H
 #define HW3_FILESAUX_H
 
-
+int edit_mode_to_file(char* file_name);
+int solve_mode_to_file(char* file_name);
 int trans_board_to_file(char* file_name);
 int trans_file_to_board(char* file_name);
 /*

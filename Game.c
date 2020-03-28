@@ -21,11 +21,18 @@ void my_exit(){
     exit(-1);
 }
 
+void save(char* file_name){
+    trans_board_to_file(file_name);
+}
+
+
 /*command always available*/
 /*TODO :My assumption is i reach here clean?*/
 void solve(char* file_name){
     state = Solve;
-    trans_file_to_board(file_name);
+    if(trans_file_to_board(file_name)){
+        print_board();
+    }
 }
 
 
@@ -34,9 +41,12 @@ void edit(char* file_name){
     state = Edit;
     if (file_name[0]=='\0'){
         create_board_size_9();
+        print_board();
     }
     else {
-        trans_file_to_board(file_name);
+        if(trans_file_to_board(file_name)){
+            print_board();
+        }
     }
 }
 
@@ -133,6 +143,7 @@ void reset(){
     }
     while(undo_head!=NULL)
         undo();
+
 }
 
 void copy_curr_to_board() {
@@ -171,6 +182,7 @@ void generate(int x, int y){
                 } else {
                     copy_curr_to_board();
                     clear_cells_random(y);
+                    print_board();
                     flag = 0;
                 }
             }
@@ -197,7 +209,8 @@ void board_set(int x, int y, int z) {
     } else if (curr_board->board[y-1][x-1].is_fixed) {
         printf("This position is fixed!\n");
         return;
-    } else { if(curr_board->board[y-1][x-1].value==z){
+    } else { if(curr_board->board[y-1][x-1].value == z){
+	  print_board();
             return;
     } else{
             command_data[0] = y-1;
@@ -212,6 +225,7 @@ void board_set(int x, int y, int z) {
             curr_board->board[y-1][x-1].value = z;
             insert_to_undo_lst(5, command_data, cell_data);
             clear_list(redo_head);
+            print_board();
     }
     }
 }
@@ -227,7 +241,8 @@ void guess(double x){
             return;
         } else{
             solver(1,1,x,0,0,0);
-	  copy_curr_to_board();
+	        copy_curr_to_board();
+	        print_board();/* TODO - check if solver doesnt work it still updates */
         }
     }
 }
@@ -483,6 +498,7 @@ void autofill(){
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
                     printf("single possible value for <%d,%d> updated: %d\n",i,j,curr_board->board[i][j].value);
                     undo_head = insert(undo_head, 15, command_data, cell_data);
+                    print_board();
                 }
             }
         }

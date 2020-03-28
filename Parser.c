@@ -263,7 +263,7 @@ void execute_command(int command_code, char** command_data) {
             redo();
             break;
         case 11:
-            trans_board_to_file(command_data[0]);
+            save(command_data[0]);
             break;
         case 12:
             if(command_data[0][0]=='\0'){

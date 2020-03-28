@@ -13,9 +13,13 @@ void free_mem_board() {
     free(curr_board);
 }
 
-void solve_mode_to_file(char* file_name){
+int solve_mode_to_file(char* file_name){
     int i,j;
     FILE *in_file = fopen(file_name, "w");
+    if (! in_file ){
+        printf("oops, file can't be read\n");
+        return 0;
+    }
     fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
     for (i = 0; i < curr_board->len; i++) {
         for (j = 0; j < curr_board->len; j++) {
@@ -32,11 +36,16 @@ void solve_mode_to_file(char* file_name){
     }
     fclose(in_file);
     free_mem_board();
+    return 1;
 }
-void edit_mode_to_file(char* file_name) {
+int edit_mode_to_file(char* file_name) {
     int i,j;
     FILE *in_file = fopen(file_name, "w");
-    fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
+    if (! in_file ){
+        printf("oops, file can't be read\n");
+        return 0;
+    }
+        fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
     for (i = 0; i < curr_board->len; i++) {
         for (j = 0; j < curr_board->len; j++) {
             fprintf(in_file, "%d", curr_board->board[i][j].value);
@@ -50,12 +59,12 @@ void edit_mode_to_file(char* file_name) {
     }
     fclose(in_file);
     free_mem_board();
+    return 1;
 }
 
 int trans_board_to_file(char* file_name){
     if(state == Solve) {
-        solve_mode_to_file(file_name);
-        return 1;
+        return solve_mode_to_file(file_name);
     } else if(state == Edit && check_erroneous_board()){
         printf("Erroneous board cannot be saved!\n");
         return 0;
@@ -66,8 +75,7 @@ int trans_board_to_file(char* file_name){
     }
     else {
         if(state == Edit) {
-            edit_mode_to_file(file_name);
-            return 1;
+            return edit_mode_to_file(file_name);
         }
         else{
             printf("save command is only available in solve or edit mode");
