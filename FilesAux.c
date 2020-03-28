@@ -97,7 +97,39 @@ void create_board_from_file(int len, int width, int height) {
         curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
     }
 }
+void create_temporary_board_from_file(int len, int width, int height) {
+    int i;
+    temporary_board = (struct curr_board *) calloc(len, sizeof(struct cell));
+    temporary_board->block_width = width;
+    temporary_board->block_height = height;
+    temporary_board->len = len ;
+    temporary_board->mark_errors = 1;
+    temporary_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
+    for (i = 0; i < len; ++i) {
+        temporary_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
+    }
+}
 
+void copy_from_temporary_to_curr_board(){
+    int i,j;
+    create_board_from_file(temporary_board->len, temporary_board->block_width, temporary_board->block_height);
+    for (i=0;i<temporary_board->len;i++){
+        for (j=0;j<temporary_board->len;j++){
+            curr_board->board[i][j].is_fixed = temporary_board->board[i][j].is_fixed;
+            curr_board->board[i][j].value = temporary_board->board[i][j].value;
+            curr_board->board[i][j].is_erroneous = temporary_board->board[i][j].is_erroneous;
+            curr_board->board[i][j].list_poss_values = temporary_board->board[i][j].list_poss_values;
+            curr_board->board[i][j].list_poss_values_len = temporary_board->board[i][j].list_poss_values_len;
+        }
+    }
+}
+
+void free_temporary_board(){
+    int i;
+    for (i = 0; i < temporary_board->len; ++i)
+        free(temporary_board->board[i]);
+    free(temporary_board);
+}
 int scan_size_from_file(FILE* in_file){
     int height, width, len;
 
@@ -108,10 +140,11 @@ int scan_size_from_file(FILE* in_file){
     }
     if( height < 1 || width<1){
         printf("oops, size smaller than 1\n");
+        return 0;
     }
     else{
         len = (height)*(width);
-        create_board_from_file(len, width, height);
+        create_temporary_board_from_file(len, width, height);
     }
     return 1;
 }
@@ -122,23 +155,27 @@ int scan_size_from_file(FILE* in_file){
 int scan_rows_from_file(FILE *in_file) {
     int i,j;
     char c;
-    for(i=0; i<curr_board->len; i++) {
+    for(i=0; i<temporary_board->len; i++) {
 
-        for (j = 0; j < curr_board->len; j++) {
+        for (j = 0; j < temporary_board->len; j++) {
 
-            if (fscanf(in_file, "%d", &curr_board->board[i][j].value) != 1) {
+            if (fscanf(in_file, "%d", &temporary_board->board[i][j].value) != 1) {
                 return 0;
             }
             if (fscanf(in_file,"%c",&c)) {
                 if (c == '.') {
-                    curr_board->board[i][j].is_fixed = 1;
+                    temporary_board->board[i][j].is_fixed = 1;
                 } else if (c == '*') {
-                    curr_board->board[i][j].is_erroneous = 1;
+                    temporary_board->board[i][j].is_erroneous = 1;
                 }
             }
         }
 
     }
+    /*return 0 if there is anything else written if the file*/
+    if (fscanf(in_file,"%c",&c))
+        if(c>=33&&c<=126)
+            return 0;
     return 1;
 
 }
@@ -158,6 +195,9 @@ int trans_file_to_board(char* file_name){
     if(! scan_rows_from_file(in_file)){
         return 0;
     }
+
+    copy_from_temporary_to_curr_board();
+    free_temporary_board();
 
     fclose(in_file);
 

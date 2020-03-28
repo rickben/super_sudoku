@@ -32,7 +32,8 @@ void solve(char* file_name){
     state = Solve;
     if(trans_file_to_board(file_name)){
         print_board();
-    }
+    } else
+        printf("File not in correct format\n");
 }
 
 
@@ -46,7 +47,8 @@ void edit(char* file_name){
     else {
         if(trans_file_to_board(file_name)){
             print_board();
-        }
+        }else
+            printf("File not in correct format\n");
     }
 }
 
