@@ -40,6 +40,7 @@ enum state state;
 Node* undo_head;
 Node* redo_head;
 
+void copy_curr_to_board();
 void solve();
 void edit();
 void mark_errors(int x);

@@ -15,7 +15,7 @@ struct curr_board{
     int block_height;
     int len;
     int mark_errors;
-}*curr_board, *gurobi_board, new_board;
+}*curr_board, new_board;
 
 typedef struct Node {
     int command_code;
@@ -24,6 +24,8 @@ typedef struct Node {
     struct Node* next; /* Pointer to next node in DLL */
     struct Node* prev; /* Pointer to previous node in DLL */
 }Node;
+
+cell** temp_board;
 
 Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_data);
 Node* remove_head(Node* head);

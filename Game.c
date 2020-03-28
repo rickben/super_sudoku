@@ -33,7 +33,7 @@ void solve(char* file_name){
 void edit(char* file_name){
     state = Edit;
     if (file_name[0]=='\0'){
-        create_board(9);
+        create_board_size_9();
     }
     else {
         trans_file_to_board(file_name);
@@ -135,8 +135,22 @@ void reset(){
         undo();
 }
 
+void copy_curr_to_board() {
+    int i, j;
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            curr_board->board[i][j].value = board[i][j].value;
+
+        }
+    }
+}
+
+
+
 
 void generate(int x, int y){
+    int flag = 1;
+    int cnt = 0;
     if (state == Edit){
         if (x < 0 || y < 0) {
             printf("Error, a number out of range (0,%d)!\n", curr_board->len);
@@ -146,10 +160,20 @@ void generate(int x, int y){
             return;
         }
         else{
-            fill_board_random(x);
-            solver(0,0,0,0,0,0,1);
-            clear_cells_random(y);
-
+            while (flag && cnt<1000) {
+                copy_curr_to_temp_board();
+                fill_board_random(x);
+                solver(0, 0, 0, 0, 0, 0);
+                if (!check_gurobi_board_full()) {
+                    curr_board->board = temp_board;
+                    flag = 1;
+                    cnt ++;
+                } else {
+                    copy_curr_to_board();
+                    clear_cells_random(y);
+                    flag = 0;
+                }
+            }
         }} else{
         printf("This command is available only in Edit mode!\n");
         return;
@@ -182,6 +206,8 @@ void board_set(int x, int y, int z) {
             cell_data = curr_board->board[y - 1][x - 1];
             if(!is_valid_set(y-1,x-1,z,curr_board)){
                 curr_board->board[y-1][x-1].is_erroneous = 1;
+            }else{
+                curr_board->board[y-1][x-1].is_erroneous = 0;
             }
             curr_board->board[y-1][x-1].value = z;
             insert_to_undo_lst(5, command_data, cell_data);
@@ -200,7 +226,8 @@ void guess(double x){
             printf("The board is erroneous\n");
             return;
         } else{
-            solver(1,1,x,0,0,0,0);
+            solver(1,1,x,0,0,0);
+	  copy_curr_to_board();
         }
     }
 }
@@ -219,18 +246,19 @@ void hint(int x, int y){
             return;
         }else if(check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
-        }else if (curr_board->board[y][x].is_fixed) {
+        }else if (curr_board->board[y-1][x-1].is_fixed) {
             printf("This position is fixed!\n");
             return;
-        } else if (curr_board->board[y][x].value != 0){
+        } else if (curr_board->board[y-1][x-1].value != 0){
             printf("This position already has a value!\n");
             return;
         } else{
-            if(solver(0,0,0,0,0,0,0) == 0){
+            solver(0,0,0,0,0,0);
+            if(!check_gurobi_board_full()){
                 printf("This board is unsolvable!\n");
                 return;
             } else{
-                printf("The value of cell <%d,%d> = %d",x,y,gurobi_board->board[y][x].value);
+                printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
             }
         }
     }
@@ -252,14 +280,14 @@ void guess_hint(int x, int y){
             return;
         }else if(check_erroneous_board() || !is_valid_board()){
             printf("The board is erroneous\n");
-        }else if (curr_board->board[y][x].is_fixed) {
+        }else if (curr_board->board[y-1][x-1].is_fixed) {
             printf("This position is fixed!\n");
             return;
-        } else if (curr_board->board[y][x].value != 0){
+        } else if (curr_board->board[y-1][x-1].value != 0){
             printf("This position already has a value!\n");
             return;
         } else{
-            if(solver(1,0,0,1,x,y,0) == 0) { /* prints the scores in solver */
+            if(solver(1,0,0,1,y-1,x-1) == 0) { /* prints the scores in solver */
                 printf("This board is unsolvable!\n");
                 return;
             }
@@ -274,8 +302,9 @@ int validate(){
     }
     if (check_erroneous_board() || !is_valid_board()){
         printf("validate not available in erroneous board\n");
+        return 0;
     }
-    solver(0,0,0,0,0,0,0);
+    solver(0,0,0,0,0,0);
     if(check_gurobi_board_full()){
         printf("Validation passed: board is solvable\n");
         return 1;
@@ -467,14 +496,3 @@ void autofill(){
 
 
 
-void create_board(int len) {
-    int i;
-    curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
-    curr_board->len = len;
-    curr_board->mark_errors = 1;
-    calc_block_size(len);
-    curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
-    for (i = 0; i < len; ++i) {
-        curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
-    }
-}

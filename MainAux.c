@@ -6,6 +6,19 @@
 #include <math.h>
 #include <stdlib.h>
 
+void copy_curr_to_temp_board() {
+    int i, j;
+    temp_board= (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
+    for (i = 0; i < curr_board->len; ++i) {
+        temp_board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
+    }
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            temp_board[i][j].value = curr_board->board[i][j].value;
+        }
+    }
+}
+
 void restart_to_init(){
     state = Init;
     free_mem_board();
@@ -154,17 +167,7 @@ int check_board_solved(){
 }
 
 
-void calc_block_size(){
-    int root = (int) (sqrt(curr_board->len));
-    while (root > 0){
-        if(curr_board->len % root == 0){
-            curr_board->block_height = root;
-            curr_board->block_height = (curr_board->len / root);
-            curr_board->block_height = (curr_board->len / root);
-        }
-        root--;
-    }
-}
+
 
 void separator_row() {
     int i=0,j=0;
@@ -268,3 +271,20 @@ bool is_valid_board(){
     return true;
 }
 
+void create_board_size_9() {
+    int i, j;
+    curr_board = (struct curr_board *) calloc(9, sizeof(struct cell));
+    curr_board->len = 9;
+    curr_board->block_height = 3;
+    curr_board->block_width = 3;
+    curr_board->mark_errors = 1;
+    curr_board->board = (struct cell **) calloc(9, sizeof(struct cell *));
+    for (i = 0; i < 9; ++i) {
+        curr_board->board[i] = (struct cell *) calloc(9, sizeof(struct cell));
+    }
+    for (i = 0; i < 9; ++i) {
+        for (j = 0; i < 9; ++i) {
+            curr_board->board[i][j].value = 0;
+        }
+    }
+}

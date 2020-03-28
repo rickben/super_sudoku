@@ -3,6 +3,8 @@
 #include "Game.h"
 #include <stdbool.h>
 
+
+void copy_curr_to_temp_board();
 int check_if_number_float(int x);
 int check_board_solved();
 void restart_to_init();
@@ -25,5 +27,6 @@ int is_fixed(int row, int col);
 int is_erroneous();
 bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix );
 bool is_valid_board();
+void create_board_size_9();
 
 #endif

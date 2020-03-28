@@ -31,5 +31,6 @@ int main() {
             }
         } else if (state == Edit){
         }
-    }
+    } 
+    return 0;
 }
