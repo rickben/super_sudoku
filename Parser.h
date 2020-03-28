@@ -7,7 +7,8 @@ extern char *strtok_r(char *, const char *, char **);
 
 bool is_digit(char c);
 bool is_dot(char c);
-bool is_integer(char* s);
+bool is_valid_path(char* path);
+int is_integer(char* s);
 bool is_double(char* s);
 int str_equals(char *str1, char *str2);
 bool is_valid_param(int command_code, char** command_data);

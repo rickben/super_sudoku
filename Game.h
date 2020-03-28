@@ -42,7 +42,7 @@ Node* redo_head;
 
 void copy_curr_to_board();
 void solve();
-void edit();
+void edit(char* file_name);
 void mark_errors(int x);
 void print_board();
 void undo();
