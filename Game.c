@@ -8,7 +8,7 @@
 #include "Stack.h"
 #include "Solver.h"
 
-
+/* change for push*/
 void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
     undo_head = insert(undo_head, command_code, command_data, cell_data);
 }

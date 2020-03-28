@@ -38,6 +38,9 @@ double    objval;
 int       i, j, v, ig, jg, count;
 int       error = 0;
 
+/* change for push*/
+
+
 /*
  * Return false if there's a cell in the same row
  * with the same value, otherwise, returns true

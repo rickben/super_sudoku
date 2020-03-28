@@ -6,6 +6,9 @@
 #include <math.h>
 #include <stdlib.h>
 
+
+/* change for push*/
+
 void copy_curr_to_temp_board() {
     int i, j;
     temp_board= (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
