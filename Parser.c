@@ -283,7 +283,7 @@ void execute_command(int command_code, char** command_data) {
                 printf("No coordinates given\n");
                 break;
             }
-            if(is_integer(command_data[0]) || is_integer(command_data[1]) == -1){
+            if(is_integer(command_data[0]) == -1 || is_integer(command_data[1]) == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
