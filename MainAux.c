@@ -158,9 +158,10 @@ void calc_block_size(){
     int root = (int) (sqrt(curr_board->len));
     while (root > 0){
         if(curr_board->len % root == 0){
-            curr_board->block_height = root;
+/*           curr_board->block_height = root;*/
             curr_board->block_height = (curr_board->len / root);
-            curr_board->block_height = (curr_board->len / root);
+            curr_board->block_width = (curr_board->len / root);
+            break;
         }
         root--;
     }

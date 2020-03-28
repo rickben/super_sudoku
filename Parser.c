@@ -179,7 +179,9 @@ void interpret_command(){
 
         if(token!=NULL){
             command_code = command_to_code(token);
-        }
+        } else{
+            return;}
+        /*this way the parser ignores empty commands*/
         token = strtok_r(rest, " \t\r", &rest);
         while (token!=NULL&& j<4){
             command_data[j]=token;
@@ -211,11 +213,6 @@ void execute_command(int command_code, char** command_data) {
             solve(command_data[0]);
             break;
         case 2:
-            if(command_data[0][0]=='\0'){
-                /*create 9*9 board*/
-                break;
-            }
-            printf("%s\n", command_data[0]);
             edit(command_data[0]);
             break;
         case 3:

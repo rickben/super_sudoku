@@ -38,6 +38,7 @@ void edit(char* file_name){
     else {
         trans_file_to_board(file_name);
     }
+    curr_board->mark_errors = 1;
 }
 
 
@@ -76,6 +77,10 @@ void undo(){
         command_data = undo_head->command_data;
         cell_data = undo_head->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+        if(!is_valid_set(command_data[0],command_data[1],cell_data.value,curr_board)){
+            curr_board->board[command_data[0]][command_data[1]].is_erroneous = 1;
+        } else
+            curr_board->board[command_data[0]][command_data[1]].is_erroneous = 0;
         insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
         undo_head = remove_head(undo_head);
         return;
@@ -85,6 +90,10 @@ void undo(){
             command_data = undo_head->command_data;
             cell_data = undo_head->cell_data;
             curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+            if(!is_valid_set(command_data[0],command_data[1],cell_data.value,curr_board)){
+                curr_board->board[command_data[0]][command_data[1]].is_erroneous = 1;
+            } else
+                curr_board->board[command_data[0]][command_data[1]].is_erroneous = 0;
             insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
             undo_head = remove_head(undo_head);
         }
@@ -111,6 +120,10 @@ void redo() {
         command_data = redo_head->command_data;
         cell_data = redo_head->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
+        if(!is_valid_set(command_data[0],command_data[1],cell_data.value,curr_board)){
+            curr_board->board[command_data[0]][command_data[1]].is_erroneous = 1;
+        } else
+            curr_board->board[command_data[0]][command_data[1]].is_erroneous = 0;
         redo_head = remove_head(redo_head);
         return;
     }
@@ -119,6 +132,10 @@ void redo() {
             command_data = redo_head->command_data;
             cell_data = redo_head->cell_data;
             curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+            if(!is_valid_set(command_data[0],command_data[1],cell_data.value,curr_board)){
+                curr_board->board[command_data[0]][command_data[1]].is_erroneous = 1;
+            } else
+                curr_board->board[command_data[0]][command_data[1]].is_erroneous = 0;
             redo_head = remove_head(redo_head);
         }
         redo_head = remove_head(redo_head);
@@ -182,7 +199,8 @@ void board_set(int x, int y, int z) {
             cell_data = curr_board->board[y - 1][x - 1];
             if(!is_valid_set(y-1,x-1,z,curr_board)){
                 curr_board->board[y-1][x-1].is_erroneous = 1;
-            }
+            } else
+                curr_board->board[y-1][x-1].is_erroneous = 0;
             curr_board->board[y-1][x-1].value = z;
             insert_to_undo_lst(5, command_data, cell_data);
             clear_list(redo_head);
