@@ -161,6 +161,10 @@ int scan_rows_from_file(FILE *in_file) {
 
             if (fscanf(in_file, "%d", &temporary_board->board[i][j].value) != 1) {
                 return 0;
+            } else{
+                if (temporary_board->board[i][j].value != 0) {
+                    temporary_board->board[i][j].is_fixed = 1;
+                }
             }
             if (fscanf(in_file,"%c",&c)) {
                 if (c == '.') {
@@ -174,8 +178,10 @@ int scan_rows_from_file(FILE *in_file) {
     }
     /*return 0 if there is anything else written if the file*/
     if (fscanf(in_file,"%c",&c))
-        if(c>=33&&c<=126)
+        if(c>=33&&c<=126) {
+            printf("this is c:%c",c);
             return 0;
+        }
     return 1;
 
 }

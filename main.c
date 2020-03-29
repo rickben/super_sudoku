@@ -18,7 +18,6 @@ int main() {
     while (1){
         printf("Please enter a command:\n");
         interpret_command();
-	board_print();
         if(state == Solve){
             if(check_board_solved()){
                 if(check_erroneous_board()){

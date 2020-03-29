@@ -7,7 +7,31 @@
 #include <stdlib.h>
 
 
-/* change for push*/
+void update_list_pos_vals(int i, int j, int num){
+    int k, flag = 0, cnt = 0;
+    int* new_list_poss;
+    for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
+        if (curr_board->board[i][j].list_poss_values[k] == num){
+            curr_board->board[i][j].list_poss_values[k] = 0;
+            flag = 1;
+            break;
+        }
+    }
+    if (flag){
+        new_list_poss = malloc((curr_board->board[i][j].list_poss_values_len-1)*sizeof(int));
+        for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
+            if (curr_board->board[i][j].list_poss_values[k] == 0) {
+                continue;
+            } else {
+                new_list_poss[cnt] = curr_board->board[i][j].list_poss_values[k];
+                cnt ++;
+            }
+        }
+        curr_board->board[i][j].list_poss_values_len --;
+        curr_board->board[i][j].list_poss_values = new_list_poss;
+    }
+}
+
 
 void copy_curr_to_temp_board() {
     int i, j;
@@ -42,24 +66,93 @@ int check_erroneous_board(){
     return 0;
 }
 
+int check_num_of_empty_cells(){
+    int res = 0, i, j;
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            if (curr_board->board[i][j].value == 0){
+                res ++;
+            }
+        }
+    }
+    return res;
+}
+
+int set_random_val(int row, int col){
+    int  v, val, num_pos = 0, cnt = 0;
+    int* pos_val;
+    pos_val = (int*) malloc(curr_board->len*sizeof(int));
+    for (v = 0; v < curr_board->len; ++ v) {
+        if (is_valid_set(row,col,v+1,curr_board)){
+            pos_val[v] = 1;
+            num_pos ++;
+        } else {
+            pos_val[v] = 0;
+        }
+    }
+    if (num_pos == 0){
+        return 0;
+    }
+    val = rand() % num_pos;
+    for (v = 0; v < curr_board->len; ++ v) {
+        if (pos_val[v] == 1){
+            if (cnt == val){
+                curr_board->board[row][col].value = val;
+                curr_board->board[row][col].is_fixed = 0;
+                break;
+            }
+            cnt++;
+        }
+    }
+    return 1;
+}
+
+void find_random_empty_cell(int* row, int* col, int num_empty){
+    int ** all_empty_cells;
+    int i, j, cnt = 0;
+    all_empty_cells = (int**)malloc(num_empty*sizeof(int*));
+    for (i = 0; i < num_empty; ++i) {
+        all_empty_cells[i] = (int*)malloc(2*sizeof(int));
+    }
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            if (curr_board->board[i][j].value == 0){
+                all_empty_cells[cnt][0] = i;
+                all_empty_cells[cnt][1] = j;
+                cnt ++;
+            }
+        }
+    }
+    cnt = rand() % num_empty;
+    *row = all_empty_cells[cnt][0];
+    *col = all_empty_cells[cnt][1];
+}
+
+
 /*
  * col->row->value
  * */
-void fill_board_random(int x){
-    int col,row,val;
-while (x>0){
-    col = rand()%curr_board->len;
-    row = rand()%curr_board->len;
-    val = rand()%curr_board->len;
-    curr_board->board[row][col].value = val;
-    /*
-    //curr_board->board[row][col].is_fixed = 1;??*/
-    --x;
-}
+int fill_board_random(int x){
+    int col, row, num;
+    num = check_num_of_empty_cells();
+    if (num < x){
+        printf("There are less then %d empty cells, generate can't finish",x);
+        return -1;
+    }
+    while (x>0){
+        find_random_empty_cell(&row,&col,num);
+        /* Find all possible values in this position*/
+        if (set_random_val(row,col) == 0){
+            return 0;
+        }
+        --x;
+    }
+    return 1;
 }
 
 void clear_cells_random(int y){
     int col, row;
+    y = (curr_board->len * curr_board->len) - y;
     while (y>0){
         col = rand()%curr_board->len;
         row = rand()%curr_board->len;
@@ -69,10 +162,7 @@ void clear_cells_random(int y){
     }
 }
 
-/*
-int check_if_number_float(int x){
 
- }*/
 
 
 /*
@@ -206,7 +296,7 @@ void cell_row(struct cell* arr, int num_row) {
         } else {
             printf(" %2d", arr[j].value);
         }
-        if(curr_board->board[num_row][j].is_fixed){
+        if(curr_board->board[num_row][j].is_fixed && state == Solve){
             printf(".");
         }
         if((curr_board->board[num_row][j].is_erroneous) && (curr_board->mark_errors) && (state == Solve)){

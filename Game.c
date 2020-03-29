@@ -32,8 +32,9 @@ void solve(char* file_name){
     state = Solve;
     if(trans_file_to_board(file_name)){
         print_board();
-    } else
+    } else {
         printf("File not in correct format\n");
+    }
 }
 
 
@@ -174,7 +175,7 @@ void copy_curr_to_board() {
 
 void generate(int x, int y){
     int flag = 1;
-    int cnt = 0;
+    int cnt = 0 ,num;
     if (state == Edit){
         if (x < 0 || y < 0) {
             printf("Error, a number out of range (0,%d)!\n", curr_board->len);
@@ -186,20 +187,32 @@ void generate(int x, int y){
         else{
             while (flag && cnt<1000) {
                 copy_curr_to_temp_board();
-                fill_board_random(x);
-                solver(0, 0, 0, 0, 0, 0);
-                if (!check_gurobi_board_full()) {
+                num = fill_board_random(x);
+                if (num == 0) { /* No legal value for one of the X cells */
                     curr_board->board = temp_board;
                     flag = 1;
-                    cnt ++;
-                } else {
-                    copy_curr_to_board();
-                    clear_cells_random(y);
-                    print_board();
+                    cnt++;
+                } else if (num == -1) { /* There are less than x empty cells*/
+                    return;
+                } else { /* No error */
                     flag = 0;
                 }
+                if (!flag) { /* No error */
+                    solver(0, 0, 0, 0, 0, 0);
+                    if (!check_gurobi_board_full()) {
+                        curr_board->board = temp_board;
+                        flag = 1;
+                        cnt++;
+                    } else {
+                        copy_curr_to_board();
+                        clear_cells_random(y);
+                        print_board();
+                        flag = 0;
+                    }
+                }
             }
-        }} else{
+        }
+        } else{
         printf("This command is available only in Edit mode!\n");
         return;
     }
@@ -219,7 +232,7 @@ void board_set(int x, int y, int z) {
     } else if (x > curr_board->len  || y > curr_board->len || z > curr_board->len) {
         printf("Error, a number out of range (1,%d)!\n", curr_board->len);
         return;
-    } else if (curr_board->board[y-1][x-1].is_fixed) {
+    } else if (curr_board->board[y-1][x-1].is_fixed && state == Solve) {
         printf("This position is fixed!\n");
         return;
     } else { if(curr_board->board[y-1][x-1].value == z){
@@ -508,7 +521,7 @@ void autofill(){
                     command_data[1] = j;
                     command_data[2] = curr_board->board[i][j].value;
                     cell_data = curr_board->board[i][j];
-                    curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
+                    board_set(i,j,curr_board->board[i][j].list_poss_values[0]);
                     printf("single possible value for <%d,%d> updated: %d\n",i,j,curr_board->board[i][j].value);
                     undo_head = insert(undo_head, 15, command_data, cell_data);
                     print_board();
