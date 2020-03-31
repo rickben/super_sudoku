@@ -156,9 +156,11 @@ void clear_cells_random(int y){
     while (y>0){
         col = rand()%curr_board->len;
         row = rand()%curr_board->len;
-        curr_board->board[row][col].value = 0;
-        curr_board->board[row][col].is_fixed = 0;
-        --y;
+        if (curr_board->board[row][col].value != 0) {
+            curr_board->board[row][col].value = 0;
+            curr_board->board[row][col].is_fixed = 0;
+            --y;
+        }
     }
 }
 

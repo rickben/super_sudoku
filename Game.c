@@ -70,8 +70,9 @@ void print_board(){
     if(state != Solve && state != Edit){
         printf("print board only available in solve or edit mode\n");
         return;
+    } else {
+        board_print();
     }
-    board_print();
 }
 int undo_action(){
     int* command_data;
@@ -170,12 +171,38 @@ void copy_curr_to_board() {
     }
 }
 
+int generate_loop(int x, int y){
+    int cnt = 0, num;
+    while (cnt < 1000) {
+        copy_curr_to_temp_board();
+        num = fill_board_random(x);
+        if (num == 0) { /* No legal value for one of the X cells */
+            curr_board->board = temp_board; /* Return to previous board - need to start over*/
+            cnt++;
+        } else if (num == -1) { /* There are less than x empty cells*/
+            printf("Generate has failed - There are less than x empty cells\n");
+            return 0; /* Generate had failed*/
+        } else { /* No error */
+            solver(0, 0, 0, 0, 0, 0);
+            if (!check_gurobi_board_full()) {
+                curr_board->board = temp_board;
+                cnt++;
+            } else {
+                copy_curr_to_board();
+                clear_cells_random(y);
+                print_board();
+                return 1;
+            }
+        }
+    }
+    printf("Generate has failed - After 1000 iterations - the board isn't solvable\n");
+    return 0;
+}
+
 
 
 
 void generate(int x, int y){
-    int flag = 1;
-    int cnt = 0 ,num;
     if (state == Edit){
         if (x < 0 || y < 0) {
             printf("Error, a number out of range (0,%d)!\n", curr_board->len);
@@ -185,32 +212,7 @@ void generate(int x, int y){
             return;
         }
         else{
-            while (flag && cnt<1000) {
-                copy_curr_to_temp_board();
-                num = fill_board_random(x);
-                if (num == 0) { /* No legal value for one of the X cells */
-                    curr_board->board = temp_board;
-                    flag = 1;
-                    cnt++;
-                } else if (num == -1) { /* There are less than x empty cells*/
-                    return;
-                } else { /* No error */
-                    flag = 0;
-                }
-                if (!flag) { /* No error */
-                    solver(0, 0, 0, 0, 0, 0);
-                    if (!check_gurobi_board_full()) {
-                        curr_board->board = temp_board;
-                        flag = 1;
-                        cnt++;
-                    } else {
-                        copy_curr_to_board();
-                        clear_cells_random(y);
-                        print_board();
-                        flag = 0;
-                    }
-                }
-            }
+            generate_loop(x,y);
         }
         } else{
         printf("This command is available only in Edit mode!\n");
