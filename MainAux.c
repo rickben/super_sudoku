@@ -32,13 +32,25 @@ void update_list_pos_vals(int i, int j, int num){
     }
 }
 
+void free_temp_board(){
+    int i;
+    for (i = 0; i < curr_board->len; ++i) {
+        free(temp_board[i]);
+    }
+    free(temp_board);
+}
 
-void copy_curr_to_temp_board() {
-    int i, j;
+
+void init_temp_board(){
+    int i;
     temp_board= (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
     for (i = 0; i < curr_board->len; ++i) {
         temp_board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
     }
+}
+
+void copy_curr_to_temp_board() {
+    int i, j;
     for (i = 0; i < curr_board->len; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
             temp_board[i][j].value = curr_board->board[i][j].value;
@@ -265,7 +277,15 @@ int check_board_solved(){
 
 
 void separator_row() {
-    int i=0,j=0;
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i) {
+        printf("----");
+    }
+    for(j=0; j<curr_board->block_width; j++) {
+        printf("-");
+    }
+    printf("-\n");
+    /*
     printf("-");
     for(; i<curr_board->block_height; i++){
         printf("--");
@@ -275,7 +295,7 @@ void separator_row() {
         printf("---");
         j=0;
     }
-    printf("\n");
+    printf("\n");*/
 }
 
 void update_erroneous_cells(){
@@ -284,11 +304,33 @@ void update_erroneous_cells(){
 
 
 
-void cell_row(struct cell* arr, int num_row) {
+void cell_row(struct cell* arr) {
     int j;
     if(state == Edit || (state == Solve && curr_board->mark_errors)){
         update_erroneous_cells();
     }
+    for (j = 0; j < curr_board->len; j++) {
+        if (j % curr_board->block_width == 0) {
+            printf("|");
+        }
+        if(arr[j].value==0){
+            printf("   ");
+        } else {
+            printf(" %2d", arr[j].value);
+        }
+        if((arr[j].is_fixed && state == Solve) || (arr[j].is_erroneous && (((curr_board->mark_errors) && (state == Solve)) || (state == Edit)))){
+            if(arr[j].is_fixed && state == Solve){
+                printf(".");
+            } else {
+                printf("*");
+            }
+        } else {
+            printf(" ");
+        }
+    }
+    printf("|\n");
+
+    /*
     for (j = 0; j < curr_board->len; j++) {
         if (j % curr_board->block_width == 0) {
             printf("|");
@@ -313,7 +355,7 @@ void cell_row(struct cell* arr, int num_row) {
 
     }
     printf("|\n");
-
+*/
 }
 
 
@@ -322,7 +364,7 @@ void board_print() {
     separator_row(curr_board->block_height, curr_board->block_width);
     for (i = 0; i < curr_board->block_width; i++) {
         for (j = 0; j < curr_board->block_height; j++) {
-            cell_row(curr_board->board[k],k);
+            cell_row(curr_board->board[k]);
             k++;
         }
         separator_row(curr_board->block_height, curr_board->block_width);

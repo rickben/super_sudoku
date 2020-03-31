@@ -5,7 +5,7 @@
 cell      **board;
 
 int check_gurobi_board_full();
-void copy_curr_board_to_board();
+void copy_curr_to_board();
 int in_row_gurobi(int row, int num);
 int in_col_gurobi(int col, int num);
 void copy_curr_board_to_gurobi_board();

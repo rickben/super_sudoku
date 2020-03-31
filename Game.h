@@ -41,7 +41,7 @@ Node* undo_head;
 Node* redo_head;
 
 void save(char* file_name);
-void copy_curr_to_board();
+void copy_board_to_cur();
 void solve(char* file_name);
 void edit(char* file_name);
 void mark_errors(int x);

@@ -389,7 +389,7 @@ int check_gurobi_board_full(){
     return 1;
 }
 
-void copy_board_to_curr() {
+void copy_curr_to_board() {
     int i, j;
     board = (struct cell **) calloc(DIM, sizeof(struct cell *));
     for (i = 0; i < DIM; ++i) {
@@ -405,7 +405,7 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     DIM = curr_board->len;
     width = curr_board->block_width;
     height = curr_board->block_height;
-    copy_board_to_curr();
+    copy_curr_to_board();
 
     var_size = check_num_var(board);
 
@@ -437,6 +437,8 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     if (write_model()) goto QUIT;
     if (capture_sol_info()) goto QUIT;
     res = optimization_complete(is_LP, is_guess, thresholdX, is_guess_hint, x, y);
+    if (!res) goto QUIT;
+    return 1;
 
     QUIT:
     error_report();
@@ -454,7 +456,7 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     for (i = 0; i < DIM; ++i) {
         free(board[i]);
     }*/
-    return res;
+    return 0;
 }
 
 

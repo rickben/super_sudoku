@@ -161,7 +161,7 @@ void reset(){
         print_board();
 }
 
-void copy_curr_to_board() {
+void copy_board_to_cur() {
     int i, j;
     for (i = 0; i < curr_board->len; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
@@ -173,6 +173,7 @@ void copy_curr_to_board() {
 
 int generate_loop(int x, int y){
     int cnt = 0, num;
+    init_temp_board();
     while (cnt < 1000) {
         copy_curr_to_temp_board();
         num = fill_board_random(x);
@@ -181,21 +182,24 @@ int generate_loop(int x, int y){
             cnt++;
         } else if (num == -1) { /* There are less than x empty cells*/
             printf("Generate has failed - There are less than x empty cells\n");
+            free_temp_board();
             return 0; /* Generate had failed*/
         } else { /* No error */
-            solver(0, 0, 0, 0, 0, 0);
-            if (!check_gurobi_board_full()) {
+            num = solver(0, 0, 0, 0, 0, 0);
+            if (!check_gurobi_board_full() || !num) {
                 curr_board->board = temp_board;
                 cnt++;
             } else {
-                copy_curr_to_board();
+                copy_board_to_cur();
                 clear_cells_random(y);
                 print_board();
+                free_temp_board();
                 return 1;
             }
         }
     }
     printf("Generate has failed - After 1000 iterations - the board isn't solvable\n");
+    free_temp_board();
     return 0;
 }
 
@@ -268,8 +272,10 @@ void guess(double x){
             printf("The board is erroneous\n");
             return;
         } else{
-            solver(1,1,x,0,0,0);
-	        copy_curr_to_board();
+            if(!solver(1,1,x,0,0,0)){
+                printf("The board isn't solvable, guess can't finish\n");
+            }
+	        copy_board_to_cur();
 	        print_board();/* TODO - check if solver doesnt work it still updates */
         }
     }
@@ -444,7 +450,7 @@ void new_board_print(struct curr_board new_board){
     separator_row(curr_board->block_height, curr_board->block_width);
     for (i = 0; i < curr_board->block_width; i++) {
         for (j = 0; j < curr_board->block_height; j++) {
-            cell_row(new_board.board[k],k);
+            cell_row(new_board.board[k]);
             k++;
         }
         separator_row(curr_board->block_height, curr_board->block_width);

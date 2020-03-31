@@ -4,6 +4,8 @@
 #include <stdbool.h>
 
 void update_list_pos_vals(int i, int j, int num);
+void init_temp_board();
+void free_temp_board();
 void copy_curr_to_temp_board();
 int check_if_number_float(int x);
 int check_board_solved();
@@ -20,7 +22,7 @@ void clear_cells_random(int y);
 void print_start_program();
 void calc_block_size();
 void separator_row();
-void cell_row(struct cell* arr, int num_row);
+void cell_row(struct cell* arr);
 void board_print();
 void set_values_board();
 int is_fixed(int row, int col);
