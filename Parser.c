@@ -216,7 +216,16 @@ void execute_command(int command_code, char** command_data) {
             edit(command_data[0]);
             break;
         case 3:
-            mark_errors((command_data[0][0] - '0'));
+            if(command_data[0][0]=='\0'){
+                printf("No parameter given\n");
+                break;
+            }
+            x = is_integer(command_data[0]);
+            if(x == -1){
+                printf("The parameter isn't legal\n");
+                break;
+            }
+            mark_errors(x);
             break;
         case 4:
             print_board();
@@ -240,6 +249,10 @@ void execute_command(int command_code, char** command_data) {
             validate();
             break;
         case 7:
+            if(command_data[0][0]=='\0'){
+                printf("No parameter given\n");
+                break;
+            }
             if (!is_double(command_data[0])){
                 printf("The parameter isn't legal (not double)\n");
                 break;
@@ -248,12 +261,16 @@ void execute_command(int command_code, char** command_data) {
             guess(d);
             break;
         case 8:
-            if(is_integer(command_data[0])  == -1|| is_integer(command_data[1]) == -1){
+            if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
+                printf("No parameters given\n");
+                break;
+            }
+            x = is_integer(command_data[0]);
+            y = is_integer(command_data[1]);
+            if( x == -1|| y == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
-            x = (command_data[0][0] - '0');
-            y = (command_data[1][0] - '0');
             generate(x,y);
             break;
         case 9:
@@ -263,32 +280,40 @@ void execute_command(int command_code, char** command_data) {
             redo();
             break;
         case 11:
+            if(command_data[0][0]=='\0'){
+                printf("No path given\n");
+                break;
+            }
+            if(!is_valid_path(command_data[0])){
+                printf("The parameter isn't legal (invalid path)\n");
+                break;
+            }
             save(command_data[0]);
             break;
         case 12:
-            if(command_data[0][0]=='\0'){
+            if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
                 printf("No coordinates given\n");
                 break;
             }
-            if(is_integer(command_data[0]) == -1 || is_integer(command_data[1]) == -1){
+            x = is_integer(command_data[0]);
+            y = is_integer(command_data[1]);
+            if(x == -1 || y == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
-            x = (command_data[0][0] - '0');
-            y = (command_data[1][0] - '0');
             hint(x,y);
             break;
         case 13:
-            if(command_data[0][0]=='\0'){
+            if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
                 printf("No coordinates given\n");
                 break;
             }
-            if(is_integer(command_data[0]) == -1 || is_integer(command_data[1]) == -1){
+            x = is_integer(command_data[0]);
+            y = is_integer(command_data[1]);
+            if(x == -1 || y == -1){
                 printf("The parameter isn't legal (not int)\n");
                 break;
             }
-            x = (command_data[0][0] - '0');
-            y = (command_data[1][0] - '0');
             guess_hint(x,y);
             break;
         case 14:
