@@ -335,7 +335,7 @@ void execute_command(int command_code, char** command_data) {
                 printf("No coordinates given\n");
                 break;
             }
-            x = is_integer(command_data[0]);//
+            x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
             if(x == -1 || y == -1){
                 printf("The parameter isn't legal (not int)\n");
@@ -369,7 +369,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 15:
             if (state != Solve){
-                printf("This command is only available in Solve or Edit mode\n");
+                printf("This command is only available in Solve mode\n");
                 break;
             }
             autofill();

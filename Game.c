@@ -116,7 +116,6 @@ void undo(){
 
 int redo_action(){
     int* command_data;
-    cell cell_data;
     if (state != Solve && state != Edit) {
         printf("undo only available in solve or edit mode\n");
         return 0;
@@ -127,7 +126,6 @@ int redo_action(){
     }
     if(redo_head->command_code == 5){
         command_data = redo_head->command_data;
-        cell_data = redo_head->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
         redo_head = remove_head(redo_head);
         return 1;
@@ -135,8 +133,7 @@ int redo_action(){
     if(redo_head->command_code == 15 || redo_head->command_code == -1){
         while (redo_head->command_code != -1){
             command_data = redo_head->command_data;
-            cell_data = redo_head->cell_data;
-            curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
+            curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
             redo_head = remove_head(redo_head);
         }
         redo_head = remove_head(redo_head);
@@ -261,7 +258,6 @@ void board_set(int x, int y, int z) {
     }
     }
 }
-
 
 void guess(double x){
     if(state != Solve){
@@ -429,35 +425,68 @@ void num_solutions(){
     printf("The number of solutions for the current board is %ld\n",count);
 }
 
+void calculate_list_possible_values(){
+    int i,j, len = 0, cell_value, possible_value;
+    for (i = 0; i < curr_board->len ; ++i) {
+        for (j = 0; j < curr_board->len ; ++j){
+            len = 0;
+            cell_value = curr_board->board[i][j].value;
+            curr_board->board[i][j].list_poss_values = calloc(curr_board->len, sizeof(int));
+            for ( possible_value = 1; possible_value <= curr_board->len; ++possible_value) {
+                if(possible_value!=cell_value){
+                    curr_board->board[i][j].value=possible_value;
+                    if( is_valid_board()){
+                        curr_board->board[i][j].list_poss_values[len] = possible_value;
+                        len++;
+                    }
+                }
+            }
+            curr_board->board[i][j].list_poss_values_len = len;
+            curr_board->board[i][j].value = cell_value;
+        }
+    }
+}
+
+/*void free_list_possible_values(){
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            free(curr_board->board[i][j].list_poss_values_len);
+            curr_board->board[i][j].list_poss_values_len = 0;
+        }
+    }
+}*/
+
 void autofill(){
     int i,j;
     int *command_data = malloc(sizeof(int) * 3);
     cell cell_data = {0,0,0,0, NULL};
-    if (state == Solve) {
-        if(check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
-            return;
-        }
-        for (i = 0; i < curr_board->len ; ++i) {
-            for (j = 0; j < curr_board->len ; ++j) {
-                if (curr_board->board[i][j].list_poss_values_len==1){
-                    command_data[0] = i;
-                    command_data[1] = j;
-                    command_data[2] = curr_board->board[i][j].value;
-                    cell_data = curr_board->board[i][j];
-                    board_set(i,j,curr_board->board[i][j].list_poss_values[0]);
-                    printf("single possible value for <%d,%d> updated: %d\n",i,j,curr_board->board[i][j].value);
-                    undo_head = insert(undo_head, 15, command_data, cell_data);
-                    print_board();
-                }
-            }
-        }
-        undo_head = insert(undo_head, -1, command_data, cell_data);
-        clear_list(redo_head);
-    } else {
-        printf("This command is only available in Solve or Edit mode\n");
+    if(check_erroneous_board() || !is_valid_board()){
+        printf("The board is erroneous\n");
         return;
     }
+    calculate_list_possible_values();
+    undo_head = insert(undo_head, -1, command_data, cell_data);
+    for (i = 0; i < curr_board->len ; ++i) {
+        for (j = 0; j < curr_board->len ; ++j) {
+            if (curr_board->board[i][j].list_poss_values_len==1&&!curr_board->board[i][j].is_fixed){
+                command_data[0] = i;
+                command_data[1] = j;
+                command_data[2] = curr_board->board[i][j].value;
+                cell_data = curr_board->board[i][j];
+                if(!is_valid_set(i,j,curr_board->board[i][j].list_poss_values[0], curr_board))
+                    curr_board->board[i][j].is_erroneous = 1;
+                else
+                    curr_board->board[i][j].is_erroneous = 0;
+                curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
+                printf("single possible value for <%d,%d> updated: %d\n",i+1,j+1,curr_board->board[i][j].value);
+                insert_to_undo_lst(15, command_data, cell_data);
+                command_data = malloc(sizeof(int) * 3);
+            }
+        }
+    }
+    clear_list(redo_head);
+    print_board();
 }
 
 
