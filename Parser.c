@@ -335,7 +335,7 @@ void execute_command(int command_code, char** command_data) {
                 printf("No coordinates given\n");
                 break;
             }
-            x = is_integer(command_data[0]);
+            x = is_integer(command_data[0]);//
             y = is_integer(command_data[1]);
             if(x == -1 || y == -1){
                 printf("The parameter isn't legal (not int)\n");
