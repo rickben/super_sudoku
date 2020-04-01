@@ -17,7 +17,9 @@ void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
 }
 void my_exit(){
     printf("Exiting...\n");
-    free_mem_board();
+    if (state == Solve || state == Edit) {
+        free_mem_board();
+    }
     exit(-1);
 }
 
@@ -27,10 +29,8 @@ void save(char* file_name){
 
 
 /*command always available*/
-/*TODO :My assumption is i reach here clean?*/
 void solve(char* file_name){
-    state = Solve;
-    if(trans_file_to_board(file_name)){
+    if(trans_file_to_board(file_name, Solve)){
         print_board();
     } else {
         printf("File not in correct format\n");
@@ -40,13 +40,13 @@ void solve(char* file_name){
 
 /*command always available*/
 void edit(char* file_name){
-    state = Edit;
     if (file_name[0]=='\0'){
+        state = Edit;
         create_board_size_9();
         print_board();
     }
     else {
-        if(trans_file_to_board(file_name)){
+        if(trans_file_to_board(file_name,Edit)){
             print_board();
         }else
             printf("File not in correct format\n");
@@ -178,7 +178,7 @@ int generate_loop(int x, int y){
         copy_curr_to_temp_board();
         num = fill_board_random(x);
         if (num == 0) { /* No legal value for one of the X cells */
-            curr_board->board = temp_board; /* Return to previous board - need to start over*/
+            copy_temp_board_to_curr(); /* Return to previous board - need to start over*/
             cnt++;
         } else if (num == -1) { /* There are less than x empty cells*/
             printf("Generate has failed - There are less than x empty cells\n");
@@ -187,7 +187,7 @@ int generate_loop(int x, int y){
         } else { /* No error */
             num = solver(0, 0, 0, 0, 0, 0);
             if (!check_gurobi_board_full() || !num) {
-                curr_board->board = temp_board;
+                copy_temp_board_to_curr();
                 cnt++;
             } else {
                 copy_board_to_cur();

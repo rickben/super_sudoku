@@ -7,6 +7,7 @@ void update_list_pos_vals(int i, int j, int num);
 void init_temp_board();
 void free_temp_board();
 void copy_curr_to_temp_board();
+void copy_temp_board_to_curr();
 void restart_to_init();
 int check_erroneous_board();
 void print_start_program();

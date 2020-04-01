@@ -57,6 +57,15 @@ void copy_curr_to_temp_board() {
     }
 }
 
+void copy_temp_board_to_curr(){
+    int i, j;
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            curr_board->board[i][j].value = temp_board[i][j].value;
+        }
+    }
+}
+
 void restart_to_init(){
     state = Init;
     free_mem_board();

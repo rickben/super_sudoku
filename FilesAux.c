@@ -188,14 +188,14 @@ int scan_rows_from_file(FILE *in_file) {
 
 }
 
-int trans_file_to_board(char* file_name){
+int trans_file_to_board(char* file_name, enum state State){
     FILE* in_file = fopen(file_name, "r");
     if (! in_file )
     {
         printf("oops, file can't be read\n");
         return 0;
     }
-
+    state = State;
     if(! scan_size_from_file(in_file) ){
         return 0;
     }
