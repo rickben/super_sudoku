@@ -216,6 +216,10 @@ void execute_command(int command_code, char** command_data) {
             edit(command_data[0]);
             break;
         case 3:
+            if (state != Solve){
+                printf("mark errors only available in solve mode\n");
+                break;
+            }
             if(command_data[0][0]=='\0'){
                 printf("No parameter given\n");
                 break;
@@ -228,9 +232,17 @@ void execute_command(int command_code, char** command_data) {
             mark_errors(x);
             break;
         case 4:
+            if(state != Solve && state != Edit) {
+                printf("print board only available in solve or edit mode\n");
+                break;
+            }
             print_board();
             break;
         case 5:
+            if (state != Solve && state != Edit) {
+                printf("set only available in solve or edit mode\n");
+                break;
+            }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'||command_data[2][0]=='\0'){
                 printf("Missing coordinates\n");
                 break;
@@ -246,9 +258,17 @@ void execute_command(int command_code, char** command_data) {
             board_set(x,y,z);
             break;
         case 6:
+            if(state!=Solve && state != Edit){
+                printf("validate only available in solve or edit mode\n");
+                break;
+            }
             validate();
             break;
         case 7:
+            if(state != Solve){
+                printf("This command is only available in Solve mode\n");
+                break;
+            }
             if(command_data[0][0]=='\0'){
                 printf("No parameter given\n");
                 break;
@@ -261,6 +281,10 @@ void execute_command(int command_code, char** command_data) {
             guess(d);
             break;
         case 8:
+            if (state!=Edit){
+                printf("This command is available only in Edit mode!\n");
+                break;
+            }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
                 printf("No parameters given\n");
                 break;
@@ -274,9 +298,17 @@ void execute_command(int command_code, char** command_data) {
             generate(x,y);
             break;
         case 9:
+            if(state!=Solve && state != Edit){
+                printf("undo only available in solve or edit mode\n");
+                break;
+            }
             undo();
             break;
         case 10:
+            if (state != Solve && state != Edit) {
+                printf("undo only available in solve or edit mode\n");
+                break;
+            }
             redo();
             break;
         case 11:
@@ -291,6 +323,10 @@ void execute_command(int command_code, char** command_data) {
             save(command_data[0]);
             break;
         case 12:
+            if(state != Solve) {
+                printf("This command is only available in Solve mode\n");
+                break;
+            }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
                 printf("No coordinates given\n");
                 break;
@@ -304,6 +340,10 @@ void execute_command(int command_code, char** command_data) {
             hint(x,y);
             break;
         case 13:
+            if(state != Solve) {
+                printf("This command is only available in Solve mode\n");
+                break;
+            }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
                 printf("No coordinates given\n");
                 break;
@@ -320,9 +360,17 @@ void execute_command(int command_code, char** command_data) {
             printf("The number of solutions for the current board is %ld\n",num_solutions());
             break;
         case 15:
+            if (state != Solve){
+                printf("This command is only available in Solve or Edit mode\n");
+                break;
+            }
             autofill();
             break;
         case 16:
+            if (state != Solve && state != Edit) {
+                printf("reset only available in solve or edit mode\n");
+                break;
+            }
             reset();
             break;
         case 17:
