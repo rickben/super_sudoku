@@ -222,8 +222,8 @@ void execute_command(int command_code, char** command_data) {
             print_board();
             break;
         case 5:
-            if(command_data[0][0]=='\0'){
-                printf("No coordinates given\n");
+            if(command_data[0][0]=='\0'||command_data[1][0]=='\0'||command_data[2][0]=='\0'){
+                printf("Missing coordinates\n");
                 break;
             }
             /* translate strings of numbers to integers */
