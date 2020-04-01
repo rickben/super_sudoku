@@ -369,7 +369,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 15:
             if (state != Solve){
-                printf("This command is only available in Solve or Edit mode\n");
+                printf("This command is only available in Solve mode\n");
                 break;
             }
             autofill();
