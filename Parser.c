@@ -312,6 +312,10 @@ void execute_command(int command_code, char** command_data) {
             redo();
             break;
         case 11:
+            if (state != Solve && state != Edit){
+                printf("This command is only available in Solve or Edit mode\n");
+                break;
+            }
             if(command_data[0][0]=='\0'){
                 printf("No path given\n");
                 break;
@@ -357,7 +361,11 @@ void execute_command(int command_code, char** command_data) {
             guess_hint(x,y);
             break;
         case 14:
-            printf("The number of solutions for the current board is %ld\n",num_solutions());
+            if (state != Solve && state != Edit){
+                printf("This command is only available in Solve or Edit mode\n");
+                break;
+            }
+            num_solutions();
             break;
         case 15:
             if (state != Solve){
