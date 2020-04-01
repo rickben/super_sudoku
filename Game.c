@@ -209,10 +209,10 @@ int generate_loop(int x, int y){
 void generate(int x, int y){
     if (state == Edit){
         if (x < 0 || y < 0) {
-            printf("Error, a number out of range (0,%d)!\n", curr_board->len);
+            printf("Error, all numbers should be positive!\n");
             return;
-        } else if (x > curr_board->len || y > curr_board->len) {
-            printf("Error, a number out of range (0,%d)!\n", curr_board->len);
+        } else if (x > curr_board->len *curr_board->len || y > curr_board->len *curr_board->len) {
+            printf("Error, a number out of range (0,%d)!\n", curr_board->len *curr_board->len);
             return;
         }
         else{
@@ -283,6 +283,7 @@ void guess(double x){
 
 
 void hint(int x, int y){
+    int num;
     if(state != Solve){
         printf("This command is only available in Solve mode\n");
         return;
@@ -302,8 +303,8 @@ void hint(int x, int y){
             printf("This position already has a value!\n");
             return;
         } else{
-            solver(0,0,0,0,0,0);
-            if(!check_gurobi_board_full()){
+            num = solver(0,0,0,0,0,0);
+            if(!check_gurobi_board_full() || !num){
                 printf("This board is unsolvable!\n");
                 return;
             } else{
@@ -336,7 +337,7 @@ void guess_hint(int x, int y){
             printf("This position already has a value!\n");
             return;
         } else{
-            if(solver(1,0,0,1,y-1,x-1) == 0) { /* prints the scores in solver */
+            if(!solver(1,0,0,1,y-1,x-1)) { /* prints the scores in solver */
                 printf("This board is unsolvable!\n");
                 return;
             }
@@ -345,6 +346,7 @@ void guess_hint(int x, int y){
 }
 
 int validate(){
+    int num;
     if(state!=Solve && state != Edit){
         printf("validate only available in solve or edit mode\n");
         return 0;
@@ -353,8 +355,8 @@ int validate(){
         printf("validate not available in erroneous board\n");
         return 0;
     }
-    solver(0,0,0,0,0,0);
-    if(check_gurobi_board_full()){
+    num = solver(0,0,0,0,0,0);
+    if(check_gurobi_board_full() || num){
         printf("Validation passed: board is solvable\n");
         return 1;
     }
