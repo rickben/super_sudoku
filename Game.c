@@ -364,110 +364,24 @@ int validate(){
     }
 }
 
-
-cell** put_1_in_all_unfixed_cells(cell** board){
-    int i,j;
-    for (i = 0; i < curr_board->len; ++i)
-        for (j = 0; j < curr_board->len ; ++j)
-            if (board[i][j].is_fixed == 0)
-                board[i][j].value = 1;
-    return board;
-}
-
-cell** put_1_in_all_unfixed_cells_right(int row, int col, cell** board){
-    int i,j;
-    for (i = curr_board->len -1; i >= 0 ; --i) {
-        for (j = curr_board->len -1; j >= 0; --j) {
-            if (i == row && j == col) {
-                return board;
-            } else {
-                if (!board[i][j].is_fixed && board[i][j].value != 0){
-                    board[i][j].value = 1;
-                }
-            }
-        }
-    }
-    return board;
- }
-
-
-
-int find_last_unfixed_un_eq_len(int* row, int* col, struct curr_board new_board){
-    int i,j;
-    for (i = curr_board->len -1; i >= 0 ; --i) {
-        for (j = curr_board->len -1; j >= 0; --j) {
-            if (!new_board.board[i][j].is_fixed) {
-                if (new_board.board[i][j].value != 0 && new_board.board[i][j].value != curr_board->len) {
-                    *row = i;
-                    *col = j;
-                    return 1;
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-void save_all_curr_cells_fixed(cell** board){
+void save_all_curr_cells_fixed(cell** my_board){
     int i,j;
     for (i = 0; i < curr_board->len ; ++i)
         for (j = 0; j < curr_board->len ; ++j)
-            if(board[i][j].value != 0)
-                board[i][j].is_fixed = 1;
+            if(my_board[i][j].value != 0)
+                my_board[i][j].is_fixed = 1;
             else{
-                board[i][j].is_fixed = 0;
+                my_board[i][j].is_fixed = 0;
             }
 }
 
-int check_board_full(cell** board){
+int check_board_full(cell** my_board){
     int i,j;
     for (i = 0; i < curr_board->len ; ++i)
         for (j = 0; j < curr_board->len ; ++j)
-            if(board[i][j].value == 0)
+            if(my_board[i][j].value == 0)
                 return 0;
 
-    return 1;
-}
-
-struct curr_board update_next_sol(struct curr_board new_board){
-    int row = 0, col = 0;
-    if (find_last_unfixed_un_eq_len(&row,&col,new_board)){
-        new_board.board = put_1_in_all_unfixed_cells_right(row,col,new_board.board);
-        new_board.board[row][col].value++;
-        new_board.board[row][col].is_fixed = 0;
-    }
-    else{
-        find_empty_cell(&row,&col,new_board.board);
-        new_board.board = put_1_in_all_unfixed_cells(new_board.board);
-        new_board.board[row][col].value = 1;
-        new_board.board[row][col].is_fixed = 0;
-    }
-    return new_board;
-}
-
-void new_board_print(struct curr_board new_board){
-    int i,j,k = 0;
-    separator_row(curr_board->block_height, curr_board->block_width);
-    for (i = 0; i < curr_board->block_width; i++) {
-        for (j = 0; j < curr_board->block_height; j++) {
-            cell_row(new_board.board[k]);
-            k++;
-        }
-        separator_row(curr_board->block_height, curr_board->block_width);
-    }
-}
-
-int check_board_finished(){
-    int i,j;
-    for (i = 0; i < curr_board->block_width; i++) {
-        for (j = 0; j < curr_board->block_height; j++) {
-            if (!new_board.board[i][j].is_fixed) {
-                if (new_board.board[i][j].value != curr_board->len) {
-                    return 0;
-                }
-            }
-        }
-    }
     return 1;
 }
 

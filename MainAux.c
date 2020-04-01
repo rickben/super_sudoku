@@ -32,21 +32,20 @@ void update_list_pos_vals(int i, int j, int num){
     }
 }
 
-void free_temp_board(){
-    int i;
-    for (i = 0; i < curr_board->len; ++i) {
-        free(temp_board[i]);
-    }
-    free(temp_board);
-}
-
-
 void init_temp_board(){
     int i;
     temp_board= (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
     for (i = 0; i < curr_board->len; ++i) {
         temp_board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
     }
+}
+
+void free_temp_board(){
+    int i;
+    for (i = 0; i < curr_board->len; ++i) {
+        free(temp_board[i]);
+    }
+    free(temp_board);
 }
 
 void copy_curr_to_temp_board() {
@@ -63,11 +62,6 @@ void restart_to_init(){
     free_mem_board();
 }
 
-void print_start_program(){
-    printf("Welcome to Sudoku puzzle game!\n");
-}
-
-
 int check_erroneous_board(){
     int i,j;
     for (i = 0; i < curr_board->len ; ++i)
@@ -76,6 +70,10 @@ int check_erroneous_board(){
                 return 1;
 
     return 0;
+}
+
+void print_start_program(){
+    printf("Welcome to Sudoku puzzle game!\n");
 }
 
 int check_num_of_empty_cells(){
