@@ -134,6 +134,10 @@ void redo() {
 
 void reset(){
     int b = 0;
+    if(undo_head==NULL){
+        printf("noting to undo\n");
+        return;
+    }
     while(undo_head!=NULL)
         b += undo_action();
     if (b>0)
