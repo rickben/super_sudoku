@@ -165,11 +165,11 @@ int scan_rows_from_file(FILE *in_file) {
                 return 0;
             } else{
                 if (temporary_board->board[i][j].value != 0) {
-                    temporary_board->board[i][j].is_fixed = 1;
+                    temporary_board->board[i][j].is_fixed = 0;
                 }
             }
             if (fscanf(in_file,"%c",&c)) {
-                if (c == '.') {
+                if (c == '.' && state == Solve) {
                     temporary_board->board[i][j].is_fixed = 1;
                 } else if (c == '*') {
                     temporary_board->board[i][j].is_erroneous = 1;
