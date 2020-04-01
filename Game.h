@@ -63,7 +63,7 @@ void guess_hint(int x, int y);
 int validate();
 void save_all_curr_cells_fixed(cell** my_board);
 int check_board_full(cell** my_board);
-long num_solutions();
+void num_solutions();
 void autofill();
 
 #endif

@@ -340,13 +340,13 @@ int check_board_full(cell** my_board){
     return 1;
 }
 
-long num_solutions(){
+void num_solutions(){
     int row = 0, col = 0;
     long count = 0;
     int i,j,k;
-    if (state != Solve && state != Edit) {
-        printf("num_solutions only available in solve or edit mode\n");
-        return -1;
+    if (check_erroneous_board() || !is_valid_board()){
+        printf("num_solutions not available in erroneous board\n");
+        return;
     }
     new_board.len = curr_board->len;
     new_board.block_width = curr_board->block_width;
@@ -379,7 +379,7 @@ long num_solutions(){
             }
         }
     }
-    return count;
+    printf("The number of solutions for the current board is %ld\n",count);
 }
 
 void autofill(){
