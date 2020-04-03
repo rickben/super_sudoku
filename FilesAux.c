@@ -178,7 +178,6 @@ int scan_rows_from_file(FILE *in_file) {
     /*return 0 if there is anything else written if the file*/
     if (fscanf(in_file,"%c",&c))
         if(c>=33&&c<=126) {
-            printf("this is c:%c",c);
             return 0;
         }
     return 1;
@@ -194,12 +193,11 @@ int trans_file_to_board(char* file_name, enum state State){
     }
     state = State;
     if(! scan_size_from_file(in_file) ){
-        printf("File not in correct format\n");
         return 0;
     }
 
     if(! scan_rows_from_file(in_file)){
-        printf("File not in correct format\n");
+        printf("File's board is not in a correct format\n");
         return 0;
     }
 

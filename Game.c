@@ -188,6 +188,8 @@ void generate(int x, int y){
     } else if (x > curr_board->len *curr_board->len || y > curr_board->len *curr_board->len) {
         printf("Error, a number out of range (0,%d)!\n", curr_board->len *curr_board->len);
         return;
+    }else if(check_erroneous_board() || !is_valid_board()){
+        printf("The board is erroneous\n");
     } else {
         generate_loop(x,y);
     }
@@ -250,14 +252,14 @@ void hint(int x, int y){
         } else if (x > curr_board->len || y > curr_board->len) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
-        }else if(check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
-        }else if (curr_board->board[y-1][x-1].is_fixed) {
+        } else if (curr_board->board[y-1][x-1].is_fixed) {
             printf("This position is fixed!\n");
             return;
         } else if (curr_board->board[y-1][x-1].value != 0){
             printf("This position already has a value!\n");
             return;
+        } else if(check_erroneous_board() || !is_valid_board()){
+            printf("The board is erroneous\n");
         } else{
             num = solver(0,0,0,0,0,0);
             if(check_gurobi_board_full() || num){
@@ -280,14 +282,14 @@ void guess_hint(int x, int y){
         } else if (x > curr_board->len || y > curr_board->len) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
-        }else if(check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
         }else if (curr_board->board[y-1][x-1].is_fixed) {
             printf("This position is fixed!\n");
             return;
         } else if (curr_board->board[y-1][x-1].value != 0){
             printf("This position already has a value!\n");
             return;
+        } else if(check_erroneous_board() || !is_valid_board()){
+            printf("The board is erroneous\n");
         } else{
             if(!solver(1,0,0,1,y-1,x-1)) { /* prints the scores in solver */
                 printf("This board is unsolvable!\n");
