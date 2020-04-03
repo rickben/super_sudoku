@@ -30,10 +30,8 @@ void save(char* file_name){
 
 /*command always available*/
 void solve(char* file_name){
-    if(trans_file_to_board(file_name, Solve)){
+    if(trans_file_to_board(file_name, Solve)) {
         print_board();
-    } else {
-        printf("File not in correct format\n");
     }
 }
 
@@ -48,17 +46,12 @@ void edit(char* file_name){
     else {
         if(trans_file_to_board(file_name,Edit)){
             print_board();
-        }else
-            printf("File not in correct format\n");
+        }
     }
 }
 
 
 void mark_errors(int x){
-    if (state != Solve){
-        printf("mark errors only available in solve mode\n");
-        return;
-    }
     if (x != 0 && x != 1) {
         printf("mark errors only accepts 0 or 1\n");
         return;
@@ -67,20 +60,12 @@ void mark_errors(int x){
 }
 
 void print_board(){
-    if(state != Solve && state != Edit){
-        printf("print board only available in solve or edit mode\n");
-        return;
-    } else {
-        board_print();
-    }
+    board_print();
 }
+
 int undo_action(){
     int* command_data;
     cell cell_data;
-    if(state!=Solve && state != Edit){
-        printf("undo only available in solve or edit mode\n");
-        return 0;
-    }
     if(undo_head==NULL){
         printf("noting to undo\n");
         return 0;
@@ -116,10 +101,7 @@ void undo(){
 
 int redo_action(){
     int* command_data;
-    if (state != Solve && state != Edit) {
-        printf("undo only available in solve or edit mode\n");
-        return 0;
-    }
+
     if(redo_head==NULL){
         printf("noting to redo\n");
         return 0;
@@ -148,10 +130,6 @@ void redo() {
 
 void reset(){
     int b = 0;
-    if (state != Solve && state != Edit) {
-        printf("reset only available in solve or edit mode\n");
-        return;
-    }
     while(undo_head!=NULL)
         b += undo_action();
     if (b>0)
@@ -204,20 +182,14 @@ int generate_loop(int x, int y){
 
 
 void generate(int x, int y){
-    if (state == Edit){
-        if (x < 0 || y < 0) {
-            printf("Error, all numbers should be positive!\n");
-            return;
-        } else if (x > curr_board->len *curr_board->len || y > curr_board->len *curr_board->len) {
-            printf("Error, a number out of range (0,%d)!\n", curr_board->len *curr_board->len);
-            return;
-        }
-        else{
-            generate_loop(x,y);
-        }
-        } else{
-        printf("This command is available only in Edit mode!\n");
+    if (x < 0 || y < 0) {
+        printf("Error, all numbers should be positive!\n");
         return;
+    } else if (x > curr_board->len *curr_board->len || y > curr_board->len *curr_board->len) {
+        printf("Error, a number out of range (0,%d)!\n", curr_board->len *curr_board->len);
+        return;
+    } else {
+        generate_loop(x,y);
     }
 }
 
@@ -225,10 +197,6 @@ void generate(int x, int y){
 void board_set(int x, int y, int z) {
     int *command_data = malloc(sizeof(int) * 3);
     cell cell_data;
-    if (state != Solve && state != Edit) {
-        printf("set only available in solve or edit mode\n");
-        return;
-    }
     if (x < 1 || y < 1 || z < 0) {
         printf("Error, a number out of range (1,%d)!\n", curr_board->len);
         return;
@@ -260,30 +228,22 @@ void board_set(int x, int y, int z) {
 }
 
 void guess(double x){
-    if(state != Solve){
-        printf("This command is only available in Solve mode\n");
-        return;
-    } else {
-        if (check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
-            return;
-        } else{
-            if(!solver(1,1,x,0,0,0)){
-                printf("The board isn't solvable, guess can't finish\n");
-            }
-	        copy_board_to_cur();
-	        print_board();/* TODO - check if solver doesnt work it still updates */
-        }
-    }
+   if (check_erroneous_board() || !is_valid_board()){
+       printf("The board is erroneous\n");
+       return;
+   } else {
+       if(!solver(1,1,x,0,0,0)){
+           printf("The board isn't solvable, guess can't finish\n");
+       }
+       copy_board_to_cur();
+       print_board();/* TODO - check if solver doesnt work it still updates */
+   }
+
 }
 
 
 void hint(int x, int y){
     int num;
-    if(state != Solve){
-        printf("This command is only available in Solve mode\n");
-        return;
-    } else {
         if (x < 1 || y < 1) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
@@ -300,24 +260,20 @@ void hint(int x, int y){
             return;
         } else{
             num = solver(0,0,0,0,0,0);
-            if(!check_gurobi_board_full() || !num){
-                printf("This board is unsolvable!\n");
+            if(check_gurobi_board_full() || num){
+                printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
                 return;
             } else{
-                printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
+                printf("This board is unsolvable!\n");
+                return;
             }
         }
-    }
 }
 
 /*
  * !! Remember to check if x and y are numbers, and if they are in the range
  * */
 void guess_hint(int x, int y){
-    if(state != Solve){
-        printf("This command is only available in Solve mode\n");
-        return;
-    } else {
         if (x < 1 || y < 1) {
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
@@ -338,15 +294,10 @@ void guess_hint(int x, int y){
                 return;
             }
         }
-    }
 }
 
 int validate(){
     int num;
-    if(state!=Solve && state != Edit){
-        printf("validate only available in solve or edit mode\n");
-        return 0;
-    }
     if (check_erroneous_board() || !is_valid_board()){
         printf("validate not available in erroneous board\n");
         return 0;
@@ -383,14 +334,8 @@ int check_board_full(cell** my_board){
     return 1;
 }
 
-void num_solutions(){
-    int row = 0, col = 0;
-    long count = 0;
-    int i,j,k;
-    if (check_erroneous_board() || !is_valid_board()){
-        printf("num_solutions not available in erroneous board\n");
-        return;
-    }
+void update_new_board_by_curr(){
+    int j,k;
     new_board.len = curr_board->len;
     new_board.block_width = curr_board->block_width;
     new_board.block_height = curr_board->block_height;
@@ -403,24 +348,39 @@ void num_solutions(){
         for (k = 0; k < new_board.len; ++k)
             new_board.board[j][k] = curr_board->board[j][k];
     }
+}
 
+
+int update_stack(int count){
+    int row = 0, col = 0, i;
+    new_board = pop_ele();
+    if (find_empty_cell(&row,&col, new_board.board)){
+        for(i = 1;i <= new_board.len ;i++){
+            new_board.board[row][col].value = i;
+            if(is_valid_board(&new_board)){
+                push_ele(new_board);
+            }
+        }
+    }
+    else {
+        if (is_valid_board(&new_board)){
+            count++;
+        }
+    }
+    return count;
+}
+
+void num_solutions(){
+    long count = 0;
+    if (check_erroneous_board() || !is_valid_board()){
+        printf("num_solutions not available in erroneous board\n");
+        return;
+    }
+    update_new_board_by_curr();
     save_all_curr_cells_fixed(new_board.board);
     push_ele(new_board);
     while (stack != NULL){
-        new_board = pop_ele();
-        if(find_empty_cell(&row,&col, new_board.board)){
-            for(i = 1;i <= new_board.len ;i++){
-                new_board.board[row][col].value = i;
-                if(is_valid_board(&new_board)){
-                    push_ele(new_board);
-                }
-            }
-        }
-        else{
-            if(is_valid_board(&new_board)){
-                count++;
-            }
-        }
+        count = update_stack(count);
     }
     printf("The number of solutions for the current board is %ld\n",count);
 }
@@ -447,15 +407,15 @@ void calculate_list_possible_values(){
     }
 }
 
-/*void free_list_possible_values(){
+void free_list_possible_values(){
     int i,j;
     for (i = 0; i < curr_board->len ; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
-            free(curr_board->board[i][j].list_poss_values_len);
+            free(curr_board->board[i][j].list_poss_values);
             curr_board->board[i][j].list_poss_values_len = 0;
         }
     }
-}*/
+}
 
 void autofill(){
     int i,j;
@@ -469,7 +429,7 @@ void autofill(){
     undo_head = insert(undo_head, -1, command_data, cell_data);
     for (i = 0; i < curr_board->len ; ++i) {
         for (j = 0; j < curr_board->len ; ++j) {
-            if (curr_board->board[i][j].list_poss_values_len==1&&!curr_board->board[i][j].is_fixed){
+            if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed){
                 command_data[0] = i;
                 command_data[1] = j;
                 command_data[2] = curr_board->board[i][j].value;
@@ -486,6 +446,7 @@ void autofill(){
         }
     }
     clear_list(redo_head);
+    free_list_possible_values();
     print_board();
 }
 

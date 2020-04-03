@@ -11,6 +11,7 @@
 #include "Solver.h"
 #include "gurobi_c.h"
 #define EMPTY 0
+#define DIF -1
 
 int DIM;
 int height;
@@ -129,7 +130,7 @@ void create_empty_model(int is_LP){
                     count++;
                 }
                 else{
-                    ind_save[i*DIM*DIM+j*DIM+v] = EMPTY;
+                    ind_save[i*DIM*DIM+j*DIM+v] = DIF;
                 }
             }
         }
@@ -154,7 +155,7 @@ int each_cell_value(){
     for (i = 0; i < DIM; i++) {
         for (j = 0; j < DIM; j++) {
             for (v = 0; v < DIM; v++) {
-                if(ind_save[i*DIM*DIM+j*DIM+v]!= EMPTY){
+                if(ind_save[i*DIM*DIM+j*DIM+v]!= DIF){
                     ind[const_size] = ind_save[i*DIM*DIM+j*DIM+v];
                     val[const_size] = 1.0;
                     const_size++;
@@ -177,7 +178,7 @@ int each_row_value(){
     for (v = 0; v < DIM; v++) {
         for (j = 0; j < DIM; j++) {
             for (i = 0; i < DIM; i++) {
-                if(ind_save[i*DIM*DIM+j*DIM+v]!= EMPTY){
+                if(ind_save[i*DIM*DIM+j*DIM+v]!= DIF){
                     ind[const_size] = ind_save[i*DIM*DIM+j*DIM+v];
                     val[const_size] = 1.0;
                     const_size++;
@@ -201,7 +202,7 @@ int each_col_value(){
     for (v = 0; v < DIM; v++) {
         for (i = 0; i < DIM; i++) {
             for (j = 0; j < DIM; j++) {
-                if(ind_save[i*DIM*DIM+j*DIM+v] != EMPTY){
+                if(ind_save[i*DIM*DIM+j*DIM+v] != DIF){
                     ind[const_size] = ind_save[i*DIM*DIM+j*DIM+v];
                     val[const_size] = 1.0;
                     const_size++;
@@ -226,7 +227,7 @@ int each_sub_grid_value(){
                 count = 0;
                 for (i = ig*(height); i < (ig+1)*(height); i++) {
                     for (j = jg*(width); j < (jg+1)*(width); j++) {
-                        if(ind_save[i*DIM*DIM+j*DIM+v]!= EMPTY){
+                        if(ind_save[i*DIM*DIM+j*DIM+v]!= DIF){
                             ind[count] = ind_save[i*DIM*DIM+j*DIM+v];
                             val[count] = 1.0;
                             count++;
@@ -248,7 +249,7 @@ int optimum_state_ilp(){
     for (i = 0; i < DIM; i++) {
         for (j = 0; j < DIM; j++) {
             for (v = 0; v < DIM; v++) {
-                if (ind_save[i*DIM*DIM+j*DIM+v] != EMPTY){
+                if (ind_save[i*DIM*DIM+j*DIM+v] != DIF){
                     error = GRBgetdblattrelement(model, "X", ind_save[i*DIM*DIM+j*DIM+v], &sol);
                     if ((int)sol == 1){
                         printf("x[%d,%d,%d]=%d\n",i,j,v+1,(int)sol);
@@ -265,7 +266,7 @@ int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, 
     for (i = 0; i < DIM; i++) {
         for (j = 0; j < DIM; j++) {
             for (v = 0; v < DIM; v++) {
-                if (ind_save[i*DIM*DIM+j*DIM+v] != EMPTY && is_valid_set_gurobi(i,j,v+1)){
+                if (ind_save[i*DIM*DIM+j*DIM+v] != DIF && is_valid_set_gurobi(i,j,v+1)){
                     error = GRBgetdblattrelement(model, "X", ind_save[i*DIM*DIM+j*DIM+v], &sol);
                     if (is_guess){
                         all_poss_scores[v] = sol;

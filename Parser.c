@@ -266,7 +266,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 7:
             if(state != Solve){
-                printf("This command is only available in Solve mode\n");
+                printf("Guess command is only available in Solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'){
@@ -281,8 +281,8 @@ void execute_command(int command_code, char** command_data) {
             guess(d);
             break;
         case 8:
-            if (state!=Edit){
-                printf("This command is available only in Edit mode!\n");
+            if (state != Edit){
+                printf("Generate command is available only in Edit mode!\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
@@ -298,7 +298,7 @@ void execute_command(int command_code, char** command_data) {
             generate(x,y);
             break;
         case 9:
-            if(state!=Solve && state != Edit){
+            if(state != Solve && state != Edit){
                 printf("undo only available in solve or edit mode\n");
                 break;
             }
@@ -306,14 +306,14 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 10:
             if (state != Solve && state != Edit) {
-                printf("undo only available in solve or edit mode\n");
+                printf("redo only available in solve or edit mode\n");
                 break;
             }
             redo();
             break;
         case 11:
             if (state != Solve && state != Edit){
-                printf("This command is only available in Solve or Edit mode\n");
+                printf("Save command is only available in Solve or Edit mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'){
@@ -328,7 +328,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 12:
             if(state != Solve) {
-                printf("This command is only available in Solve mode\n");
+                printf("Hint command is only available in Solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
@@ -345,7 +345,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 13:
             if(state != Solve) {
-                printf("This command is only available in Solve mode\n");
+                printf("Guess_hint command is only available in Solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
@@ -362,7 +362,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 14:
             if (state != Solve && state != Edit){
-                printf("This command is only available in Solve or Edit mode\n");
+                printf("Num_solutions command is only available in Solve or Edit mode\n");
                 break;
             }
             num_solutions();
@@ -376,7 +376,7 @@ void execute_command(int command_code, char** command_data) {
             break;
         case 16:
             if (state != Solve && state != Edit) {
-                printf("reset only available in solve or edit mode\n");
+                printf("Reset only available in solve or edit mode\n");
                 break;
             }
             reset();

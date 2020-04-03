@@ -79,9 +79,6 @@ int trans_board_to_file(char* file_name){
         if(state == Edit) {
             return edit_mode_to_file(file_name);
         }
-        else{
-            printf("save command is only available in solve or edit mode");
-        }
     }
     return 0;
 }
@@ -197,10 +194,12 @@ int trans_file_to_board(char* file_name, enum state State){
     }
     state = State;
     if(! scan_size_from_file(in_file) ){
+        printf("File not in correct format\n");
         return 0;
     }
 
     if(! scan_rows_from_file(in_file)){
+        printf("File not in correct format\n");
         return 0;
     }
 
