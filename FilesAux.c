@@ -27,9 +27,6 @@ int solve_mode_to_file(char* file_name){
             if (curr_board->board[i][j].is_fixed!=0 && curr_board->board[i][j].value!=0) {
                 fprintf(in_file, ".");
             }
-            else if (curr_board->board[i][j].is_erroneous!=0 && curr_board->board[i][j].value!=0) {
-                fprintf(in_file, "*");
-            }
             fprintf(in_file, " ");
         }
         fprintf(in_file, "\n");
@@ -151,7 +148,7 @@ int scan_size_from_file(FILE* in_file){
 /*
  * TODO need to change - to fgets, to check if the file in the right format
  * */
-int scan_rows_from_file(FILE *in_file) {
+int scan_rows_from_file(FILE *in_file, enum state State) {
     int i,j;
     char c;
     for(i=0; i<temporary_board->len; i++) {
@@ -166,10 +163,8 @@ int scan_rows_from_file(FILE *in_file) {
                 }
             }
             if (fscanf(in_file,"%c",&c)) {
-                if (c == '.' && state == Solve) {
+                if (c == '.' && State == Solve) {
                     temporary_board->board[i][j].is_fixed = 1;
-                } else if (c == '*') {
-                    temporary_board->board[i][j].is_erroneous = 1;
                 }
             }
         }
@@ -184,6 +179,93 @@ int scan_rows_from_file(FILE *in_file) {
 
 }
 
+
+/*
+ * Return false if there's a cell in the same row
+ * with the same value, otherwise, returns true
+ * */
+int in_row_fixed(int row, int num) {
+    int j;
+    for (j = 0; j < temporary_board->len; ++j) {
+        if (temporary_board->board[row][j].value == num && temporary_board->board[row][j].is_fixed) {
+            if(num!=0) {
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+ * Return false if there's a cell in the same column
+ * with the same value, otherwise, returns true
+ * */
+int in_col_fixed(int col, int num) {
+    int j;
+    for (j = 0; j < temporary_board->len; ++j) {
+        if (temporary_board->board[j][col].value == num && temporary_board->board[j][col].is_fixed) {
+            if (num != 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+ * Return false if there's a cell in the same block
+ * with the same value, otherwise, returns true
+ * */
+int in_block_fixed(int x, int y, int num) {
+    int i, j;
+    for (i = 0; i < temporary_board->block_height; ++i) {
+        for (j = 0; j < temporary_board->block_width; ++j) {
+            if (temporary_board->board[i+x][j+y].value == num && temporary_board->board[i+x][j+y].is_fixed) {
+                if(num!=0) {
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+
+int is_valid_fixed_set(int i, int j, int num){
+    int block_x = (i / (temporary_board->block_height))*(temporary_board->block_height);
+    int block_y = (j / (temporary_board->block_width))*(temporary_board->block_width);
+    return (!in_row_fixed(i,num) && !in_col_fixed(j,num) &&
+            !in_block_fixed(block_x,block_y,num));
+}
+
+int check_erroneous_fixed_cells_temp(){
+    int i,j,num;
+    for (i = 0; i < temporary_board->len ; ++i) {
+        for (j = 0; j < temporary_board->len; ++j) {
+            if (temporary_board->board[i][j].is_fixed){
+                num = temporary_board->board[i][j].value;
+                temporary_board->board[i][j].value = 0;
+                if (!is_valid_fixed_set(i,j,num)){
+                    temporary_board->board[i][j].value = num;
+                    return 0;
+                }else{
+                    temporary_board->board[i][j].value = num;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+
 int trans_file_to_board(char* file_name, enum state State){
     FILE* in_file = fopen(file_name, "r");
     if (! in_file )
@@ -191,19 +273,25 @@ int trans_file_to_board(char* file_name, enum state State){
         printf("oops, file can't be read\n");
         return 0;
     }
-    state = State;
+
     if(! scan_size_from_file(in_file) ){
         return 0;
     }
 
-    if(! scan_rows_from_file(in_file)){
+    if(! scan_rows_from_file(in_file, State)){
         printf("File's board is not in a correct format\n");
+        free_temporary_board();
         return 0;
     }
-
+    if(! check_erroneous_fixed_cells_temp()){
+        printf("File's board is not legal - erroneous fixed cells\n");
+        free_temporary_board();
+        return 0;
+    }
+    state = State;
     copy_from_temporary_to_curr_board();
     free_temporary_board();
-
+    update_erroneous_cells();
     fclose(in_file);
 
     return 1;

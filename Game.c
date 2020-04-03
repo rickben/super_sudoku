@@ -156,7 +156,6 @@ int generate_loop(int x, int y){
             copy_temp_board_to_curr(); /* Return to previous board - need to start over*/
             cnt++;
         } else if (num == -1) { /* There are less than x empty cells*/
-            printf("Generate has failed - There are less than x empty cells\n");
             free_temp_board();
             return 0; /* Generate had failed*/
         } else { /* No error */
@@ -236,9 +235,10 @@ void guess(double x){
    } else {
        if(!solver(1,1,x,0,0,0)){
            printf("The board isn't solvable, guess can't finish\n");
+           return;
        }
        copy_board_to_cur();
-       print_board();/* TODO - check if solver doesnt work it still updates */
+       print_board();
    }
 
 }
@@ -262,11 +262,11 @@ void hint(int x, int y){
             printf("The board is erroneous\n");
         } else{
             num = solver(0,0,0,0,0,0);
-            if(check_gurobi_board_full() || num){
-                printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
+            if(!check_gurobi_board_full() || !num){
+                printf("This board is unsolvable!\n");
                 return;
             } else{
-                printf("This board is unsolvable!\n");
+                printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
                 return;
             }
         }
@@ -305,13 +305,13 @@ int validate(){
         return 0;
     }
     num = solver(0,0,0,0,0,0);
-    if(check_gurobi_board_full() || num){
-        printf("Validation passed: board is solvable\n");
-        return 1;
-    }
-    else{
+    if(!check_gurobi_board_full() || !num){
         printf("Validation failed: board is unsolvable\n");
         return 0;
+
+    } else{
+        printf("Validation passed: board is solvable\n");
+        return 1;
     }
 }
 

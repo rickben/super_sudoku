@@ -155,7 +155,7 @@ int fill_board_random(int x){
     int col, row, num;
     num = check_num_of_empty_cells();
     if (num < x){
-        printf("There are less then %d empty cells, generate can't finish",x);
+        printf("There are less then %d empty cells, generate can't finish\n",x);
         return -1;
     }
     while (x>0){
@@ -292,21 +292,27 @@ void separator_row() {
         printf("-");
     }
     printf("-\n");
-    /*
-    printf("-");
-    for(; i<curr_board->block_height; i++){
-        printf("--");
-        for(; j<curr_board->block_width-1; j++){
-            printf("----");
-        }
-        printf("---");
-        j=0;
-    }
-    printf("\n");*/
 }
 
 void update_erroneous_cells(){
-
+    int i,j,num;
+    for (i = 0; i < curr_board->len ; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            if (!curr_board->board[i][j].is_fixed){
+                num = curr_board->board[i][j].value;
+                curr_board->board[i][j].value = 0;
+                if (!is_valid_set(i,j,num,curr_board)){
+                    curr_board->board[i][j].value = num;
+                    curr_board->board[i][j].is_erroneous = 1;
+                }else{
+                    curr_board->board[i][j].value = num;
+                    curr_board->board[i][j].is_erroneous = 0;
+                }
+            } else{
+                curr_board->board[i][j].is_erroneous = 0;
+            }
+        }
+    }
 }
 
 
@@ -336,33 +342,6 @@ void cell_row(struct cell* arr) {
         }
     }
     printf("|\n");
-
-    /*
-    for (j = 0; j < curr_board->len; j++) {
-        if (j % curr_board->block_width == 0) {
-            printf("|");
-        }
-        if(arr[j].value==0){
-            printf("   ");
-        } else {
-            printf(" %2d", arr[j].value);
-        }
-        if(curr_board->board[num_row][j].is_fixed && state == Solve){
-            printf(".");
-        }
-        if((curr_board->board[num_row][j].is_erroneous) && (curr_board->mark_errors) && (state == Solve)){
-            printf("*");
-        }
-        if((curr_board->board[num_row][j].is_erroneous) && (state == Edit)){
-            printf("*");
-        }
-        else{
-            printf(" ");
-        }
-
-    }
-    printf("|\n");
-*/
 }
 
 
