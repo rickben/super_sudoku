@@ -65,11 +65,11 @@ int trans_board_to_file(char* file_name){
     if(state == Solve) {
         return solve_mode_to_file(file_name);
     } else if(state == Edit && check_erroneous_board()){
-        printf("Erroneous board cannot be saved!\n");
+        printf("Erroneous board cannot be saved in Edit mode!\n");
         return 0;
     }
-    else if(!validate() && state == Edit){
-        printf("Invalid board cannot be saved!\n");
+    else if(!check_validate() && state == Edit){
+        printf("Board without a solution cannot be saved in Edit mode!\n");
         return 0;
     }
     else {
@@ -158,23 +158,27 @@ int scan_rows_from_file(FILE *in_file, enum state State) {
             if (fscanf(in_file, "%d", &temporary_board->board[i][j].value) != 1) {
                 return 0;
             } else{
+                if (temporary_board->board[i][j].value < 0 ||
+                    temporary_board->board[i][j].value > temporary_board->len){
+                    printf("Error, a number out of range (1,%d)!\n",temporary_board->len);
+                }
                 if (temporary_board->board[i][j].value != 0) {
                     temporary_board->board[i][j].is_fixed = 0;
                 }
             }
-            if (fscanf(in_file,"%c",&c)) {
-                if (c == '.' && State == Solve) {
+            if ((c = fgetc(in_file))=='.' && State == Solve){
                     temporary_board->board[i][j].is_fixed = 1;
-                }
             }
         }
 
     }
+
     /*return 0 if there is anything else written if the file*/
-    if (fscanf(in_file,"%c",&c))
+    if (fscanf(in_file,"%c",&c)){
         if(c>=33&&c<=126) {
             return 0;
         }
+    }
     return 1;
 
 }
@@ -271,21 +275,25 @@ int trans_file_to_board(char* file_name, enum state State){
     if (! in_file )
     {
         printf("oops, file can't be read\n");
+        fclose(in_file);
         return 0;
     }
 
     if(! scan_size_from_file(in_file) ){
+        fclose(in_file);
         return 0;
     }
 
     if(! scan_rows_from_file(in_file, State)){
         printf("File's board is not in a correct format\n");
         free_temporary_board();
+        fclose(in_file);
         return 0;
     }
     if(! check_erroneous_fixed_cells_temp()){
         printf("File's board is not legal - erroneous fixed cells\n");
         free_temporary_board();
+        fclose(in_file);
         return 0;
     }
     state = State;

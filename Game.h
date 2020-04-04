@@ -60,6 +60,7 @@ void board_set(int x, int y, int z);
 void guess(double x);
 void hint(int x, int y);
 void guess_hint(int x, int y);
+int check_validate();
 int validate();
 void save_all_curr_cells_fixed(cell** my_board);
 int check_board_full(cell** my_board);

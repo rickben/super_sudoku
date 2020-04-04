@@ -298,14 +298,24 @@ void guess_hint(int x, int y){
         }
 }
 
-int validate(){
+/* TODO: When get here - already checked board to be not erroneous*/
+int check_validate(){
     int num;
+    num = solver(0,0,0,0,0,0);
+    if(!check_gurobi_board_full() || !num){
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}
+
+int validate(){
     if (check_erroneous_board() || !is_valid_board()){
         printf("validate not available in erroneous board\n");
         return 0;
     }
-    num = solver(0,0,0,0,0,0);
-    if(!check_gurobi_board_full() || !num){
+    if(!check_validate()){
         printf("Validation failed: board is unsolvable\n");
         return 0;
 
