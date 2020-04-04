@@ -153,7 +153,8 @@ int command_to_code(char* input) {
 }
 
 void interpret_command(){
-    int input_len = 256;
+    char c;
+    int input_len = 257;
     char* input = malloc(input_len* sizeof(char));
     char *token;
     char *rest;
@@ -166,9 +167,16 @@ void interpret_command(){
     }
     j=0;
     if(fgets(input, input_len, stdin)!=NULL){
+        size_t len = strlen(input);
+
+        /*flush*/
+        if((int)len==(input_len-1)){
+            printf("command is to long\n");
+            while((c = getchar()) != '\n' && c != EOF);
+            return;
+        }
 
         /* fix input*/
-        size_t len = strlen(input);
         if (len > 0 && input[len - 1] == '\n') input[--len] = '\0';
 
         /*copy input so we won't ruin it*/
