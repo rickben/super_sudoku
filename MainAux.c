@@ -394,6 +394,24 @@ bool is_valid_board(){
     return true;
 }
 
+bool is_valid_board_new_board(){
+    int temp = 0, i, j;
+    for (i = 0; i < new_board.len; ++i) {
+        for (j = 0; j < new_board.len; ++j) {
+            if(new_board.board[i][j].value!=0){
+                temp = new_board.board[i][j].value;
+                new_board.board[i][j].value = 0;
+                if(!is_valid_set(i,j,temp,&new_board)) {
+                    new_board.board[i][j].value = temp;
+                    return false;
+                }
+                new_board.board[i][j].value = temp;
+            }
+        }
+    }
+    return true;
+}
+
 void create_board_size_9() {
     int i, j;
     curr_board = (struct curr_board *) calloc(9, sizeof(struct cell));

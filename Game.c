@@ -371,7 +371,7 @@ int update_stack(int count){
     if (find_empty_cell(&row,&col, new_board.board)){
         for(i = 1;i <= new_board.len ;i++){
             new_board.board[row][col].value = i;
-            if(is_valid_board(&new_board)){
+            if(is_valid_board_new_board()){
                 push_ele(new_board);
             }
         }
