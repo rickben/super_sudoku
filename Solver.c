@@ -16,7 +16,7 @@
 int DIM;
 int height;
 int width;
-int       flag;
+int       flag,flag_guess;
 double    num,sum,start;
 GRBenv   *env   = NULL;
 GRBmodel *model = NULL;
@@ -142,6 +142,11 @@ int create_env(){
     return error;
 }
 
+int remove_log_to_console(){
+    error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
+    return error;
+}
+
 int create_new_model(){
     error = GRBnewmodel(env, &model, "sudoku", var_size, obj , lb, ub,
                         vtype, names);
@@ -245,14 +250,12 @@ int each_sub_grid_value(){
 }
 
 int optimum_state_ilp(){
-    printf("Optimal objective: %.4e\n", objval);
     for (i = 0; i < DIM; i++) {
         for (j = 0; j < DIM; j++) {
             for (v = 0; v < DIM; v++) {
                 if (ind_save[i*DIM*DIM+j*DIM+v] != DIF){
                     error = GRBgetdblattrelement(model, "X", ind_save[i*DIM*DIM+j*DIM+v], &sol);
                     if ((int)sol == 1){
-                        printf("x[%d,%d,%d]=%d\n",i,j,v+1,(int)sol);
                         board[i][j].value = v+1;
                     }
                 }
@@ -260,22 +263,71 @@ int optimum_state_ilp(){
     return error;
 }
 
-int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, int y){
+void set_guess_board(double thresholdX){
+    count = 0;
+    num = 0;
+    sum = 0;
+    start = 0;
+    for (v = 0; v < DIM; ++v) {
+        if (all_poss_scores[v] >= thresholdX) {
+            sum += all_poss_scores[v];
+        }
+    }
+    num = (((double) rand()) / RAND_MAX) * sum;
+    for (v = 0; v < DIM; ++v) {
+        if (all_poss_scores[v] >= thresholdX) {
+            if ((num >= start && num < (start + all_poss_scores[v])) ) {
+                board[i][j].value = v+1;
+                break;
+            } else if (((start + all_poss_scores[v]) == sum) ){
+                board[i][j].value = v+1;
+            }
+            start += all_poss_scores[v];
+        }
+    }
+}
+
+int print_guess_hint_prob(){
     flag = 0;
-    printf("Optimal objective: %.4e\n", objval);
+    for (v = 0; v < DIM; ++v) {
+        if (all_poss_scores[v] > 0){
+            printf("value = %d : prob = %f\n",v+1,all_poss_scores[v]);
+        }
+    }
+    return error;
+}
+
+void check_board_unsolvable_for_guess_hint(int is_guess_hint){
+    if(is_guess_hint && flag == 0){
+        printf("This board is unsolvable!\n");
+    }
+}
+
+void set_guess_prob(){
+    all_poss_scores[v] = sol;
+}
+
+void set_guess_hint_prob(int x, int y){
+    if (i == x && j == y){
+        flag = 1;
+        all_poss_scores[v] = sol;
+    }
+}
+
+int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, int y){
+    flag_guess = 1;
+    flag = 0;
     for (i = 0; i < DIM; i++) {
         for (j = 0; j < DIM; j++) {
             for (v = 0; v < DIM; v++) {
                 if (ind_save[i*DIM*DIM+j*DIM+v] != DIF && is_valid_set_gurobi(i,j,v+1)){
                     error = GRBgetdblattrelement(model, "X", ind_save[i*DIM*DIM+j*DIM+v], &sol);
                     if (is_guess){
-                        all_poss_scores[v] = sol;
+                        flag_guess = 0;
+                        set_guess_prob();
                     }
                     else if (is_guess_hint) {
-                        if (i == x && j == y){
-                            flag = 1;
-                            all_poss_scores[v] = sol;
-                        }
+                        set_guess_hint_prob(x,y);
                     }
                     else
                         return 1;/* ERROR */
@@ -284,61 +336,29 @@ int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, 
                 }
             }
             if (is_guess_hint && flag){
-                flag = 0;
-                for (v = 0; v < DIM; ++v) {
-                    if (all_poss_scores[v] > 0){
-                        printf("value = %d : prob = %f\n",v+1,all_poss_scores[v]);
-                    }
-                }
-                return error;
+                return print_guess_hint_prob();
             }
             else if (is_guess && board[i][j].value == 0) {
-                count = 0;
-                num = 0;
-                sum = 0;
-                start = 0;
-                for (v = 0; v < DIM; ++v) {
-                    if (all_poss_scores[v] >= thresholdX) {
-                        sum += all_poss_scores[v];
-                    }
-                }
-                printf("sum :%f\n",sum);
-                num = (((double) rand()) / RAND_MAX) * sum;
-                for (v = 0; v < DIM; ++v) {
-                    if (all_poss_scores[v] >= thresholdX) {
-                        if ((num >= start && num < (start + all_poss_scores[v])) ) {
-                            printf("num =%f, str:%f, end:%f, score:%f\n",num,start,start + all_poss_scores[v],all_poss_scores[v]);
-                            board[i][j].value = v+1;
-                            break;
-                        } else if (((start + all_poss_scores[v]) == sum) ){
-                            board[i][j].value = v+1;
-                        }
-                        start += all_poss_scores[v];
-                    }
-                }
+                set_guess_board(thresholdX);
             }
-            /* choose randomly the value for x[i,j] from all_poss_scores */
-            /* here */
         }}
-    if(is_guess_hint && flag == 0){
-        printf("This board is unsolvable!\n");
-    }
+    check_board_unsolvable_for_guess_hint(is_guess_hint);
+
     return error;
 }
 
 int optimization_complete(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y){
-    printf("\nOptimization complete\n");
+    /*printf("\nOptimization complete\n");*/
     if (optimstatus == GRB_OPTIMAL){
         error = is_LP ? optimum_state_lp(is_guess, thresholdX, is_guess_hint, x, y) : optimum_state_ilp();
-        printf("\n");
         return !error;
-    }
+    }/*
     else if (optimstatus == GRB_INF_OR_UNBD) {
         printf("Model is infeasible or unbounded\n");
     }else {
         printf("Optimization was stopped early\n");
     }
-    printf("\n");
+    printf("\n");*/
     return 0;
 }
 
@@ -426,6 +446,8 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
 
     create_empty_model(is_LP);
     if (create_env()) goto QUIT;
+    if (remove_log_to_console()) goto QUIT;
+
     if (create_new_model()) goto QUIT;
 
     if (each_cell_value()) goto QUIT;
@@ -439,6 +461,8 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     if (capture_sol_info()) goto QUIT;
     res = optimization_complete(is_LP, is_guess, thresholdX, is_guess_hint, x, y);
     if (!res) goto QUIT;
+    if (is_guess && flag_guess)
+        return 0;
     return 1;
 
     QUIT:
