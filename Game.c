@@ -19,6 +19,8 @@ void my_exit(){
     printf("Exiting...\n");
     if (state == Solve || state == Edit) {
         free_mem_board();
+        clear_list(undo_head);
+        clear_list(redo_head);
     }
     exit(-1);
 }
