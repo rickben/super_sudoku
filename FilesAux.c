@@ -150,7 +150,7 @@ int scan_size_from_file(FILE* in_file){
  * */
 int scan_rows_from_file(FILE *in_file, enum state State) {
     int i,j;
-    char c;
+    int c;
     for(i=0; i<temporary_board->len; i++) {
 
         for (j = 0; j < temporary_board->len; j++) {
@@ -166,7 +166,7 @@ int scan_rows_from_file(FILE *in_file, enum state State) {
                     temporary_board->board[i][j].is_fixed = 0;
                 }
             }
-            if ((c = fgetc(in_file))=='.' && State == Solve){
+            if ((fgetc(in_file))=='.' && State == Solve && temporary_board->board[i][j].value != 0){
                     temporary_board->board[i][j].is_fixed = 1;
             }
         }
@@ -174,7 +174,7 @@ int scan_rows_from_file(FILE *in_file, enum state State) {
     }
 
     /*return 0 if there is anything else written if the file*/
-    if (fscanf(in_file,"%c",&c)){
+    while ((c=fgetc(in_file))!=EOF){
         if(c>=33&&c<=126) {
             return 0;
         }
