@@ -127,7 +127,7 @@ void free_temporary_board(){
 int scan_size_from_file(FILE* in_file){
     int height, width, len;
 
-    if(fscanf(in_file, "%d %d", &width, &height) != 2 )
+    if(fscanf(in_file, "%d %d", &height, &width) != 2 )
     {
         printf("oops, error in scanning size\n");
         return 0;
@@ -137,6 +137,7 @@ int scan_size_from_file(FILE* in_file){
         return 0;
     }
     else{
+        len = (height)*(width);
         len = (height)*(width);
         create_temporary_board_from_file(len, width, height);
     }
