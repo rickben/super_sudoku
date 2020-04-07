@@ -198,6 +198,9 @@ void interpret_command(){
         }
         j=0;
     }
+    else{
+        my_exit();
+    }
     execute_command(command_code, command_data);
 }
 
