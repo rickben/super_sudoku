@@ -431,8 +431,9 @@ void create_board_size_9() {
 }
 void fill_undo_board(){
     int i,j;
+    undo_board = (struct curr_board *) calloc(curr_board->len, sizeof(struct cell));
     undo_board->board = (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
-    for (i = 0; i < 9; ++i) {
+    for (i = 0; i < curr_board->len; ++i) {
         undo_board->board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
     }
     undo_board->len = curr_board->len;
@@ -440,8 +441,9 @@ void fill_undo_board(){
     undo_board->block_height = curr_board->block_height;
     for (i = 0; i < undo_board->len; i++) {
         for (j = 0; j < undo_board->len; j++) {
-            undo_board->board[i][j].is_erroneous = curr_board->board[i][j].is_erroneous;
-            undo_board->board[i][j].is_fixed = curr_board->board[i][j].is_fixed;
+            /*TODO unknown segmentation fault*/
+            /*undo_board->board[i][j].is_erroneous = curr_board->board[i][j].is_erroneous;
+            undo_board->board[i][j].is_fixed = curr_board->board[i][j].is_fixed;*/
             undo_board->board[i][j].value = curr_board->board[i][j].value;
 
         }
@@ -450,10 +452,11 @@ void fill_undo_board(){
 
 void free_undo_board(){
     int i;
-    for (i = 0; i < 9; ++i) {
+    for (i = 0; i < undo_board->len; ++i) {
         free(undo_board->board[i]);
     }
     free(undo_board->board);
+    free(undo_board);
 }
 
 void fill_undo_lst_by_cmp_board(int command_code){
@@ -464,12 +467,12 @@ void fill_undo_lst_by_cmp_board(int command_code){
     for(i=0;i<undo_board->len;i++){
         for(j=0;j<undo_board->len;j++){
             if(undo_board->board[i][j].value!=curr_board->board[i][j].value){
-                cell_data.value = curr_board->board[i][j].value;
-                cell_data.is_fixed = curr_board->board[i][j].is_fixed;
-                cell_data.is_erroneous = curr_board->board[i][j].is_erroneous;
+                cell_data.value = undo_board->board[i][j].value;
+                cell_data.is_fixed = undo_board->board[i][j].is_fixed;
+                cell_data.is_erroneous = undo_board->board[i][j].is_erroneous;
                 command_data[0] = i;
                 command_data[1] = j;
-                command_data[2] = undo_board->board[i][j].value;
+                command_data[2] = curr_board->board[i][j].value;
                 insert_to_undo_lst(command_code, command_data, cell_data);
                 command_data = malloc(sizeof(int) * 3);
             }
