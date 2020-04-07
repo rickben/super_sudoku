@@ -29,5 +29,7 @@ bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix );
 bool is_valid_board();
 bool is_valid_board_new_board();
 void create_board_size_9();
-
+void fill_undo_board();
+void free_undo_board();
+void fill_undo_lst_by_cmp_board(int command_code);
 #endif

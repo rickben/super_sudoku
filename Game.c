@@ -80,7 +80,11 @@ int undo_action(){
         undo_head = remove_head(undo_head);
         return 1;
     }
-    if(undo_head->command_code == 15 || undo_head->command_code == -1){
+    if(undo_head->command_code == -1){
+        command_data = undo_head->command_data;
+        cell_data = undo_head->cell_data;
+        insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
+        undo_head = remove_head(undo_head);
         while (undo_head->command_code != -1){
             command_data = undo_head->command_data;
             cell_data = undo_head->cell_data;
@@ -114,7 +118,8 @@ int redo_action(){
         redo_head = remove_head(redo_head);
         return 1;
     }
-    if(redo_head->command_code == 15 || redo_head->command_code == -1){
+    if(redo_head->command_code == -1){
+        redo_head = remove_head(redo_head);
         while (redo_head->command_code != -1){
             command_data = redo_head->command_data;
             curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
@@ -192,7 +197,11 @@ void generate(int x, int y){
     }else if(check_erroneous_board() || !is_valid_board()){
         printf("The board is erroneous\n");
     } else {
-        generate_loop(x,y);
+        fill_undo_board();
+        if(generate_loop(x,y))
+            fill_undo_lst_by_cmp_board(8);
+        free_undo_board();
+
     }
 }
 
@@ -440,14 +449,16 @@ void autofill(){
         return;
     }
     calculate_list_possible_values();
-    undo_head = insert(undo_head, -1, command_data, cell_data);
+    insert_to_undo_lst(-1, command_data, cell_data);
     for (i = 0; i < curr_board->len ; ++i) {
         for (j = 0; j < curr_board->len ; ++j) {
             if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed){
                 command_data[0] = i;
                 command_data[1] = j;
-                command_data[2] = curr_board->board[i][j].value;
-                cell_data = curr_board->board[i][j];
+                command_data[2] = curr_board->board[i][j].list_poss_values[0];
+                cell_data.value = curr_board->board[i][j].value;
+                cell_data.is_fixed = curr_board->board[i][j].is_fixed;
+                cell_data.is_erroneous = curr_board->board[i][j].is_erroneous;
                 if(!is_valid_set(i,j,curr_board->board[i][j].list_poss_values[0], curr_board))
                     curr_board->board[i][j].is_erroneous = 1;
                 else
@@ -459,6 +470,8 @@ void autofill(){
             }
         }
     }
+    insert_to_undo_lst(-1, command_data, cell_data);
+    free(command_data);
     clear_list(redo_head);
     free_list_possible_values();
     print_board();
