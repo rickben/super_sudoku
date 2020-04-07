@@ -201,7 +201,6 @@ void generate(int x, int y){
         if(generate_loop(x,y))
             fill_undo_lst_by_cmp_board(8);
         free_undo_board();
-
     }
 }
 
