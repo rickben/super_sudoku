@@ -245,7 +245,7 @@ void guess(double x){
    } else {
        fill_undo_board();
        if(!solver(1,1,x,0,0,0)){
-           printf("The board isn't solvable, guess can't finish\n");
+           printf("The board isn't solvable!\n");
            return;
        }
        copy_board_to_cur();

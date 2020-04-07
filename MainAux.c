@@ -288,7 +288,7 @@ void separator_row() {
     for (i = 0; i < curr_board->len ; ++i) {
         printf("----");
     }
-    for(j=0; j<curr_board->block_width; j++) {
+    for(j=0; j<curr_board->block_height; j++) {
         printf("-");
     }
     printf("-\n");
@@ -347,13 +347,13 @@ void cell_row(struct cell* arr) {
 
 void board_print() {
     int k = 0, i, j;
-    separator_row(curr_board->block_height, curr_board->block_width);
+    separator_row();
     for (i = 0; i < curr_board->block_width; i++) {
         for (j = 0; j < curr_board->block_height; j++) {
             cell_row(curr_board->board[k]);
             k++;
         }
-        separator_row(curr_board->block_height, curr_board->block_width);
+        separator_row();
     }
 }
 

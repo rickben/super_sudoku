@@ -158,7 +158,7 @@ int scan_rows_from_file(FILE *in_file, enum state State) {
             } else{
                 if (temporary_board->board[i][j].value < 0 ||
                     temporary_board->board[i][j].value > temporary_board->len){
-                    printf("Error, a number out of range (1,%d)!\n",temporary_board->len);
+                    printf("Error, a number out of range (1,%d) in file!\n",temporary_board->len);
                 }
                 if (temporary_board->board[i][j].value != 0) {
                     temporary_board->board[i][j].is_fixed = 0;
