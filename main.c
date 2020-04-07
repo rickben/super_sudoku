@@ -14,6 +14,7 @@
 int main() {
     srand(time(0));
     state = Init;
+    global_mark_errors = 1;
     print_start_program();
     while (1){
         printf("Please enter a command:\n");

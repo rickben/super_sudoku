@@ -87,7 +87,6 @@ void create_board_from_file(int len, int width, int height) {
     curr_board->block_width = width;
     curr_board->block_height = height;
     curr_board->len = len ;
-    curr_board->mark_errors = 1;
     curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
     for (i = 0; i < len; ++i) {
         curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
@@ -99,7 +98,6 @@ void create_temporary_board_from_file(int len, int width, int height) {
     temporary_board->block_width = width;
     temporary_board->block_height = height;
     temporary_board->len = len ;
-    temporary_board->mark_errors = 1;
     temporary_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
     for (i = 0; i < len; ++i) {
         temporary_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));

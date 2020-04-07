@@ -12,13 +12,16 @@ typedef struct cell{
     int* list_poss_values;
 }cell;
 
+
 struct curr_board{
     struct cell** board;
     int block_width;
     int block_height;
     int len;
-    int mark_errors;
 }*curr_board, new_board, *temporary_board, *undo_board;
+
+int global_mark_errors;
+
 
 typedef struct Node {
     int command_code;

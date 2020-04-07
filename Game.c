@@ -58,7 +58,7 @@ void mark_errors(int x){
         printf("mark errors only accepts 0 or 1\n");
         return;
     }
-    curr_board->mark_errors = x;
+    global_mark_errors = x;
 }
 
 void print_board(){
@@ -364,7 +364,6 @@ void update_new_board_by_curr(){
     new_board.len = curr_board->len;
     new_board.block_width = curr_board->block_width;
     new_board.block_height = curr_board->block_height;
-    new_board.mark_errors = new_board.mark_errors;
     new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
     for (j = 0; j < new_board.len; ++j) {
         new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));

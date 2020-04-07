@@ -319,7 +319,7 @@ void update_erroneous_cells(){
 
 void cell_row(struct cell* arr) {
     int j;
-    if(state == Edit || (state == Solve && curr_board->mark_errors)){
+    if(state == Edit || (state == Solve && global_mark_errors)){
         update_erroneous_cells();
     }
     for (j = 0; j < curr_board->len; j++) {
@@ -331,7 +331,7 @@ void cell_row(struct cell* arr) {
         } else {
             printf(" %2d", arr[j].value);
         }
-        if((arr[j].is_fixed && state == Solve) || (arr[j].is_erroneous && (((curr_board->mark_errors) && (state == Solve)) || (state == Edit)))){
+        if((arr[j].is_fixed && state == Solve) || (arr[j].is_erroneous && (((global_mark_errors) && (state == Solve)) || (state == Edit)))){
             if(arr[j].is_fixed && state == Solve){
                 printf(".");
             } else {
@@ -418,7 +418,6 @@ void create_board_size_9() {
     curr_board->len = 9;
     curr_board->block_height = 3;
     curr_board->block_width = 3;
-    curr_board->mark_errors = 1;
     curr_board->board = (struct cell **) calloc(9, sizeof(struct cell *));
     for (i = 0; i < 9; ++i) {
         curr_board->board[i] = (struct cell *) calloc(9, sizeof(struct cell));

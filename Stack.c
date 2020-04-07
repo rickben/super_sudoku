@@ -19,7 +19,6 @@ void push_ele(struct curr_board next_board)
     m->top.len = next_board.len;
     m->top.block_height = next_board.block_height;
     m->top.block_width = next_board.block_width;
-    m->top.mark_errors = next_board.mark_errors;
     m->next_stack = stack; /*receives all previous elements stack*/
     stack = m;
 }
