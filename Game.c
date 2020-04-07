@@ -477,7 +477,7 @@ void autofill(){
     clear_list(redo_head);
     free_list_possible_values();
     print_board();
-}//
+}
 
 
 
