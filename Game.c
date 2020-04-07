@@ -243,11 +243,14 @@ void guess(double x){
        printf("The board is erroneous\n");
        return;
    } else {
+       fill_undo_board();
        if(!solver(1,1,x,0,0,0)){
            printf("The board isn't solvable, guess can't finish\n");
            return;
        }
        copy_board_to_cur();
+       fill_undo_lst_by_cmp_board(7);
+       free_undo_board();
        print_board();
    }
 
