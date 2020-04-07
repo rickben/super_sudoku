@@ -19,7 +19,7 @@ struct curr_board{
     int len;
     int mark_errors;
 }*curr_board, new_board, *temporary_board, *undo_board;
-//
+
 typedef struct Node {
     int command_code;
     int* command_data;
