@@ -197,11 +197,18 @@ void interpret_command(){
             j++;
         }
         j=0;
+        free(rest);
+
     }
     else{
         my_exit();
     }
     execute_command(command_code, command_data);
+    free(input);
+    for (j=0; j < 4; ++j) {
+        free(command_data[j]);
+    }
+    free(command_data);
 }
 
 void execute_command(int command_code, char** command_data) {

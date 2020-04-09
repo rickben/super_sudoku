@@ -26,8 +26,9 @@ void my_exit(){
 }
 
 void save(char* file_name){
-    trans_board_to_file(file_name);
-    printf("Board saved to: %s\n",file_name);
+    if (trans_board_to_file(file_name)) {
+        printf("Board saved to: %s\n", file_name);
+    }
 }
 
 
