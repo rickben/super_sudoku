@@ -84,23 +84,41 @@ int trans_board_to_file(char* file_name){
 void create_board_from_file(int len, int width, int height) {
     int i;
     curr_board = (struct curr_board *) calloc(len, sizeof(struct cell));
+    if (curr_board == NULL) {
+        memory_error("calloc");
+    }
     curr_board->block_width = width;
     curr_board->block_height = height;
     curr_board->len = len ;
     curr_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
+    if (curr_board->board == NULL) {
+        memory_error("calloc");
+    }
     for (i = 0; i < len; ++i) {
         curr_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
+        if (curr_board->board[i] == NULL) {
+            memory_error("calloc");
+        }
     }
 }
 void create_temporary_board_from_file(int len, int width, int height) {
     int i;
     temporary_board = (struct curr_board *) calloc(len, sizeof(struct cell));
+    if (temporary_board == NULL) {
+        memory_error("calloc");
+    }
     temporary_board->block_width = width;
     temporary_board->block_height = height;
     temporary_board->len = len ;
     temporary_board->board = (struct cell **) calloc(len, sizeof(struct cell *));
+    if (temporary_board->board == NULL) {
+        memory_error("calloc");
+    }
     for (i = 0; i < len; ++i) {
         temporary_board->board[i] = (struct cell *) calloc(len, sizeof(struct cell));
+        if (temporary_board->board[i] == NULL) {
+            memory_error("calloc");
+        }
     }
 }
 

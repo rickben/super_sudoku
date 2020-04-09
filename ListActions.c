@@ -1,5 +1,6 @@
 #include "ListActions.h"
 #include "Game.h"
+#include "MainAux.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,6 +8,9 @@
 Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_data) {
     /* 1. allocate new node */
     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL){
+        memory_error("malloc");
+    }
 
     /* 2. put in the data  */
     new_node->command_code = command_code;

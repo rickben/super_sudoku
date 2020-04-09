@@ -1,6 +1,7 @@
 #include "Parser.h"
 #include "Game.h"
 #include "FilesAux.h"
+#include "MainAux.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -155,14 +156,25 @@ int command_to_code(char* input) {
 void interpret_command(){
     char c;
     int input_len = 257;
-    char* input = malloc(input_len* sizeof(char));
+    char* input;
     char *token;
     char *rest;
     int command_code = 0;
     int j = 0;
-    char **command_data = malloc(sizeof(char*) * 4);
+    char **command_data;
+    input = malloc(input_len* sizeof(char));
+    if (input == NULL){
+        memory_error("malloc");
+    }
+    command_data = malloc(sizeof(char*) * 4);
+    if (command_data == NULL){
+        memory_error("malloc");
+    }
     for (; j < 4; ++j) {
         command_data[j] = malloc(sizeof(char) * input_len);
+        if (command_data[j] == NULL){
+            memory_error("malloc");
+        }
         command_data[j][0]='\0';
     }
     j=0;
@@ -173,6 +185,9 @@ void interpret_command(){
         if((int)len==(input_len-1)){
             printf("command is to long\n");
             while((c = getchar()) != '\n' && c != EOF);
+            if (c == EOF){
+                my_exit();
+            }
             return;
         }
 
@@ -181,6 +196,9 @@ void interpret_command(){
 
         /*copy input so we won't ruin it*/
         rest = malloc(sizeof(char) * (strlen(input) + 1));
+        if (rest == NULL){
+            memory_error("malloc");
+        }
         strcpy(rest, input);
 
         token = strtok_r(rest, " \t\r", &rest);
@@ -188,6 +206,7 @@ void interpret_command(){
         if(token!=NULL){
             command_code = command_to_code(token);
         } else{
+            memory_error("strtok_r");
             return;}
         /*this way the parser ignores empty commands*/
         token = strtok_r(rest, " \t\r", &rest);
@@ -196,19 +215,19 @@ void interpret_command(){
             token = strtok_r(rest, " \t\r", &rest);
             j++;
         }
+        /* TODO: do i need to check if token == NULL -> memory_error? */
         j=0;
-        free(rest);
 
     }
     else{
         my_exit();
     }
     execute_command(command_code, command_data);
-    free(input);
+    /*free(input);
     for (j=0; j < 4; ++j) {
         free(command_data[j]);
     }
-    free(command_data);
+    free(command_data);*/
 }
 
 void execute_command(int command_code, char** command_data) {

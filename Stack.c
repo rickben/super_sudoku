@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "Stack.h"
+#include "MainAux.h"
 #include <stdlib.h>
 
 /*Inserting the elements using push function*/
@@ -8,9 +9,18 @@ void push_ele(struct curr_board next_board)
 {   int i,j,k;
     struct rec_stack *m;
     m = (struct rec_stack*) malloc(sizeof( struct rec_stack));
+    if (m == NULL) {
+        memory_error("malloc");
+    }
     m->top.board = (struct cell **) calloc(next_board.len, sizeof(struct cell *));
+    if (m->top.board == NULL) {
+        memory_error("calloc");
+    }
     for (i = 0; i < next_board.len; ++i) {
         m->top.board[i] = (struct cell *) calloc(next_board.len, sizeof(struct cell));
+        if (m->top.board[i] == NULL) {
+            memory_error("calloc");
+        }
     }
     for (j = 0; j < next_board.len; ++j) {
         for (k = 0; k < next_board.len; ++k)

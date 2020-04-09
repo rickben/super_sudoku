@@ -208,8 +208,12 @@ void generate(int x, int y){
 
 
 void board_set(int x, int y, int z) {
-    int *command_data = malloc(sizeof(int) * 3);
+    int *command_data;
     cell cell_data;
+    command_data = malloc(sizeof(int) * 3);
+    if (command_data == NULL){
+        memory_error("malloc");
+    }
     if (x < 1 || y < 1 || z < 0) {
         printf("Error, a number out of range (1,%d)!\n", curr_board->len);
         return;
@@ -241,6 +245,10 @@ void board_set(int x, int y, int z) {
 }
 
 void guess(double x){
+    if (x<0 || x>1){
+        printf("Error, a number out of range (0,1)!\n");
+        return;
+    }
    if (check_erroneous_board() || !is_valid_board()){
        printf("The board is erroneous\n");
        return;
@@ -367,8 +375,14 @@ void update_new_board_by_curr(){
     new_board.block_width = curr_board->block_width;
     new_board.block_height = curr_board->block_height;
     new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
+    if (new_board.board == NULL){
+        memory_error("calloc");
+    }
     for (j = 0; j < new_board.len; ++j) {
         new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));
+        if (new_board.board[j] == NULL){
+            memory_error("calloc");
+        }
     }
     for (j = 0; j < new_board.len; ++j) {
         for (k = 0; k < new_board.len; ++k)
@@ -418,6 +432,9 @@ void calculate_list_possible_values(){
             len = 0;
             cell_value = curr_board->board[i][j].value;
             curr_board->board[i][j].list_poss_values = calloc(curr_board->len, sizeof(int));
+            if (curr_board->board[i][j].list_poss_values == NULL){
+                memory_error("calloc");
+            }
             for ( possible_value = 1; possible_value <= curr_board->len; ++possible_value) {
                 if(possible_value!=cell_value){
                     curr_board->board[i][j].value=possible_value;
@@ -445,8 +462,12 @@ void free_list_possible_values(){
 
 void autofill(){
     int i,j;
-    int *command_data = malloc(sizeof(int) * 3);
+    int *command_data;
     cell cell_data = {0,0,0,0, NULL};
+    command_data = malloc(sizeof(int) * 3);
+    if (command_data == NULL){
+        memory_error("malloc");
+    }
     if(check_erroneous_board() || !is_valid_board()){
         printf("The board is erroneous\n");
         return;
@@ -470,6 +491,9 @@ void autofill(){
                 printf("single possible value for <%d,%d> updated: %d\n",i+1,j+1,curr_board->board[i][j].value);
                 insert_to_undo_lst(15, command_data, cell_data);
                 command_data = malloc(sizeof(int) * 3);
+                if (command_data == NULL){
+                    memory_error("malloc");
+                }
             }
         }
     }

@@ -3,6 +3,7 @@
 #include "Game.h"
 #include <stdbool.h>
 
+void memory_error(char* func);
 void update_list_pos_vals(int i, int j, int num);
 void init_temp_board();
 void free_temp_board();

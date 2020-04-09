@@ -431,17 +431,47 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     var_size = check_num_var(board);
 
     namestorage= (char*)malloc(sizeof(char)*(10*DIM*DIM*DIM));
+    if (namestorage == NULL){
+        memory_error("malloc");
+    }
     val = (double*)malloc(sizeof(double)*DIM);
+    if (val == NULL){
+        memory_error("malloc");
+    }
     ind_save = (int*)malloc(sizeof(int)*(DIM*DIM*DIM));
+    if (ind_save == NULL){
+        memory_error("malloc");
+    }
     ind = (int*)malloc(sizeof(int)*DIM);
+    if (ind == NULL){
+        memory_error("malloc");
+    }
     lb = (double*)malloc(sizeof(double)*var_size);
+    if (lb == NULL){
+        memory_error("malloc");
+    }
     ub = (double*)malloc(sizeof(double)*var_size);
+    if (ub == NULL){
+        memory_error("malloc");
+    }
     obj = (double*)malloc(sizeof(double)*var_size);
+    if (obj == NULL){
+        memory_error("malloc");
+    }
     vtype = (char*)malloc(sizeof(char)*var_size);
-    names = (char**)malloc(sizeof(char*)*var_size);    
+    if (vtype == NULL){
+        memory_error("malloc");
+    }
+    names = (char**)malloc(sizeof(char*)*var_size);
+    if (names == NULL){
+        memory_error("malloc");
+    }
     
     if (is_LP){
         all_poss_scores = (double*)malloc(sizeof(double)*DIM);
+        if (all_poss_scores == NULL){
+            memory_error("malloc");
+        }
     }
 
     create_empty_model(is_LP);

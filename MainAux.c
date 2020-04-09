@@ -6,6 +6,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+void memory_error(char* func){
+    printf("ERROR: memory leak in function %s\n",func);
+    my_exit();
+}
 
 void update_list_pos_vals(int i, int j, int num){
     int k, flag = 0, cnt = 0;
@@ -19,6 +23,9 @@ void update_list_pos_vals(int i, int j, int num){
     }
     if (flag){
         new_list_poss = malloc((curr_board->board[i][j].list_poss_values_len-1)*sizeof(int));
+        if (new_list_poss == NULL){
+            memory_error("malloc");
+        }
         for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
             if (curr_board->board[i][j].list_poss_values[k] == 0) {
                 continue;
@@ -35,8 +42,14 @@ void update_list_pos_vals(int i, int j, int num){
 void init_temp_board(){
     int i;
     temp_board= (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
+    if (temp_board == NULL){
+        memory_error("calloc");
+    }
     for (i = 0; i < curr_board->len; ++i) {
         temp_board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
+        if (temp_board[i] == NULL){
+            memory_error("calloc");
+        }
     }
 }
 
@@ -101,6 +114,9 @@ int set_random_val(int row, int col){
     int  v, val, num_pos = 0, cnt = 0;
     int* pos_val;
     pos_val = (int*) malloc(curr_board->len*sizeof(int));
+    if (pos_val == NULL){
+        memory_error("malloc");
+    }
     for (v = 0; v < curr_board->len; ++ v) {
         if (is_valid_set(row,col,v+1,curr_board)){
             pos_val[v] = 1;
@@ -130,8 +146,14 @@ void find_random_empty_cell(int* row, int* col, int num_empty){
     int ** all_empty_cells;
     int i, j, cnt = 0;
     all_empty_cells = (int**)malloc(num_empty*sizeof(int*));
+    if (all_empty_cells == NULL){
+        memory_error("malloc");
+    }
     for (i = 0; i < num_empty; ++i) {
         all_empty_cells[i] = (int*)malloc(2*sizeof(int));
+        if (all_empty_cells[i] == NULL){
+            memory_error("malloc");
+        }
     }
     for (i = 0; i < curr_board->len; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
@@ -415,12 +437,21 @@ bool is_valid_board_new_board(){
 void create_board_size_9() {
     int i, j;
     curr_board = (struct curr_board *) calloc(9, sizeof(struct cell));
+    if (curr_board == NULL) {
+        memory_error("calloc");
+    }
     curr_board->len = 9;
     curr_board->block_height = 3;
     curr_board->block_width = 3;
     curr_board->board = (struct cell **) calloc(9, sizeof(struct cell *));
+    if (curr_board->board == NULL) {
+        memory_error("calloc");
+    }
     for (i = 0; i < 9; ++i) {
         curr_board->board[i] = (struct cell *) calloc(9, sizeof(struct cell));
+        if (curr_board->board[i] == NULL) {
+            memory_error("calloc");
+        }
     }
     for (i = 0; i < 9; ++i) {
         for (j = 0; i < 9; ++i) {
@@ -431,9 +462,18 @@ void create_board_size_9() {
 void fill_undo_board(){
     int i,j;
     undo_board = (struct curr_board *) calloc(curr_board->len, sizeof(struct cell));
+    if (undo_board == NULL) {
+        memory_error("calloc");
+    }
     undo_board->board = (struct cell **) calloc(curr_board->len, sizeof(struct cell *));
+    if (undo_board->board == NULL) {
+        memory_error("calloc");
+    }
     for (i = 0; i < curr_board->len; ++i) {
         undo_board->board[i] = (struct cell *) calloc(curr_board->len, sizeof(struct cell));
+        if (undo_board->board[i] == NULL) {
+            memory_error("calloc");
+        }
     }
     undo_board->len = curr_board->len;
     undo_board->block_width = curr_board->block_width;
@@ -460,8 +500,12 @@ void free_undo_board(){
 
 void fill_undo_lst_by_cmp_board(int command_code){
     int i,j;
-    int *command_data = malloc(sizeof(int) * 3);
+    int *command_data;
     cell cell_data = {0,0,0,0, NULL};
+    command_data = malloc(sizeof(int) * 3);
+    if (command_data == NULL){
+        memory_error("malloc");
+    }
     insert_to_undo_lst(-1, command_data, cell_data);
     for(i=0;i<undo_board->len;i++){
         for(j=0;j<undo_board->len;j++){
@@ -474,6 +518,9 @@ void fill_undo_lst_by_cmp_board(int command_code){
                 command_data[2] = curr_board->board[i][j].value;
                 insert_to_undo_lst(command_code, command_data, cell_data);
                 command_data = malloc(sizeof(int) * 3);
+                if (command_data == NULL){
+                    memory_error("malloc");
+                }
             }
         }
     }
