@@ -38,6 +38,10 @@ void save(char* file_name){
 
 /*command always available*/
 void solve(char* file_name){
+    if(state!=Init){
+        free_mem_board();
+        clear_list(end_list);
+    }
     if(trans_file_to_board(file_name, Solve)) {
         print_board();
     }
@@ -46,6 +50,10 @@ void solve(char* file_name){
 
 /*command always available*/
 void edit(char* file_name){
+    if(state!=Init){
+        free_mem_board();
+        clear_list(end_list);
+    }
     if (file_name[0]=='\0'){
         state = Edit;
         create_board_size_9();
