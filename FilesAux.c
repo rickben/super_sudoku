@@ -34,6 +34,8 @@ int solve_mode_to_file(char* file_name){
     fclose(in_file);
     free_mem_board();
     clear_list(end_list);
+    end_list = NULL;
+    start_list = NULL;
     state = Init;
     return 1;
 }
@@ -59,6 +61,8 @@ int edit_mode_to_file(char* file_name) {
     fclose(in_file);
     free_mem_board();
     clear_list(end_list);
+    end_list = NULL;
+    start_list = NULL;
     state = Init;
     return 1;
 }
