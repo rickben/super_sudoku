@@ -34,7 +34,7 @@
  * reset                   - resets the board to its first situation
  * mark_errors             - sets the mark_errors field to X (0 or 1)
  * board_exit              - prints and exits the game
- * */
+ * *//**/
 
 
 
