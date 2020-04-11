@@ -314,6 +314,12 @@ int trans_file_to_board(char* file_name, enum state State){
         fclose(in_file);
         return 0;
     }
+    if(state!=Init){
+        free_mem_board();
+        clear_list(end_list);
+        end_list = NULL;
+        start_list = NULL;
+    }
     state = State;
     copy_from_temporary_to_curr_board();
     free_temporary_board();

@@ -436,6 +436,12 @@ bool is_valid_board_new_board(){
 
 void create_board_size_9() {
     int i, j;
+    if(state!=Init){
+        free_mem_board();
+        clear_list(end_list);
+        end_list = NULL;
+        start_list = NULL;
+    }
     curr_board = (struct curr_board *) calloc(9, sizeof(struct cell));
     if (curr_board == NULL) {
         memory_error("calloc");
