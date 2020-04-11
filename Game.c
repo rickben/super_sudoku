@@ -6,21 +6,25 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 #include "Stack.h"
-#include "Solver.h"
 
-/* change for push1*/
-void insert_to_undo_lst(int command_code, int* command_data, cell cell_data){
-    undo_head = insert(undo_head, command_code, command_data, cell_data);
+void insert_into_undo_lst(int command_code, int* command_data, cell cell_data){
+    Node* temp = end_list->prev;
+    temp = insert(temp, command_code, command_data, cell_data);
+    temp->next = end_list;
+    end_list->prev = temp;
+    current_move = end_list->prev;
 }
-void insert_to_redo_lst(int command_code, int* command_data, cell cell_data){
-    redo_head = insert(redo_head, command_code, command_data, cell_data);
+void clear_redo_gap(){
+    while(end_list->prev!=current_move){
+        end_list = end_list->prev;
+        free(end_list->next);
+    }
 }
 void my_exit(){
     printf("Exiting...\n");
     if (state == Solve || state == Edit) {
         free_mem_board();
-        clear_list(undo_head);
-        clear_list(redo_head);
+        clear_list(end_list);
     }
     exit(-1);
 }
@@ -70,34 +74,28 @@ void print_board(){
 int undo_action(){
     int* command_data;
     cell cell_data;
-    if(undo_head==NULL){
+    if(current_move==start_list){
         printf("noting to undo\n");
         return 0;
     }
-    if(undo_head->command_code == 5){
-        command_data = undo_head->command_data;
-        cell_data = undo_head->cell_data;
+    if(current_move->command_code == 5){
+        command_data = current_move->command_data;
+        cell_data = current_move->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-        insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
-        undo_head = remove_head(undo_head);
+        printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,cell_data.value);
+        current_move = current_move->prev;
         return 1;
     }
-    if(undo_head->command_code == -1){
-        command_data = undo_head->command_data;
-        cell_data = undo_head->cell_data;
-        insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
-        undo_head = remove_head(undo_head);
-        while (undo_head->command_code != -1){
-            command_data = undo_head->command_data;
-            cell_data = undo_head->cell_data;
+    if(current_move->command_code == -1){
+        current_move = current_move->prev;
+        while (current_move->command_code != -1){
+            command_data = current_move->command_data;
+            cell_data = current_move->cell_data;
             curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-            insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
-            undo_head = remove_head(undo_head);
+            printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,cell_data.value);
+            current_move = current_move->prev;
         }
-        command_data = undo_head->command_data;
-        cell_data = undo_head->cell_data;
-        insert_to_redo_lst(undo_head->command_code, command_data, cell_data);
-        undo_head = remove_head(undo_head);
+        current_move = current_move->prev;
         return 1;
     }
     return 0;
@@ -109,25 +107,25 @@ void undo(){
 
 int redo_action(){
     int* command_data;
-
-    if(redo_head==NULL){
+    if(current_move->next == end_list){
         printf("noting to redo\n");
         return 0;
     }
-    if(redo_head->command_code == 5){
-        command_data = redo_head->command_data;
+    current_move = current_move->next;
+    if(current_move->command_code == 5){
+        command_data = current_move->command_data;
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
-        redo_head = remove_head(redo_head);
+        printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,command_data[2]);
         return 1;
     }
-    if(redo_head->command_code == -1){
-        redo_head = remove_head(redo_head);
-        while (redo_head->command_code != -1){
-            command_data = redo_head->command_data;
+    if(current_move->command_code == -1){
+        current_move = current_move->next;
+        while (current_move->command_code != -1){
+            command_data = current_move->command_data;
             curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
-            redo_head = remove_head(redo_head);
+            printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,command_data[2]);
+            current_move = current_move->next;
         }
-        redo_head = remove_head(redo_head);
         return 1;
     }
     return 0;
@@ -139,7 +137,7 @@ void redo() {
 
 void reset(){
     int b = 0;
-    while(undo_head!=NULL)
+    while(current_move!=start_list)
         b += undo_action();
     if (b>0)
         print_board();
@@ -237,8 +235,8 @@ void board_set(int x, int y, int z) {
                 curr_board->board[y-1][x-1].is_erroneous = 0;
             }
             curr_board->board[y-1][x-1].value = z;
-            insert_to_undo_lst(5, command_data, cell_data);
-            clear_list(redo_head);
+            clear_redo_gap();
+            insert_into_undo_lst(5, command_data, cell_data);
             print_board();
     }
     }
@@ -473,7 +471,8 @@ void autofill(){
         return;
     }
     calculate_list_possible_values();
-    insert_to_undo_lst(-1, command_data, cell_data);
+    clear_redo_gap();
+    insert_into_undo_lst(-1, command_data, cell_data);
     for (i = 0; i < curr_board->len ; ++i) {
         for (j = 0; j < curr_board->len ; ++j) {
             if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed){
@@ -489,7 +488,7 @@ void autofill(){
                     curr_board->board[i][j].is_erroneous = 0;
                 curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
                 printf("single possible value for <%d,%d> updated: %d\n",i+1,j+1,curr_board->board[i][j].value);
-                insert_to_undo_lst(15, command_data, cell_data);
+                insert_into_undo_lst(15, command_data, cell_data);
                 command_data = malloc(sizeof(int) * 3);
                 if (command_data == NULL){
                     memory_error("malloc");
@@ -497,9 +496,8 @@ void autofill(){
             }
         }
     }
-    insert_to_undo_lst(-1, command_data, cell_data);
+    insert_into_undo_lst(-1, command_data, cell_data);
     free(command_data);
-    clear_list(redo_head);
     free_list_possible_values();
     print_board();
 }

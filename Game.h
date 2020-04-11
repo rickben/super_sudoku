@@ -42,12 +42,13 @@
 
 enum state{Init, Edit, Solve};
 enum state state;
-Node* undo_head;
-Node* redo_head;
 
+Node* current_move;
+Node* end_list;
+Node* start_list;
 
-void insert_to_undo_lst(int command_code, int* command_data, cell cell_data);
-void insert_to_redo_lst(int command_code, int* command_data, cell cell_data);
+void insert_into_undo_lst(int command_code, int* command_data, cell cell_data);
+void clear_redo_gap();
 void my_exit();
 void save(char* file_name);
 void solve(char* file_name);

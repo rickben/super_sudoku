@@ -1,6 +1,6 @@
 #ifndef HW3_FILESAUX_H
 #define HW3_FILESAUX_H
-
+#include "Game.h"
 void free_mem_board();
 int solve_mode_to_file(char* file_name);
 int edit_mode_to_file(char* file_name);

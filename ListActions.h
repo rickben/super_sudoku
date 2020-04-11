@@ -38,4 +38,5 @@ Node* remove_head(Node* head);
 Node* get_head(Node* curr_node);
 void clear_list(Node* head);
 int arr_len(int* arr);
+void init_start_list();
 #endif

@@ -1,4 +1,4 @@
-#include "Game.h"
+
 #include "MainAux.h"
 #include <stdlib.h>
 
@@ -33,6 +33,7 @@ int solve_mode_to_file(char* file_name){
     }
     fclose(in_file);
     free_mem_board();
+    clear_list(end_list);
     state = Init;
     return 1;
 }
@@ -57,6 +58,7 @@ int edit_mode_to_file(char* file_name) {
     }
     fclose(in_file);
     free_mem_board();
+    clear_list(end_list);
     state = Init;
     return 1;
 }
@@ -318,7 +320,7 @@ int trans_file_to_board(char* file_name, enum state State){
     free_temporary_board();
     update_erroneous_cells();
     fclose(in_file);
-
+    init_start_list();
     return 1;
 }
 

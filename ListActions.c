@@ -112,3 +112,10 @@ int arr_len(int* arr){
     return i;
 }
 
+void init_start_list(){
+    cell cell_data = {0,0,0,0,NULL};
+    start_list = insert(start_list,-2, NULL, cell_data);
+    end_list = insert(start_list,2, NULL, cell_data);
+    current_move = start_list;
+}
+
