@@ -47,9 +47,9 @@ void solve(char* file_name){
 /*command always available*/
 void edit(char* file_name){
     if (file_name[0]=='\0'){
-        state = Edit;
         create_board_size_9();
         init_start_list();
+        state = Edit;
         print_board();
     }
     else {
