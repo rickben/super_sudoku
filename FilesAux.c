@@ -294,7 +294,6 @@ int trans_file_to_board(char* file_name, enum state State){
     if (! in_file )
     {
         printf("oops, file can't be read\n");
-        fclose(in_file);
         return 0;
     }
 
