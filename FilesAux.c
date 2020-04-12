@@ -162,15 +162,12 @@ int scan_size_from_file(FILE* in_file){
     }
     else{
         len = (height)*(width);
-        len = (height)*(width);
         create_temporary_board_from_file(len, width, height);
     }
     return 1;
 }
 
-/*
- * TODO need to change - to fgets, to check if the file in the right format
- * */
+
 int scan_rows_from_file(FILE *in_file, enum state State) {
     int i,j;
     int c;
