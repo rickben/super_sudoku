@@ -83,7 +83,7 @@ int undo_action(){
         command_data = current_move->command_data;
         cell_data = current_move->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-        printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,cell_data.value);
+        printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
         current_move = current_move->prev;
         return 1;
     }
@@ -93,7 +93,7 @@ int undo_action(){
             command_data = current_move->command_data;
             cell_data = current_move->cell_data;
             curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-            printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,cell_data.value);
+            printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
             current_move = current_move->prev;
         }
         current_move = current_move->prev;
@@ -116,7 +116,7 @@ int redo_action(){
     if(current_move->command_code == 5){
         command_data = current_move->command_data;
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
-        printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,command_data[2]);
+        printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,command_data[2]);
         return 1;
     }
     if(current_move->command_code == -1){
@@ -124,7 +124,7 @@ int redo_action(){
         while (current_move->command_code != -1){
             command_data = current_move->command_data;
             curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
-            printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,command_data[2]);
+            printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,command_data[2]);
             current_move = current_move->next;
         }
         return 1;
@@ -486,8 +486,8 @@ void autofill(){
         for (i = 0; i < curr_board->len ; ++i) {
             for (j = 0; j < curr_board->len ; ++j) {
                 if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed && curr_board->board[i][j].value==0){
-                    command_data[0] = j;
-                    command_data[1] = i;
+                    command_data[0] = i;
+                    command_data[1] = j;
                     command_data[2] = curr_board->board[i][j].list_poss_values[0];
                     cell_data.value = curr_board->board[i][j].value;
                     cell_data.is_fixed = curr_board->board[i][j].is_fixed;
@@ -498,12 +498,12 @@ void autofill(){
                         curr_board->board[i][j].is_erroneous = 0;
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
                     printf("single possible value for <%d,%d> updated: %d\n",j+1,i+1,curr_board->board[i][j].value);
-                    insert_into_undo_lst(15, command_data, cell_data);
-                    command_data = malloc(sizeof(int) * 3);
-                    if (command_data == NULL){
-                        memory_error("malloc");
-                    }
+                insert_into_undo_lst(15, command_data, cell_data);
+                command_data = malloc(sizeof(int) * 3);
+                if (command_data == NULL){
+                    memory_error("malloc");
                 }
+            }
             }
         }
         insert_into_undo_lst(-1, command_data, cell_data);
