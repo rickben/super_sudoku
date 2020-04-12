@@ -39,10 +39,19 @@
 
 
 
-
+/*
+ * This enum - state, represents the current state of the game, it's
+ * is either in Init, Edit of Solve state
+ * */
 enum state{Init, Edit, Solve};
 enum state state;
 
+/*
+ * This Nodes represent:
+ * current_move - pointer to current node in the doubly-linked list of moves
+ * end_list - the end node in the doubly-linked list of moves
+ * start_list - the start node in the doubly-linked list of moves
+ * */
 Node* current_move;
 Node* end_list;
 Node* start_list;

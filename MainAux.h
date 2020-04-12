@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 /*
- *ListActions Summary:
+ *MainAux Summary:
  *
  *This module supports all auxiliary functions of the game.
  *
