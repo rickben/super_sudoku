@@ -2,13 +2,28 @@
 #define HW3_SOLVER_H
 #include "MainAux.h"
 #include "Game.h"
+
+/*
+ *Solver Summary:
+ *
+ * This module manges the gurobi solver part of the program - translates the board to
+ * variables and constraints suitable for gurobi and then uses its ILP/LP solver to compute
+ * an optimum solution, assign values to the program variables to optimize the objective
+ * function while satisfying all the constraints - which will give a solution for the board -
+ * in ILP it will give an exact solution (if the board is solvable)
+ * in LP it will give probabilities for a value to be in a certain cell (if the board is solvable)
+ * ***/
+
+/* board is a two dimensional array of cells, its size is the same as curr_board's board
+ * and it's being initialized in the same values as curr_board's board.
+ * In order to avoid changing the curr_board's board it is defined
+ * */
 cell      **board;
 
 int check_gurobi_board_full();
 void copy_curr_to_board();
 int in_row_gurobi(int row, int num);
 int in_col_gurobi(int col, int num);
-void copy_curr_board_to_gurobi_board();
 int in_block_gurobi(int x, int y, int num);
 int is_valid_set_gurobi(int x, int y, int num);
 int check_num_var();

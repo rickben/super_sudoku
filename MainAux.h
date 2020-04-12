@@ -3,6 +3,18 @@
 #include "Game.h"
 #include <stdbool.h>
 
+/*
+ *ListActions Summary:
+ *
+ *This module supports all auxiliary functions of the game.
+ *
+ *It supports the following functions:
+ *
+ * functions that mange the allocation of memory, functions that check
+ * the state of the board and its cells, and functions that update the board
+ * ***/
+
+
 void memory_error(char* func);
 void update_list_pos_vals(int i, int j, int num);
 void init_temp_board();

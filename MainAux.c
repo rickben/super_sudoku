@@ -80,8 +80,11 @@ void copy_temp_board_to_curr(){
 }
 
 void restart_to_init(){
-    state = Init;
     free_mem_board();
+    clear_list(end_list);
+    end_list = NULL;
+    start_list = NULL;
+    state = Init;
 }
 
 int check_erroneous_board(){
