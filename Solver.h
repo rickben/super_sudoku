@@ -3,7 +3,7 @@
 #include "MainAux.h"
 #include "Game.h"
 
-/*
+/**
  *Solver Summary:
  *
  * This module manges the gurobi solver part of the program - translates the board to
@@ -14,7 +14,7 @@
  * in LP it will give probabilities for a value to be in a certain cell (if the board is solvable)
  * ***/
 
-/* board is a two dimensional array of cells, its size is the same as curr_board's board
+/** board is a two dimensional array of cells, its size is the same as curr_board's board
  * and it's being initialized in the same values as curr_board's board.
  * In order to avoid changing the curr_board's board it is defined
  * */

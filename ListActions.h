@@ -1,7 +1,7 @@
 #ifndef HW3_LISTACTIONS_H
 #define HW3_LISTACTIONS_H
 
-/*
+/**
  *ListActions Summary:
  *
  *This module manges the actions lists -  maintains a doubly-linked list of the user's moves,
@@ -14,7 +14,7 @@
  * init_start_list           - initializes the doubly-linked list of the user's moves
  * ***/
 
-/* In this module the curr_board and cell structs are defined:
+/** In this module the curr_board and cell structs are defined:
  *
  * cell represents a single cell in the board. It contains the cells value,
  * a flag (0/1) if it is fixed (is_fixed), a flag (0/1) if it is erroneous (is_erroneous),
@@ -29,7 +29,7 @@ typedef struct cell{
     int* list_poss_values;
 }cell;
 
-/*
+/**
  * curr_board - struct that contains board - the N x N current board (two dimensional array of cells)
  * in the game that is either in Solve or Edit mode, the board's block width - block_width
  * (n - num of columns in block), the board's block height - block_height (m - num of rows in block)
@@ -48,13 +48,14 @@ struct curr_board{
 }*curr_board, new_board, *temporary_board, *undo_board;
 
 
-/* global_mark_errors - is a global variable which at the start of the program is defined
+/**
+ * global_mark_errors - is a global variable which at the start of the program is defined
  * to be 1 and can change via the mark_errors command
  * */
 int global_mark_errors;
 
 
-/*
+/**
  *  Node is a struct that contains - command_code that represents the type of command,
  *  The possible command_code and there meaning:
  *  set: 5 (only one change of value in cell) , guess,generate,autofill: -1 (multiple cells that can be changed) .
@@ -76,7 +77,7 @@ typedef struct Node {
     struct Node* prev; /* Pointer to previous node in DLL */
 }Node;
 
-/*
+/**
  * temp_board is used for only generate command - to save the board
  * that to insure that if the command is unsuccessful - we can gp back to the
  * board that is saved in temp_board

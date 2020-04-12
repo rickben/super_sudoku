@@ -3,7 +3,7 @@
 #include "Game.h"
 
 
-/*
+/**
  *FilesAux Summary:
  *
  *This module supports saving and loading puzzles from files.

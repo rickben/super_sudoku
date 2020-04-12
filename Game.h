@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include "ListActions.h"
 
-/*
+/**
  * curr_board represents the current board game - whether its
  * been loaded in Solve or Edit mode.
  * curr_board->board : is the multi-dimensional array that represents
  * this board game which the player can load, edit, change and save.
  * */
 
-/*
+/**
  *Game Summary:
  *
  *A curr_board->len X curr_board->len (N X N) puzzle board with only one player.
@@ -39,14 +39,14 @@
 
 
 
-/*
+/**
  * This enum - state, represents the current state of the game, it's
  * is either in Init, Edit of Solve state
  * */
 enum state{Init, Edit, Solve};
 enum state state;
 
-/*
+/**
  * This Nodes represent:
  * current_move - pointer to current node in the doubly-linked list of moves
  * end_list - the end node in the doubly-linked list of moves

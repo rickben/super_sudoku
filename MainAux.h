@@ -3,7 +3,7 @@
 #include "Game.h"
 #include <stdbool.h>
 
-/*
+/**
  *MainAux Summary:
  *
  *This module supports all auxiliary functions of the game.
