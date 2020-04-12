@@ -424,8 +424,8 @@ void num_solutions(){
     printf("The number of solutions for the current board is %ld\n",count);
 }
 
-void calculate_list_possible_values(){
-    int i,j, len = 0, cell_value, possible_value;
+int calculate_list_possible_values(){
+    int i,j, len = 0, cell_value, possible_value, is_filled=0;
     for (i = 0; i < curr_board->len ; ++i) {
         for (j = 0; j < curr_board->len ; ++j){
             len = 0;
@@ -445,8 +445,11 @@ void calculate_list_possible_values(){
             }
             curr_board->board[i][j].list_poss_values_len = len;
             curr_board->board[i][j].value = cell_value;
+            if(len==1)
+                is_filled=1;
         }
     }
+    return is_filled;
 }
 
 void free_list_possible_values(){
@@ -460,7 +463,7 @@ void free_list_possible_values(){
 }
 
 void autofill(){
-    int i,j;
+    int i,j, is_filled=0;
     int *command_data;
     cell cell_data = {0,0,0,0, NULL};
     command_data = malloc(sizeof(int) * 3);
@@ -471,36 +474,38 @@ void autofill(){
         printf("The board is erroneous\n");
         return;
     }
-    calculate_list_possible_values();
+    is_filled = calculate_list_possible_values();
     clear_redo_gap();
-    insert_into_undo_lst(-1, command_data, cell_data);
-    for (i = 0; i < curr_board->len ; ++i) {
-        for (j = 0; j < curr_board->len ; ++j) {
-            if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed){
-                command_data[0] = i;
-                command_data[1] = j;
-                command_data[2] = curr_board->board[i][j].list_poss_values[0];
-                cell_data.value = curr_board->board[i][j].value;
-                cell_data.is_fixed = curr_board->board[i][j].is_fixed;
-                cell_data.is_erroneous = curr_board->board[i][j].is_erroneous;
-                if(!is_valid_set(i,j,curr_board->board[i][j].list_poss_values[0], curr_board))
-                    curr_board->board[i][j].is_erroneous = 1;
-                else
-                    curr_board->board[i][j].is_erroneous = 0;
-                curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
-                printf("single possible value for <%d,%d> updated: %d\n",i+1,j+1,curr_board->board[i][j].value);
-                insert_into_undo_lst(15, command_data, cell_data);
-                command_data = malloc(sizeof(int) * 3);
-                if (command_data == NULL){
-                    memory_error("malloc");
+    if(is_filled){
+        insert_into_undo_lst(-1, command_data, cell_data);
+        for (i = 0; i < curr_board->len ; ++i) {
+            for (j = 0; j < curr_board->len ; ++j) {
+                if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed && curr_board->board[i][j].value==0){
+                    command_data[0] = i;
+                    command_data[1] = j;
+                    command_data[2] = curr_board->board[i][j].list_poss_values[0];
+                    cell_data.value = curr_board->board[i][j].value;
+                    cell_data.is_fixed = curr_board->board[i][j].is_fixed;
+                    cell_data.is_erroneous = curr_board->board[i][j].is_erroneous;
+                    if(!is_valid_set(i,j,curr_board->board[i][j].list_poss_values[0], curr_board))
+                        curr_board->board[i][j].is_erroneous = 1;
+                    else
+                        curr_board->board[i][j].is_erroneous = 0;
+                    curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
+                    printf("single possible value for <%d,%d> updated: %d\n",i+1,j+1,curr_board->board[i][j].value);
+                    insert_into_undo_lst(15, command_data, cell_data);
+                    command_data = malloc(sizeof(int) * 3);
+                    if (command_data == NULL){
+                        memory_error("malloc");
+                    }
                 }
             }
         }
+        insert_into_undo_lst(-1, command_data, cell_data);
+        print_board();
     }
-    insert_into_undo_lst(-1, command_data, cell_data);
     free(command_data);
     free_list_possible_values();
-    print_board();
 }
 
 

@@ -505,7 +505,7 @@ void free_undo_board(){
 }
 
 void fill_undo_lst_by_cmp_board(int command_code){
-    int i,j;
+    int i,j, is_filled = 0;
     int *command_data;
     cell cell_data = {0,0,0,0, NULL};
     command_data = malloc(sizeof(int) * 3);
@@ -513,10 +513,12 @@ void fill_undo_lst_by_cmp_board(int command_code){
         memory_error("malloc");
     }
     clear_redo_gap();
-    insert_into_undo_lst(-1, command_data, cell_data);
     for(i=0;i<undo_board->len;i++){
         for(j=0;j<undo_board->len;j++){
             if(undo_board->board[i][j].value!=curr_board->board[i][j].value){
+                is_filled++;
+                if (is_filled==1)
+                    insert_into_undo_lst(-1, command_data, cell_data);
                 cell_data.value = undo_board->board[i][j].value;
                 cell_data.is_fixed = undo_board->board[i][j].is_fixed;
                 cell_data.is_erroneous = undo_board->board[i][j].is_erroneous;
@@ -531,6 +533,7 @@ void fill_undo_lst_by_cmp_board(int command_code){
             }
         }
     }
-    insert_into_undo_lst(-1, command_data, cell_data);
+    if(is_filled>0)
+        insert_into_undo_lst(-1, command_data, cell_data);
     free(command_data);
 }
