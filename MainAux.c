@@ -522,8 +522,8 @@ void fill_undo_lst_by_cmp_board(int command_code){
                 cell_data.value = undo_board->board[i][j].value;
                 cell_data.is_fixed = undo_board->board[i][j].is_fixed;
                 cell_data.is_erroneous = undo_board->board[i][j].is_erroneous;
-                command_data[0] = i;
-                command_data[1] = j;
+                command_data[0] = j;
+                command_data[1] = i;
                 command_data[2] = curr_board->board[i][j].value;
                 insert_into_undo_lst(command_code, command_data, cell_data);
                 command_data = malloc(sizeof(int) * 3);

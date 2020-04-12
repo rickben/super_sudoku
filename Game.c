@@ -430,6 +430,10 @@ int calculate_list_possible_values(){
         for (j = 0; j < curr_board->len ; ++j){
             len = 0;
             cell_value = curr_board->board[i][j].value;
+            if (cell_value != 0) {
+                curr_board->board[i][j].list_poss_values_len = -1; /* don't calculate the poss_values for non-empty cell */
+                continue;
+            }
             curr_board->board[i][j].list_poss_values = calloc(curr_board->len, sizeof(int));
             if (curr_board->board[i][j].list_poss_values == NULL){
                 memory_error("calloc");
@@ -456,8 +460,10 @@ void free_list_possible_values(){
     int i,j;
     for (i = 0; i < curr_board->len ; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
-            free(curr_board->board[i][j].list_poss_values);
-            curr_board->board[i][j].list_poss_values_len = 0;
+            if (curr_board->board[i][j].list_poss_values_len != -1) {
+                free(curr_board->board[i][j].list_poss_values);
+                curr_board->board[i][j].list_poss_values_len = 0;
+            }
         }
     }
 }
@@ -481,8 +487,8 @@ void autofill(){
         for (i = 0; i < curr_board->len ; ++i) {
             for (j = 0; j < curr_board->len ; ++j) {
                 if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed && curr_board->board[i][j].value==0){
-                    command_data[0] = i;
-                    command_data[1] = j;
+                    command_data[0] = j;
+                    command_data[1] = i;
                     command_data[2] = curr_board->board[i][j].list_poss_values[0];
                     cell_data.value = curr_board->board[i][j].value;
                     cell_data.is_fixed = curr_board->board[i][j].is_fixed;
@@ -492,7 +498,7 @@ void autofill(){
                     else
                         curr_board->board[i][j].is_erroneous = 0;
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
-                    printf("single possible value for <%d,%d> updated: %d\n",i+1,j+1,curr_board->board[i][j].value);
+                    printf("single possible value for <%d,%d> updated: %d\n",j+1,i+1,curr_board->board[i][j].value);
                     insert_into_undo_lst(15, command_data, cell_data);
                     command_data = malloc(sizeof(int) * 3);
                     if (command_data == NULL){
@@ -503,9 +509,13 @@ void autofill(){
         }
         insert_into_undo_lst(-1, command_data, cell_data);
         print_board();
+        free_list_possible_values();
+        free(command_data);
+    } else{
+        free(command_data);
+        printf("nothing to autofill\n");
     }
-    free(command_data);
-    free_list_possible_values();
+
 }
 
 
