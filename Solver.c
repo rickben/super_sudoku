@@ -299,7 +299,7 @@ int print_guess_hint_prob(){
 
 void check_board_unsolvable_for_guess_hint(int is_guess_hint){
     if(is_guess_hint && flag == 0){
-        printf("This board is unsolvable!\n");
+        printf("Error: This board is unsolvable!\n");
     }
 }
 

@@ -17,7 +17,7 @@ int solve_mode_to_file(char* file_name){
     int i,j;
     FILE *in_file = fopen(file_name, "w");
     if (! in_file ){
-        printf("oops, file can't be read\n");
+        printf("Error: file can't be read\n");
         return 0;
     }
     fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
@@ -43,7 +43,7 @@ int edit_mode_to_file(char* file_name) {
     int i,j;
     FILE *in_file = fopen(file_name, "w");
     if (! in_file ){
-        printf("oops, file can't be read\n");
+        printf("Error: file can't be read\n");
         return 0;
     }
         fprintf(in_file, "%d %d\n", curr_board->block_width, curr_board->block_height);
@@ -71,11 +71,11 @@ int trans_board_to_file(char* file_name){
     if(state == Solve) {
         return solve_mode_to_file(file_name);
     } else if(state == Edit && check_erroneous_board()){
-        printf("Erroneous board cannot be saved in Edit mode!\n");
+        printf("Error: Erroneous board cannot be saved in Edit mode!\n");
         return 0;
     }
     else if(!check_validate() && state == Edit){
-        printf("Board without a solution cannot be saved in Edit mode!\n");
+        printf("Error: Board without a solution cannot be saved in Edit mode!\n");
         return 0;
     }
     else {
@@ -153,11 +153,11 @@ int scan_size_from_file(FILE* in_file){
 
     if(fscanf(in_file, "%d %d", &height, &width) != 2 )
     {
-        printf("oops, error in scanning size\n");
+        printf("Error: error in scanning size\n");
         return 0;
     }
     if( height < 1 || width<1){
-        printf("oops, size smaller than 1\n");
+        printf("Error: size smaller than 1\n");
         return 0;
     }
     else{
@@ -183,7 +183,7 @@ int scan_rows_from_file(FILE *in_file, enum state State) {
             } else{
                 if (temporary_board->board[i][j].value < 0 ||
                     temporary_board->board[i][j].value > temporary_board->len){
-                    printf("Error, a number out of range (1,%d) in file!\n",temporary_board->len);
+                    printf("Error: a number out of range (1,%d) in file!\n",temporary_board->len);
                 }
                 if (temporary_board->board[i][j].value != 0) {
                     temporary_board->board[i][j].is_fixed = 0;
@@ -297,7 +297,7 @@ int trans_file_to_board(char* file_name, enum state State){
     FILE* in_file = fopen(file_name, "r");
     if (! in_file )
     {
-        printf("oops, file can't be read\n");
+        printf("Error: file can't be read\n");
         return 0;
     }
 
@@ -307,13 +307,13 @@ int trans_file_to_board(char* file_name, enum state State){
     }
 
     if(! scan_rows_from_file(in_file, State)){
-        printf("File's board is not in a correct format\n");
+        printf("Error: File's board is not in a correct format\n");
         free_temporary_board();
         fclose(in_file);
         return 0;
     }
     if(! check_erroneous_fixed_cells_temp()){
-        printf("File's board is not legal - erroneous fixed cells\n");
+        printf("Error: File's board is not legal - erroneous fixed cells\n");
         free_temporary_board();
         fclose(in_file);
         return 0;

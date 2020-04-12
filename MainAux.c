@@ -177,7 +177,7 @@ int fill_board_random(int x){
     int col, row, num;
     num = check_num_of_empty_cells();
     if (num < x){
-        printf("There are less then %d empty cells, generate can't finish\n",x);
+        printf("Error: There are less then %d empty cells, generate can't finish\n",x);
         return -1;
     }
     while (x>0){
