@@ -76,7 +76,7 @@ int undo_action(){
     int* command_data;
     cell cell_data;
     if(current_move==start_list){
-        printf("noting to undo\n");
+        printf("No more moves to undo\n");
         return 0;
     }
     if(current_move->command_code == 5){
@@ -109,7 +109,7 @@ void undo(){
 int redo_action(){
     int* command_data;
     if(current_move->next == end_list){
-        printf("noting to redo\n");
+        printf("No more moves to redo\n");
         return 0;
     }
     current_move = current_move->next;
@@ -412,7 +412,7 @@ int update_stack(int count){
 void num_solutions(){
     long count = 0;
     if (check_erroneous_board() || !is_valid_board()){
-        printf("num_solutions not available in erroneous board\n");
+        printf("num_solutions is not available in erroneous board\n");
         return;
     }
     update_new_board_by_curr();
