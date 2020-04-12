@@ -302,19 +302,19 @@ void guess_hint(int x, int y){
             printf("Error, a number out of range (1,%d)!\n", curr_board->len);
             return;
         } else if (x > curr_board->len || y > curr_board->len) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
+            printf("Error: a number out of range (1,%d)!\n", curr_board->len);
             return;
         }else if (curr_board->board[y-1][x-1].is_fixed) {
-            printf("This position is fixed!\n");
+            printf("Error: This position is fixed!\n");
             return;
         } else if (curr_board->board[y-1][x-1].value != 0){
-            printf("This position already has a value!\n");
+            printf("Error: This position already has a value!\n");
             return;
         } else if(check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
+            printf("Error: The board is erroneous\n");
         } else{
             if(!solver(1,0,0,1,y-1,x-1)) { /* prints the scores in solver */
-                printf("This board is unsolvable!\n");
+                printf("Error: This board is unsolvable!\n");
                 return;
             }
         }
