@@ -20,6 +20,7 @@
  * */
 cell      **board;
 
+
 /**
  * checks if board (of gurobi) has no empty cells
  * @return 1 - if it doesn't have empty cells, 0 otherwise
@@ -30,6 +31,12 @@ int check_gurobi_board_full();
  * copies curr_board's board to gurobi's board
  */
 void copy_curr_to_board();
+
+/**
+ * sets the objective function to be maximum
+ * @return 1 if an error occurred, 0 otherwise
+ */
+int set_obj_max();
 
 /**
  * checks if there is a cell with the value of num in this row
@@ -133,21 +140,81 @@ int optimum_state_ilp();
 void check_board_unsolvable_for_guess_hint(int is_guess_hint);
 
 /**
- *
- * @param thresholdX
+ * sets the values with probabilities greater than the threshold to the cells of board
+ * @param thresholdX - the threshold to the probabilities
  */
 void set_guess_board(double thresholdX);
-int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, int y);
-int optimization_complete(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y);
-void error_report();
-int optimize_model();
-int write_model();
-int capture_sol_info();
-void free_model();
-void free_env();
-int set_obj_max();
-int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y);
 
+/**
+ * in LP optimizer: if it is guess command - updates the board with values with probabilities
+ * greater than the threshold, if it is guess_hint - prints the probabilities of values for the
+ * specified cell <y,x>
+ * @param is_guess - 1 if it's guess command, 0 otherwise
+ * @param thresholdX - the threshold for the probabilities for guess command
+ * @param is_guess_hint - 1 if it's guess_hint command, 0 otherwise
+ * @param x - the row of the cell for guess_hint command
+ * @param y - the column of the cell for guess_hint command
+ * @return 1 if an error occurred, 0 otherwise
+ */
+int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, int y);
+
+/**
+ * if the optimizer succeeded in reaching optimum - calls for optimum_state_lp or optimum_state_ilp
+ * @param is_LP parameter - 1 if we solve by LP, 0 if we solve by ILP
+ * @param is_guess - 1 if it's guess command, 0 otherwise
+ * @param thresholdX - the threshold for the probabilities for guess command
+ * @param is_guess_hint - 1 if it's guess_hint command, 0 otherwise
+ * @param x - the row of the cell for guess_hint command
+ * @param y - the column of the cell for guess_hint command
+ * @return 0 if an error occurred, 1 otherwise
+ */
+int optimization_complete(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y);
+
+/**
+ * prints error message to the console
+ */
+void error_report();
+
+/**
+ * optimizes the model with the gurobi optimizer
+ * @return 1 if an error occurred, 0 otherwise
+ */
+int optimize_model();
+
+/**
+ * writes the model to .lp file
+ * @return 1 if an error occurred, 0 otherwise
+ */
+int write_model();
+
+/**
+ * captures the solution information by the gurobi optimizer
+ * @return 1 if an error occurred, 0 otherwise
+ */
+int capture_sol_info();
+
+/**
+ * frees the model
+ */
+void free_model();
+
+/**
+ * frees the environment
+ */
+void free_env();
+
+/**
+ * solves the board using gurobi optimizer either via ILP or via LP (for guess of
+ * guess_hint commands only)
+ * @param is_LP parameter - 1 if we solve by LP, 0 if we solve by ILP
+ * @param is_guess - 1 if it's guess command, 0 otherwise
+ * @param thresholdX - the threshold for the probabilities for guess command
+ * @param is_guess_hint - 1 if it's guess_hint command, 0 otherwise
+ * @param x - the row of the cell for guess_hint command
+ * @param y - the column of the cell for guess_hint command
+ * @return 0 if an error occurred or if the board is unsolvable, otherwise 1
+ */
+int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y);
 
 
 #endif
