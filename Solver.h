@@ -132,7 +132,10 @@ int optimum_state_ilp();
  */
 void check_board_unsolvable_for_guess_hint(int is_guess_hint);
 
-
+/**
+ *
+ * @param thresholdX
+ */
 void set_guess_board(double thresholdX);
 int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, int y);
 int optimization_complete(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y);
