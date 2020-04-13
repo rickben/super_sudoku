@@ -102,19 +102,21 @@ int set_random_val(int row, int col){
         }
     }
     if (num_pos == 0){
+        free(pos_val);
         return 0;
     }
-    val = rand() % num_pos;
+    val = rand() % num_pos; /* randomly pick an index between 0 to num_pos-1*/
     for (v = 0; v < curr_board->len; ++ v) {
         if (pos_val[v] == 1){
-            if (cnt == val){
-                curr_board->board[row][col].value = val;
+            if (cnt == val){ /* cnt is the index of the 1's in the pos_val array */
+                curr_board->board[row][col].value = v+1;
                 curr_board->board[row][col].is_fixed = 0;
                 break;
             }
             cnt++;
         }
     }
+    free(pos_val);
     return 1;
 }
 
@@ -146,7 +148,7 @@ void second_set_cond_check_param(int x, int y){
 
 void find_random_empty_cell(int* row, int* col, int num_empty){
     int ** all_empty_cells;
-    int i, j, cnt = 0;
+    int i, j, cnt = 0; /* cnt iterates from 0 to the number of empty cells */
     all_empty_cells = (int**)malloc(num_empty*sizeof(int*));
     if (all_empty_cells == NULL){
         memory_error("malloc");
@@ -159,16 +161,21 @@ void find_random_empty_cell(int* row, int* col, int num_empty){
     }
     for (i = 0; i < curr_board->len; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
-            if (curr_board->board[i][j].value == 0){
+            if (curr_board->board[i][j].value == 0){ /* if the cell is empty */
                 all_empty_cells[cnt][0] = i;
                 all_empty_cells[cnt][1] = j;
                 cnt ++;
             }
         }
     }
+
     cnt = rand() % num_empty;
     *row = all_empty_cells[cnt][0];
     *col = all_empty_cells[cnt][1];
+    for (i = 0; i < num_empty; ++i) {
+        free(all_empty_cells[i]);
+    }
+    free(all_empty_cells);
 }
 
 
@@ -183,6 +190,7 @@ int fill_board_random(int x){
         return -1;
     }
     while (x>0){
+        num = check_num_of_empty_cells();
         find_random_empty_cell(&row,&col,num);
         /* Find all possible values in this position*/
         if (set_random_val(row,col) == 0){
