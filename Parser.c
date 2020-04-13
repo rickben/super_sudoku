@@ -289,8 +289,16 @@ void execute_command(int command_code, char** command_data) {
             y = is_integer(command_data[1]);
             z = is_integer(command_data[2]);
             if(x == -1 || y == -1 || z == -1){
-                printf("Error: The parameter isn't legal (not int)\n");
-                break;
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else if (y == -1){
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The third parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             board_set(x,y,z);
             break;
@@ -328,9 +336,14 @@ void execute_command(int command_code, char** command_data) {
             }
             x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
-            if( x == -1|| y == -1){
-                printf("Error: The parameter isn't legal (not int)\n");
-                break;
+            if(x == -1 || y == -1){
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             generate(x,y);
             break;
@@ -375,8 +388,13 @@ void execute_command(int command_code, char** command_data) {
             x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
             if(x == -1 || y == -1){
-                printf("Error: The parameter isn't legal (not int)\n");
-                break;
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             hint(x,y);
             break;
@@ -391,9 +409,14 @@ void execute_command(int command_code, char** command_data) {
             }
             x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
-            if(x == -1 || y == -1){
-                printf("Error: The parameter isn't legal (not int)\n");
-                break;
+            if (x == -1 || y == -1){
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             guess_hint(x,y);
             break;

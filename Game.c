@@ -190,11 +190,21 @@ int generate_loop(int x, int y){
 
 void generate(int x, int y){
     if (x < 0 || y < 0) {
-        printf("Error: all numbers should be positive!\n");
-        return;
+        if (x < 0) {
+            printf("Error: the first parameter should be positive!\n");
+            return;
+        } else {
+            printf("Error: the second parameter should be positive!\n");
+            return;
+        }
     } else if (x > curr_board->len *curr_board->len || y > curr_board->len *curr_board->len) {
-        printf("Error: a number out of range (0,%d)!\n", curr_board->len *curr_board->len);
-        return;
+        if (x > curr_board->len *curr_board->len ) {
+            printf("Error: the first parameter out of range (0,%d)!\n", curr_board->len * curr_board->len);
+            return;
+        } else {
+            printf("Error: the second parameter out of range (0,%d)!\n", curr_board->len * curr_board->len);
+            return;
+        }
     }else if(check_erroneous_board() || !is_valid_board()){
         printf("Error: The board is erroneous\n");
     } else {
@@ -205,48 +215,57 @@ void generate(int x, int y){
     }
 }
 
-
-void board_set(int x, int y, int z) {
+void execute_set_command(int x, int y, int z){
     int *command_data;
     cell cell_data;
     command_data = malloc(sizeof(int) * 3);
     if (command_data == NULL){
         memory_error("malloc");
     }
+    if(curr_board->board[y-1][x-1].value == z){
+        print_board();
+        return;
+    } else {
+        command_data[0] = y-1;
+        command_data[1] = x-1;
+        command_data[2] = z;
+        cell_data = curr_board->board[y - 1][x - 1];
+        if(!is_valid_set(y-1,x-1,z,curr_board)){
+            curr_board->board[y-1][x-1].is_erroneous = 1;
+        }else{
+            curr_board->board[y-1][x-1].is_erroneous = 0;
+        }
+        curr_board->board[y-1][x-1].value = z;
+        clear_redo_gap();
+        insert_into_undo_lst(5, command_data, cell_data);
+        print_board();
+    }
+}
+
+
+
+void board_set(int x, int y, int z) {
     if (x < 1 || y < 1 || z < 0) {
-        printf("Error: a number out of range (1,%d)!\n", curr_board->len);
-        return;
-    } else if (x > curr_board->len  || y > curr_board->len || z > curr_board->len) {
-        printf("Error: a number out of range (1,%d)!\n", curr_board->len);
-        return;
-    } else if (curr_board->board[y-1][x-1].is_fixed && state == Solve) {
+        first_set_cond_check_param(x,y);
+    } else if (x > curr_board->len || y > curr_board->len || z > curr_board->len) {
+        second_set_cond_check_param(x,y);
+    } else if (curr_board->board[y - 1][x - 1].is_fixed && state == Solve) {
         printf("Error: This position is fixed!\n");
         return;
-    } else { if(curr_board->board[y-1][x-1].value == z){
-	  print_board();
-            return;
-    } else{
-            command_data[0] = y-1;
-            command_data[1] = x-1;
-            command_data[2] = z;
-            cell_data = curr_board->board[y - 1][x - 1];
-            if(!is_valid_set(y-1,x-1,z,curr_board)){
-                curr_board->board[y-1][x-1].is_erroneous = 1;
-            }else{
-                curr_board->board[y-1][x-1].is_erroneous = 0;
-            }
-            curr_board->board[y-1][x-1].value = z;
-            clear_redo_gap();
-            insert_into_undo_lst(5, command_data, cell_data);
-            print_board();
-    }
+    } else {
+        execute_set_command(x,y,z);
     }
 }
 
 void guess(double x){
     if (x<0 || x>1){
-        printf("Error: a number out of range (0,1)!\n");
-        return;
+        if (x < 0) {
+            printf("Error: the first parameter out of range (0,1)!\n");
+            return;
+        } else {
+            printf("Error: the second parameter out of range (0,1)!\n");
+            return;
+        }
     }
    if (check_erroneous_board() || !is_valid_board()){
        printf("Error: The board is erroneous\n");
@@ -269,11 +288,21 @@ void guess(double x){
 void hint(int x, int y){
     int num;
         if (x < 1 || y < 1) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x < 1) {
+                printf("Error: the first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else{
+                printf("Error: the second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         } else if (x > curr_board->len || y > curr_board->len) {
-            printf("Error: a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x > curr_board->len){
+                printf("Error: the first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else {
+                printf("Error: the second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         } else if (curr_board->board[y-1][x-1].is_fixed) {
             printf("Error: This position is fixed!\n");
             return;
@@ -299,11 +328,21 @@ void hint(int x, int y){
  * */
 void guess_hint(int x, int y){
         if (x < 1 || y < 1) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x < 1) {
+                printf("Error: first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else{
+                printf("Error: second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         } else if (x > curr_board->len || y > curr_board->len) {
-            printf("Error: a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x > curr_board->len) {
+                printf("Error: first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else {
+                printf("Error: second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         }else if (curr_board->board[y-1][x-1].is_fixed) {
             printf("Error: This position is fixed!\n");
             return;

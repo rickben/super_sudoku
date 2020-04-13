@@ -11,33 +11,6 @@ void memory_error(char* func){
     my_exit();
 }
 
-void update_list_pos_vals(int i, int j, int num){
-    int k, flag = 0, cnt = 0;
-    int* new_list_poss;
-    for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
-        if (curr_board->board[i][j].list_poss_values[k] == num){
-            curr_board->board[i][j].list_poss_values[k] = 0;
-            flag = 1;
-            break;
-        }
-    }
-    if (flag){
-        new_list_poss = malloc((curr_board->board[i][j].list_poss_values_len-1)*sizeof(int));
-        if (new_list_poss == NULL){
-            memory_error("malloc");
-        }
-        for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
-            if (curr_board->board[i][j].list_poss_values[k] == 0) {
-                continue;
-            } else {
-                new_list_poss[cnt] = curr_board->board[i][j].list_poss_values[k];
-                cnt ++;
-            }
-        }
-        curr_board->board[i][j].list_poss_values_len --;
-        curr_board->board[i][j].list_poss_values = new_list_poss;
-    }
-}
 
 void init_temp_board(){
     int i;
@@ -143,6 +116,32 @@ int set_random_val(int row, int col){
         }
     }
     return 1;
+}
+
+void first_set_cond_check_param(int x, int y){
+    if (x < 1) {
+        printf("Error: the first parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else if (y < 1) {
+        printf("Error: the second parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else {
+        printf("Error: the third parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    }
+}
+
+void second_set_cond_check_param(int x, int y){
+    if (x > curr_board->len) {
+        printf("Error: the first parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else if (y > curr_board->len) {
+        printf("Error: the second parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else {
+        printf("Error: the third parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    }
 }
 
 void find_random_empty_cell(int* row, int* col, int num_empty){

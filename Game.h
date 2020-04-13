@@ -115,21 +115,120 @@ int undo_action();
  */
 void undo();
 
+/**
+ * redo's the last action
+ * @return 1 if successful, 0 otherwise
+ */
 int redo_action();
+
+/**
+ * calls redo_action, and prints the board if the command
+ * was successful
+ */
 void redo();
+
+/**
+ * resets the board to its first state
+ */
 void reset();
+
+/**
+ * copies gurobi's board values (after calling solver())
+ * to curr_board's board
+ */
 void copy_board_to_cur();
+
+/**
+ * tries to fill x empty cells with random values,
+ * run ILP and then leave y random empty cells,
+ * if it fails tries again for 1000 iterations
+ * @param x - the number of first cells to fill
+ * @param y - the number of last cells to leave empty
+ * @return if all the 1000 the tries were unsuccessful - 0, otherwise 1.
+ */
 int generate_loop(int x, int y);
+
+/**
+ * checks whether conditions for the command met, if they
+ * do - calls generate_loop, otherwise prints error
+ * @param x - the number of first cells to fill
+ * @param y - the number of last cells to leave empty
+ */
 void generate(int x, int y);
+
+/**
+ * executes set command
+ * @param x - the number of column
+ * @param y - the number of row
+ * @param z - the value to set
+ */
+void execute_set_command(int x, int y, int z);
+
+/**
+ * sets the cell <x,y> (col,row) in the curr_board's board,
+ * with the value of z. calls execute_set_command
+ * @param x - the number of column
+ * @param y - the number of row
+ * @param z - the value to set
+ */
 void board_set(int x, int y, int z);
+
+/**
+ * using LP - fills the curr_board's board with values
+ * with probabilities greater than x
+ * @param x - the threshold for probabilities
+ */
 void guess(double x);
+
+/**
+ * using ILP get a hint to the value of the cell
+ * @param x - the column of the cell
+ * @param y - the row of the cell
+ */
 void hint(int x, int y);
+
+/**
+ * using LP prints probabilities of values to be set to the cell
+ * @param x - the column of the cell
+ * @param y - the row of the cell
+ */
 void guess_hint(int x, int y);
+
+/**
+ * using ILP checks if the board is full after running the solver
+ * if not - the board is not valid (can not be saved)
+ * @return 1 if the board is valid, 0 otherwise
+ */
 int check_validate();
+
+/**
+ * checks whether the board is valid - means it can be solved
+ * @return 1 if the board is valid, 0 otherwise
+ */
 int validate();
+
+/**
+ * makes all the non-empty cells in the board to be fixed
+ * @param my_board - the board given
+ */
 void save_all_curr_cells_fixed(cell** my_board);
+
+/**
+ * checks whether the board is full - means there are no empty cells
+ * @param my_board - the board given
+ * @return 1 if the board is full, 0 otherwise
+ */
 int check_board_full(cell** my_board);
+
+/**
+ * using exhaustive backtracking algorithm and a stack, it calculates
+ * the number of possible solutions for the curr_board's board
+ */
 void num_solutions();
+
+/**
+ * fills all empty cells with only one possible value with that value
+ */
 void autofill();
 
 #endif

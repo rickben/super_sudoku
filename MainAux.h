@@ -14,19 +14,74 @@
  * the state of the board and its cells, and functions that update the board
  * ***/
 
-
+/**
+ * prints error message
+ * @param func string - the function that created the error
+ */
 void memory_error(char* func);
-void update_list_pos_vals(int i, int j, int num);
+
+/**
+ * initializes temp_board for generate command
+ */
 void init_temp_board();
+
+/**
+ * frees all memories allocated for temp_board
+ */
 void free_temp_board();
+
+/**
+ * copies curr_board's cells values into temp_board's cells
+ */
 void copy_curr_to_temp_board();
+/**
+ * copies temp_board's cells values into curr_board's cells
+ */
 void copy_temp_board_to_curr();
+
+/**
+ * restart the game to state Init by freeing all memories allocated,
+ * and changing the state
+ */
 void restart_to_init();
+
+/**
+ * checks whether the board is erroneous
+ * @return 1 if the board is erroneous, 0 otherwise
+ */
 int check_erroneous_board();
+
+/**
+ * prints message for the start of the game
+ */
 void print_start_program();
+
+/**
+ * counts the number of empty cells
+ * @return number of empty cells
+ */
 int check_num_of_empty_cells();
+
+/**
+ * randomly chooses a value for the cell <col,row> from
+ * a list of valid values
+ * @param row - row of cell
+ * @param col - column of cell
+ * @return 1 if the set was successful, 0 otherwise
+ */
 int set_random_val(int row, int col);
+
+/**
+ *
+ * @param row
+ * @param col
+ * @param num_empty
+ */
 void find_random_empty_cell(int* row, int* col, int num_empty);
+
+void first_set_cond_check_param(int x, int y);
+void second_set_cond_check_param(int x, int y);
+
 int fill_board_random(int x);
 void clear_cells_random(int y);
 int in_row(int row, int num, struct curr_board* curr_board);
