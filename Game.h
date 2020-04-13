@@ -56,16 +56,65 @@ Node* current_move;
 Node* end_list;
 Node* start_list;
 
+/**
+ * inserts new node with the command's number and its data (only successful commands)
+ * @param command_code - the number of the command
+ * @param command_data - its data - the cell information
+ * @param cell_data - the value the cell is changed to
+ */
 void insert_into_undo_lst(int command_code, int* command_data, cell cell_data);
+
+/**
+ * TODO:
+ */
 void clear_redo_gap();
+
+/**
+ * frees all the memory and exits the program
+ */
 void my_exit();
+
+/**
+ * saves the curr_board's board to the specified file
+ * @param file_name - path to the specified file
+ */
 void save(char* file_name);
+
+/**
+ * loads to state Solve the board from to the specified file
+ * @param file_name - path to the specified file
+ */
 void solve(char* file_name);
+
+/**
+ * loads to state Edit the board from to the specified file
+ * @param file_name - path to the specified file
+ */
 void edit(char* file_name);
+
+/**
+ * sets the parameter global_mark_errors to x
+ * @param x - the parameter to set to
+ */
 void mark_errors(int x);
+
+/**
+ * prints the curr_board's board
+ */
 void print_board();
+
+/**
+ * undo's the last action
+ * @return 1 if successful, 0 otherwise
+ */
 int undo_action();
+
+/**
+ * calls undo_action, and prints the board if the command
+ * was successful
+ */
 void undo();
+
 int redo_action();
 void redo();
 void reset();
