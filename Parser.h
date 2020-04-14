@@ -22,7 +22,7 @@
 **/
 
 extern char *strtok_r(char *, const char *, char **);
-
+/**/
 /**
  * compares two strings
  * @param first string
