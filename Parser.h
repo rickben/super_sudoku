@@ -2,6 +2,11 @@
 #define HW3_PARSER_H
 #include <string.h>
 #include <stdbool.h>
+#include "Game.h"
+#include "FilesAux.h"
+#include "MainAux.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /**
 *Parser Summary:

@@ -56,18 +56,6 @@ Node* current_move;
 Node* end_list;
 Node* start_list;
 
-/**
- * inserts new node with the command's number and its data (only successful commands)
- * @param command_code - the number of the command
- * @param command_data - its data - the cell information
- * @param cell_data - the value the cell is changed to
- */
-void insert_into_undo_lst(int command_code, int* command_data, cell cell_data);
-
-/**
- * TODO:
- */
-void clear_redo_gap();
 
 /**
  * frees all the memory and exits the program
@@ -132,11 +120,6 @@ void redo();
  */
 void reset();
 
-/**
- * copies gurobi's board values (after calling solver())
- * to curr_board's board
- */
-void copy_board_to_cur();
 
 /**
  * tries to fill x empty cells with random values,

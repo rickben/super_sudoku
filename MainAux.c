@@ -547,3 +547,113 @@ void fill_undo_lst_by_cmp_board(int command_code){
         insert_into_undo_lst(-1, command_data, cell_data);
     free(command_data);
 }
+void insert_into_undo_lst(int command_code, int* command_data, cell cell_data){
+    Node* temp = end_list->prev;
+    temp = insert(temp, command_code, command_data, cell_data);
+    temp->next = end_list;
+    end_list->prev = temp;
+    current_move = end_list->prev;
+}
+void clear_redo_gap(){
+    while(end_list->prev!=current_move){
+        end_list = end_list->prev;
+        free(end_list->next);
+    }
+}
+
+
+
+void copy_board_to_cur() {
+    int i, j;
+    for (i = 0; i < curr_board->len; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            curr_board->board[i][j].value = board[i][j].value;
+
+        }
+    }
+}
+
+void update_new_board_by_curr(){
+    int j,k;
+    new_board.len = curr_board->len;
+    new_board.block_width = curr_board->block_width;
+    new_board.block_height = curr_board->block_height;
+    new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
+    if (new_board.board == NULL){
+        memory_error("calloc");
+    }
+    for (j = 0; j < new_board.len; ++j) {
+        new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));
+        if (new_board.board[j] == NULL){
+            memory_error("calloc");
+        }
+    }
+    for (j = 0; j < new_board.len; ++j) {
+        for (k = 0; k < new_board.len; ++k)
+            new_board.board[j][k] = curr_board->board[j][k];
+    }
+}
+
+
+int update_stack(int count){
+    int row = 0, col = 0, i;
+    new_board = pop_ele();
+    if (find_empty_cell(&row,&col, new_board.board)){
+        for(i = 1;i <= new_board.len ;i++){
+            new_board.board[row][col].value = i;
+            if(is_valid_board_new_board()){
+                push_ele(new_board);
+            }
+        }
+    }
+    else {
+        if (is_valid_board(&new_board)){
+            count++;
+        }
+    }
+    return count;
+}
+
+int calculate_list_possible_values(){
+    int i,j, len = 0, cell_value, possible_value, is_filled=0;
+    for (i = 0; i < curr_board->len ; ++i) {
+        for (j = 0; j < curr_board->len ; ++j){
+            len = 0;
+            cell_value = curr_board->board[i][j].value;
+            if (cell_value != 0) {
+                curr_board->board[i][j].list_poss_values_len = -1; /* don't calculate the poss_values for non-empty cell */
+                continue;
+            }
+            curr_board->board[i][j].list_poss_values = calloc(curr_board->len, sizeof(int));
+            if (curr_board->board[i][j].list_poss_values == NULL){
+                memory_error("calloc");
+            }
+            for ( possible_value = 1; possible_value <= curr_board->len; ++possible_value) {
+                if(possible_value!=cell_value){
+                    curr_board->board[i][j].value=possible_value;
+                    if( is_valid_board()){
+                        curr_board->board[i][j].list_poss_values[len] = possible_value;
+                        len++;
+                    }
+                }
+            }
+            curr_board->board[i][j].list_poss_values_len = len;
+            curr_board->board[i][j].value = cell_value;
+            if(len==1)
+                is_filled=1;
+        }
+    }
+    return is_filled;
+}
+
+void free_list_possible_values(){
+    int i,j;
+    for (i = 0; i < curr_board->len ; ++i) {
+        for (j = 0; j < curr_board->len; ++j) {
+            if (curr_board->board[i][j].list_poss_values_len != -1) {
+                free(curr_board->board[i][j].list_poss_values);
+                curr_board->board[i][j].list_poss_values_len = 0;
+            }
+        }
+    }
+}

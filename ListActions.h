@@ -84,7 +84,26 @@ typedef struct Node {
  * */
 cell** temp_board;
 
+
+/**
+ * inserts a new_node into the linked list after curr_node
+ * the rest of the parameters are the data inseted into the new Node
+ * curr_node is initialized as the new_node.prev, and curr_node.next is new_node
+ * insert() returns new_node
+ * @param curr_node - a pointer to a node which after it we want to insert new_node
+ * @param command_code - the number of the command
+ * @param command_data - its data - the cell information
+ * @param cell_data - the value the cell is changed to
+ */
 Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_data);
+/**
+ * frees the linked list from memory, given the head pointer
+ * @param head - pointer to the end of the list
+ */
 void clear_list(Node* head);
+/**
+ * initializes the moves linked list - creates the pointers to the beginning of the list (start list)
+ * and to the end of the list (end list)
+ */
 void init_start_list();
 #endif
