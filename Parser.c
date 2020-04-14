@@ -210,7 +210,7 @@ void interpret_command(){
         j=0;
     }
     else{
-        my_exit();
+        memory_error("fgetc");
     }
     execute_command(command_code, command_data);
 }
