@@ -146,6 +146,7 @@ void free_temporary_board(){
     int i;
     for (i = 0; i < temporary_board->len; ++i)
         free(temporary_board->board[i]);
+    free(temporary_board->board);
     free(temporary_board);
 }
 int scan_size_from_file(FILE* in_file){
