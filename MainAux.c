@@ -89,25 +89,30 @@ int check_num_of_empty_cells(){
 int set_random_val(int row, int col){
     int  v, val, num_pos = 0, cnt = 0;
     int* pos_val;
+    /* allocate memory for array of possible values in the
+     * size of curr_board's length for this cell <col,row> */
     pos_val = (int*) malloc(curr_board->len*sizeof(int));
     if (pos_val == NULL){
         memory_error("malloc");
     }
+    /* for every value that can be in the board -
+     * check if it's valid - and set flag to 1 in pos_val */
     for (v = 0; v < curr_board->len; ++ v) {
         if (is_valid_set(row,col,v+1,curr_board)){
             pos_val[v] = 1;
             num_pos ++;
         } else {
+            /* if not valid - set flag to 0*/
             pos_val[v] = 0;
         }
     }
-    if (num_pos == 0){
+    if (num_pos == 0){ /* there are no possible values for this cell */
         free(pos_val);
         return 0;
     }
     val = rand() % num_pos; /* randomly pick an index between 0 to num_pos-1*/
     for (v = 0; v < curr_board->len; ++ v) {
-        if (pos_val[v] == 1){
+        if (pos_val[v] == 1){ /* if the flag is 1*/
             if (cnt == val){ /* cnt is the index of the 1's in the pos_val array */
                 curr_board->board[row][col].value = v+1;
                 curr_board->board[row][col].is_fixed = 0;
@@ -119,6 +124,7 @@ int set_random_val(int row, int col){
     free(pos_val);
     return 1;
 }
+
 
 void first_set_cond_check_param(int x, int y){
     if (x < 1) {
@@ -146,9 +152,12 @@ void second_set_cond_check_param(int x, int y){
     }
 }
 
+
+
 void find_random_empty_cell(int* row, int* col, int num_empty){
     int ** all_empty_cells;
     int i, j, cnt = 0; /* cnt iterates from 0 to the number of empty cells */
+    /* allocate memory for array in the size of number of empty cells */
     all_empty_cells = (int**)malloc(num_empty*sizeof(int*));
     if (all_empty_cells == NULL){
         memory_error("malloc");
@@ -159,6 +168,9 @@ void find_random_empty_cell(int* row, int* col, int num_empty){
             memory_error("malloc");
         }
     }
+    /* each entry in the array contains 2 values:
+     * first - i - the row of the empty cell
+     * second - j - the col of the empty cell*/
     for (i = 0; i < curr_board->len; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
             if (curr_board->board[i][j].value == 0){ /* if the cell is empty */
@@ -168,16 +180,20 @@ void find_random_empty_cell(int* row, int* col, int num_empty){
             }
         }
     }
-
+    /*
+     * randomly chooses index from 0 to number of empty cells:
+     * it means randomly choose an empty cell
+     * */
     cnt = rand() % num_empty;
     *row = all_empty_cells[cnt][0];
     *col = all_empty_cells[cnt][1];
+
+    /* free all memory allocated */
     for (i = 0; i < num_empty; ++i) {
         free(all_empty_cells[i]);
     }
     free(all_empty_cells);
 }
-
 
 /*
  * col->row->value
