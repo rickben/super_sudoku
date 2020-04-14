@@ -156,15 +156,13 @@ int command_to_code(char* input) {
 void interpret_command(){
     char c;
     int input_len = 257;
-    char* input;
+    char input[257];
     char *token;
+    char* ptr;
     int command_code = 0;
     int j = 0;
     char command_data[4][258];
-    input = malloc(input_len* sizeof(char));
-    if (input == NULL){
-        memory_error("malloc");
-    }
+
     for (; j < 4; ++j) {
         command_data[j][0]='\0';
     }
@@ -185,32 +183,24 @@ void interpret_command(){
         /* fix input*/
         if (len > 0 && input[len - 1] == '\n') input[--len] = '\0';
 
-        /*copy input so we won't ruin it
-        rest = malloc(sizeof(char) * (strlen(input) + 1));
-        if (rest == NULL){
-            memory_error("malloc");
-        }
-        strcpy(rest, input);*/
-
-        token = strtok_r(input, " \t\r", &input);
+        token = strtok_r(input, " \t\r", &ptr);
 
         if(token!=NULL){
             command_code = command_to_code(token);
         } else{
-            memory_error("strtok_r");
-            return;}
+            return;
+        }
         /*this way the parser ignores empty commands*/
-        token = strtok_r(input, " \t\r", &input);
+        token = strtok_r(NULL, " \t\r", &ptr);
         while (token!=NULL&& j<4){
             strcpy(command_data[j], token);
-            token = strtok_r(input, " \t\r", &input);
+            token = strtok_r(NULL, " \t\r", &ptr);
             j++;
         }
-        /* TODO: do i need to check if token == NULL -> memory_error? */
         j=0;
     }
     else{
-        memory_error("fgetc");
+        my_exit();
     }
     execute_command(command_code, command_data);
 }

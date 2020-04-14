@@ -216,6 +216,7 @@ void execute_set_command(int x, int y, int z){
         clear_redo_gap();
         insert_into_undo_lst(5, command_data, cell_data);
         print_board();
+        free(command_data);
     }
 }
 
