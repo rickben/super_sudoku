@@ -189,6 +189,19 @@ void clear_redo_gap();
 void copy_board_to_cur();
 
 /**
+ * makes all the non-empty cells in the board to be fixed
+ * @param my_board - the board given
+ */
+void save_all_curr_cells_fixed(cell** my_board);
+
+/**
+ * checks whether the board is full - means there are no empty cells
+ * @param my_board - the board given
+ * @return 1 if the board is full, 0 otherwise
+ */
+int check_board_full(cell** my_board);
+
+/**
  * this function copies into new_board all of curr_board data
  */
 void update_new_board_by_curr();

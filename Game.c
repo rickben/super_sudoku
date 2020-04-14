@@ -362,27 +362,6 @@ int validate(){
     }
 }
 
-void save_all_curr_cells_fixed(cell** my_board){
-    int i,j;
-    for (i = 0; i < curr_board->len ; ++i)
-        for (j = 0; j < curr_board->len ; ++j)
-            if(my_board[i][j].value != 0)
-                my_board[i][j].is_fixed = 1;
-            else{
-                my_board[i][j].is_fixed = 0;
-            }
-}
-
-int check_board_full(cell** my_board){
-    int i,j;
-    for (i = 0; i < curr_board->len ; ++i)
-        for (j = 0; j < curr_board->len ; ++j)
-            if(my_board[i][j].value == 0)
-                return 0;
-
-    return 1;
-}
-
 void num_solutions(){
     long count = 0;
     if (check_erroneous_board() || !is_valid_board()){

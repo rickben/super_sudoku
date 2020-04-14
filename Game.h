@@ -191,19 +191,6 @@ int check_validate();
 int validate();
 
 /**
- * makes all the non-empty cells in the board to be fixed
- * @param my_board - the board given
- */
-void save_all_curr_cells_fixed(cell** my_board);
-
-/**
- * checks whether the board is full - means there are no empty cells
- * @param my_board - the board given
- * @return 1 if the board is full, 0 otherwise
- */
-int check_board_full(cell** my_board);
-
-/**
  * using exhaustive backtracking algorithm and a stack, it calculates
  * the number of possible solutions for the curr_board's board
  */
