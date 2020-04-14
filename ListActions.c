@@ -42,57 +42,6 @@ Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_dat
 
 }
 
-Node* get_head(Node* curr_node){
-    Node* head;
-    /*1. check if the given prev_node is NULL */
-    if (curr_node == NULL) {
-        /*Error*/
-        return NULL;
-    }
-    head = curr_node;
-    while(head->prev != NULL){
-        head = head->prev;
-    }
-    return head;
-}
-
-Node* get_tail(Node* curr_node){
-    Node* head;
-    /*1. check if the given prev_node is NULL */
-    if (curr_node == NULL) {
-        /*Error*/
-        return NULL;
-    }
-    head = curr_node;
-    while(head->prev != NULL){
-        head = head->prev;
-    }
-    return head;
-}
-
-Node* remove_head(Node* head){
-    Node* second_last;
-    if (head == NULL)
-        return NULL;
-
-    if (head->prev == NULL) {
-        free(head);
-        return NULL;
-    }
-
-    /* Find the second last node*/
-    second_last = head;
-    while (second_last->next == NULL)
-        second_last = second_last->prev;
-
-    /* Delete last node*/
-    free (second_last->next);
-
-    /* Change next of second last*/
-    second_last->next = NULL;
-
-    return second_last;
-}
 
 void clear_list(Node* head){
     if(head == NULL)
@@ -105,12 +54,7 @@ void clear_list(Node* head){
 
     free(head);
 }
-int arr_len(int* arr){
-    int i=0;
-    while(arr[i]!=0 && i < 9)
-        i++;
-    return i;
-}
+
 
 void init_start_list(){
     cell cell_data = {0,0,0,0,NULL};

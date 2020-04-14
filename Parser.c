@@ -74,25 +74,25 @@ bool is_double(char* s){
 bool is_valid_param(int command_code, char command_data[4][258]){
     if(command_code==5){
         if(strlen(command_data[3])>0){
-            printf("To many parameters given\n");
+            printf("Error: To many parameters given\n");
             return false;
         }
     }
     if(command_code==8||command_code==12||command_code==13){
         if(strlen(command_data[2])>0){
-            printf("To many parameters given\n");
+            printf("Error: To many parameters given\n");
             return false;
         }
     }
     if (command_code==1||command_code==2||command_code==3||command_code==7||command_code==11){
         if(strlen(command_data[1])>0){
-            printf("To many parameters given\n");
+            printf("Error: To many parameters given\n");
             return false;
         }
     }
     if (command_code==4||command_code==6||command_code==9||command_code==10||command_code==14||command_code==15||command_code==16||command_code==17){
         if(strlen(command_data[0])>0){
-            printf("To many parameters given\n");
+            printf("Error: To many parameters given\n");
             return false;
         }
     }
@@ -174,7 +174,7 @@ void interpret_command(){
 
         /*flush*/
         if((int)len==(input_len-1)){
-            printf("command is to long\n");
+            printf("Error: command is to long\n");
             while((c = getchar()) != '\n' && c != EOF);
             if (c == EOF){
                 my_exit();
@@ -225,11 +225,11 @@ void execute_command(int command_code, char command_data[4][258]) {
     {
         case 1:
             if(command_data[0][0]=='\0'){
-                printf("No path given\n");
+                printf("Error: No path given\n");
                 break;
             }
             if(!is_valid_path(command_data[0])){
-                printf("The parameter isn't legal (invalid path)\n");
+                printf("Error: The parameter isn't legal (invalid path)\n");
                 break;
             }
             solve(command_data[0]);
@@ -239,34 +239,34 @@ void execute_command(int command_code, char command_data[4][258]) {
             break;
         case 3:
             if (state != Solve){
-                printf("mark errors only available in solve mode\n");
+                printf("Error: Mark errors only available in solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'){
-                printf("No parameter given\n");
+                printf("Error: No parameter given\n");
                 break;
             }
             x = is_integer(command_data[0]);
             if(x == -1){
-                printf("The parameter isn't legal\n");
+                printf("Error: The parameter isn't legal\n");
                 break;
             }
             mark_errors(x);
             break;
         case 4:
             if(state != Solve && state != Edit) {
-                printf("print board only available in solve or edit mode\n");
+                printf("Error: Print board only available in solve or edit mode\n");
                 break;
             }
             print_board();
             break;
         case 5:
             if (state != Solve && state != Edit) {
-                printf("set only available in solve or edit mode\n");
+                printf("Error: Set only available in solve or edit mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'||command_data[2][0]=='\0'){
-                printf("Missing coordinates\n");
+                printf("Error: Missing coordinates\n");
                 break;
             }
             /* translate strings of numbers to integers */
@@ -274,29 +274,37 @@ void execute_command(int command_code, char command_data[4][258]) {
             y = is_integer(command_data[1]);
             z = is_integer(command_data[2]);
             if(x == -1 || y == -1 || z == -1){
-                printf("The parameter isn't legal (not int)\n");
-                break;
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else if (y == -1){
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The third parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             board_set(x,y,z);
             break;
         case 6:
             if(state!=Solve && state != Edit){
-                printf("validate only available in solve or edit mode\n");
+                printf("Error: validate only available in solve or edit mode\n");
                 break;
             }
             validate();
             break;
         case 7:
             if(state != Solve){
-                printf("Guess command is only available in Solve mode\n");
+                printf("Error: Guess command is only available in Solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'){
-                printf("No parameter given\n");
+                printf("Error: No parameter given\n");
                 break;
             }
             if (!is_double(command_data[0])){
-                printf("The parameter isn't legal (not double)\n");
+                printf("Error: The parameter isn't legal (not double)\n");
                 break;
             }
             d = strtod(command_data[0], &stop_string);
@@ -304,101 +312,116 @@ void execute_command(int command_code, char command_data[4][258]) {
             break;
         case 8:
             if (state != Edit){
-                printf("Generate command is available only in Edit mode!\n");
+                printf("Error: Generate command is available only in Edit mode!\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
-                printf("No parameters given\n");
+                printf("Error: No parameters given\n");
                 break;
             }
             x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
-            if( x == -1|| y == -1){
-                printf("The parameter isn't legal (not int)\n");
-                break;
+            if(x == -1 || y == -1){
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             generate(x,y);
             break;
         case 9:
             if(state != Solve && state != Edit){
-                printf("undo only available in solve or edit mode\n");
+                printf("Error: Undo only available in solve or edit mode\n");
                 break;
             }
             undo();
             break;
         case 10:
             if (state != Solve && state != Edit) {
-                printf("redo only available in solve or edit mode\n");
+                printf("Error: Redo only available in solve or edit mode\n");
                 break;
             }
             redo();
             break;
         case 11:
             if (state != Solve && state != Edit){
-                printf("Save command is only available in Solve or Edit mode\n");
+                printf("Error: Save command is only available in Solve or Edit mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'){
-                printf("No path given\n");
+                printf("Error: No path given\n");
                 break;
             }
             if(!is_valid_path(command_data[0])){
-                printf("The parameter isn't legal (invalid path)\n");
+                printf("Error: The parameter isn't legal (invalid path)\n");
                 break;
             }
             save(command_data[0]);
             break;
         case 12:
             if(state != Solve) {
-                printf("Hint command is only available in Solve mode\n");
+                printf("Error: Hint command is only available in Solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
-                printf("No coordinates given\n");
+                printf("Error: No coordinates given\n");
                 break;
             }
             x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
             if(x == -1 || y == -1){
-                printf("The parameter isn't legal (not int)\n");
-                break;
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             hint(x,y);
             break;
         case 13:
             if(state != Solve) {
-                printf("Guess_hint command is only available in Solve mode\n");
+                printf("Error: Guess_hint command is only available in Solve mode\n");
                 break;
             }
             if(command_data[0][0]=='\0'||command_data[1][0]=='\0'){
-                printf("No coordinates given\n");
+                printf("Error: No coordinates given\n");
                 break;
             }
             x = is_integer(command_data[0]);
             y = is_integer(command_data[1]);
-            if(x == -1 || y == -1){
-                printf("The parameter isn't legal (not int)\n");
-                break;
+            if (x == -1 || y == -1){
+                if (x == -1){
+                    printf("Error: The first parameter isn't legal (not int)\n");
+                    break;
+                } else {
+                    printf("Error: The second parameter isn't legal (not int)\n");
+                    break;
+                }
             }
             guess_hint(x,y);
             break;
         case 14:
             if (state != Solve && state != Edit){
-                printf("Num_solutions command is only available in Solve or Edit mode\n");
+                printf("Error: Num_solutions command is only available in Solve or Edit mode\n");
                 break;
             }
             num_solutions();
             break;
         case 15:
             if (state != Solve){
-                printf("This command is only available in Solve mode\n");
+                printf("Error: Autofill command is only available in Solve mode\n");
                 break;
             }
             autofill();
             break;
         case 16:
             if (state != Solve && state != Edit) {
-                printf("Reset only available in solve or edit mode\n");
+                printf("Error: Reset only available in solve or edit mode\n");
                 break;
             }
             reset();

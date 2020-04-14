@@ -299,7 +299,7 @@ int print_guess_hint_prob(){
 
 void check_board_unsolvable_for_guess_hint(int is_guess_hint){
     if(is_guess_hint && flag == 0){
-        printf("This board is unsolvable!\n");
+        printf("Error: This board is unsolvable!\n");
     }
 }
 
@@ -348,17 +348,10 @@ int optimum_state_lp(int is_guess, double thresholdX, int is_guess_hint, int x, 
 }
 
 int optimization_complete(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y){
-    /*printf("\nOptimization complete\n");*/
     if (optimstatus == GRB_OPTIMAL){
         error = is_LP ? optimum_state_lp(is_guess, thresholdX, is_guess_hint, x, y) : optimum_state_ilp();
         return !error;
-    }/*
-    else if (optimstatus == GRB_INF_OR_UNBD) {
-        printf("Model is infeasible or unbounded\n");
-    }else {
-        printf("Optimization was stopped early\n");
     }
-    printf("\n");*/
     return 0;
 }
 

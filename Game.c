@@ -62,7 +62,7 @@ void edit(char* file_name){
 
 void mark_errors(int x){
     if (x != 0 && x != 1) {
-        printf("mark errors only accepts 0 or 1\n");
+        printf("Error: mark errors only accepts 0 or 1\n");
         return;
     }
     global_mark_errors = x;
@@ -76,14 +76,14 @@ int undo_action(){
     int* command_data;
     cell cell_data;
     if(current_move==start_list){
-        printf("No more moves to undo\n");
+        printf("Error: No more moves to undo\n");
         return 0;
     }
     if(current_move->command_code == 5){
         command_data = current_move->command_data;
         cell_data = current_move->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-        printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,cell_data.value);
+        printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
         current_move = current_move->prev;
         return 1;
     }
@@ -93,7 +93,7 @@ int undo_action(){
             command_data = current_move->command_data;
             cell_data = current_move->cell_data;
             curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-            printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,cell_data.value);
+            printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
             current_move = current_move->prev;
         }
         current_move = current_move->prev;
@@ -109,14 +109,14 @@ void undo(){
 int redo_action(){
     int* command_data;
     if(current_move->next == end_list){
-        printf("No more moves to redo\n");
+        printf("Error: No more moves to redo\n");
         return 0;
     }
     current_move = current_move->next;
     if(current_move->command_code == 5){
         command_data = current_move->command_data;
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
-        printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,command_data[2]);
+        printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,command_data[2]);
         return 1;
     }
     if(current_move->command_code == -1){
@@ -124,7 +124,7 @@ int redo_action(){
         while (current_move->command_code != -1){
             command_data = current_move->command_data;
             curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
-            printf("single possible value for <%d,%d> updated: %d\n",command_data[0]+1,command_data[1]+1,command_data[2]);
+            printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,command_data[2]);
             current_move = current_move->next;
         }
         return 1;
@@ -180,7 +180,7 @@ int generate_loop(int x, int y){
             }
         }
     }
-    printf("Generate has failed - After 1000 iterations - the board isn't solvable\n");
+    printf("Error: generate has failed - After 1000 iterations - the board isn't solvable\n");
     free_temp_board();
     return 0;
 }
@@ -190,13 +190,23 @@ int generate_loop(int x, int y){
 
 void generate(int x, int y){
     if (x < 0 || y < 0) {
-        printf("Error, all numbers should be positive!\n");
-        return;
+        if (x < 0) {
+            printf("Error: the first parameter should be positive!\n");
+            return;
+        } else {
+            printf("Error: the second parameter should be positive!\n");
+            return;
+        }
     } else if (x > curr_board->len *curr_board->len || y > curr_board->len *curr_board->len) {
-        printf("Error, a number out of range (0,%d)!\n", curr_board->len *curr_board->len);
-        return;
+        if (x > curr_board->len *curr_board->len ) {
+            printf("Error: the first parameter out of range (0,%d)!\n", curr_board->len * curr_board->len);
+            return;
+        } else {
+            printf("Error: the second parameter out of range (0,%d)!\n", curr_board->len * curr_board->len);
+            return;
+        }
     }else if(check_erroneous_board() || !is_valid_board()){
-        printf("The board is erroneous\n");
+        printf("Error: The board is erroneous\n");
     } else {
         fill_undo_board();
         if(generate_loop(x,y))
@@ -205,56 +215,65 @@ void generate(int x, int y){
     }
 }
 
-
-void board_set(int x, int y, int z) {
+void execute_set_command(int x, int y, int z){
     int *command_data;
     cell cell_data;
     command_data = malloc(sizeof(int) * 3);
     if (command_data == NULL){
         memory_error("malloc");
     }
-    if (x < 1 || y < 1 || z < 0) {
-        printf("Error, a number out of range (1,%d)!\n", curr_board->len);
+    if(curr_board->board[y-1][x-1].value == z){
+        print_board();
         return;
-    } else if (x > curr_board->len  || y > curr_board->len || z > curr_board->len) {
-        printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-        return;
-    } else if (curr_board->board[y-1][x-1].is_fixed && state == Solve) {
-        printf("This position is fixed!\n");
-        return;
-    } else { if(curr_board->board[y-1][x-1].value == z){
-	  print_board();
-            return;
-    } else{
-            command_data[0] = y-1;
-            command_data[1] = x-1;
-            command_data[2] = z;
-            cell_data = curr_board->board[y - 1][x - 1];
-            if(!is_valid_set(y-1,x-1,z,curr_board)){
-                curr_board->board[y-1][x-1].is_erroneous = 1;
-            }else{
-                curr_board->board[y-1][x-1].is_erroneous = 0;
-            }
-            curr_board->board[y-1][x-1].value = z;
-            clear_redo_gap();
-            insert_into_undo_lst(5, command_data, cell_data);
-            print_board();
+    } else {
+        command_data[0] = y-1;
+        command_data[1] = x-1;
+        command_data[2] = z;
+        cell_data = curr_board->board[y - 1][x - 1];
+        if(!is_valid_set(y-1,x-1,z,curr_board)){
+            curr_board->board[y-1][x-1].is_erroneous = 1;
+        }else{
+            curr_board->board[y-1][x-1].is_erroneous = 0;
+        }
+        curr_board->board[y-1][x-1].value = z;
+        clear_redo_gap();
+        insert_into_undo_lst(5, command_data, cell_data);
+        print_board();
     }
+}
+
+
+
+void board_set(int x, int y, int z) {
+    if (x < 1 || y < 1 || z < 0) {
+        first_set_cond_check_param(x,y);
+    } else if (x > curr_board->len || y > curr_board->len || z > curr_board->len) {
+        second_set_cond_check_param(x,y);
+    } else if (curr_board->board[y - 1][x - 1].is_fixed && state == Solve) {
+        printf("Error: This position is fixed!\n");
+        return;
+    } else {
+        execute_set_command(x,y,z);
     }
 }
 
 void guess(double x){
     if (x<0 || x>1){
-        printf("Error, a number out of range (0,1)!\n");
-        return;
+        if (x < 0) {
+            printf("Error: the first parameter out of range (0,1)!\n");
+            return;
+        } else {
+            printf("Error: the second parameter out of range (0,1)!\n");
+            return;
+        }
     }
    if (check_erroneous_board() || !is_valid_board()){
-       printf("The board is erroneous\n");
+       printf("Error: The board is erroneous\n");
        return;
    } else {
        fill_undo_board();
        if(!solver(1,1,x,0,0,0)){
-           printf("The board isn't solvable!\n");
+           printf("Error: The board isn't solvable!\n");
            return;
        }
        copy_board_to_cur();
@@ -269,23 +288,33 @@ void guess(double x){
 void hint(int x, int y){
     int num;
         if (x < 1 || y < 1) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x < 1) {
+                printf("Error: the first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else{
+                printf("Error: the second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         } else if (x > curr_board->len || y > curr_board->len) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x > curr_board->len){
+                printf("Error: the first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else {
+                printf("Error: the second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         } else if (curr_board->board[y-1][x-1].is_fixed) {
-            printf("This position is fixed!\n");
+            printf("Error: This position is fixed!\n");
             return;
         } else if (curr_board->board[y-1][x-1].value != 0){
-            printf("This position already has a value!\n");
+            printf("Error: This position already has a value!\n");
             return;
         } else if(check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
+            printf("Error: The board is erroneous\n");
         } else{
             num = solver(0,0,0,0,0,0);
             if(!check_gurobi_board_full() || !num){
-                printf("This board is unsolvable!\n");
+                printf("Error: This board is unsolvable!\n");
                 return;
             } else{
                 printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
@@ -299,28 +328,37 @@ void hint(int x, int y){
  * */
 void guess_hint(int x, int y){
         if (x < 1 || y < 1) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x < 1) {
+                printf("Error: first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else{
+                printf("Error: second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         } else if (x > curr_board->len || y > curr_board->len) {
-            printf("Error, a number out of range (1,%d)!\n", curr_board->len);
-            return;
+            if (x > curr_board->len) {
+                printf("Error: first parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            } else {
+                printf("Error: second parameter out of range (1,%d)!\n", curr_board->len);
+                return;
+            }
         }else if (curr_board->board[y-1][x-1].is_fixed) {
-            printf("This position is fixed!\n");
+            printf("Error: This position is fixed!\n");
             return;
         } else if (curr_board->board[y-1][x-1].value != 0){
-            printf("This position already has a value!\n");
+            printf("Error: This position already has a value!\n");
             return;
         } else if(check_erroneous_board() || !is_valid_board()){
-            printf("The board is erroneous\n");
+            printf("Error: The board is erroneous\n");
         } else{
             if(!solver(1,0,0,1,y-1,x-1)) { /* prints the scores in solver */
-                printf("This board is unsolvable!\n");
+                printf("Error: This board is unsolvable!\n");
                 return;
             }
         }
 }
 
-/* TODO: When get here - already checked board to be not erroneous*/
 int check_validate(){
     int num;
     num = solver(0,0,0,0,0,0);
@@ -334,7 +372,7 @@ int check_validate(){
 
 int validate(){
     if (check_erroneous_board() || !is_valid_board()){
-        printf("validate not available in erroneous board\n");
+        printf("Error: validate not available in erroneous board\n");
         return 0;
     }
     if(!check_validate()){
@@ -412,7 +450,7 @@ int update_stack(int count){
 void num_solutions(){
     long count = 0;
     if (check_erroneous_board() || !is_valid_board()){
-        printf("num_solutions is not available in erroneous board\n");
+        printf("Error: num_solutions is not available in erroneous board\n");
         return;
     }
     update_new_board_by_curr();
@@ -477,7 +515,7 @@ void autofill(){
         memory_error("malloc");
     }
     if(check_erroneous_board() || !is_valid_board()){
-        printf("The board is erroneous\n");
+        printf("Error: The board is erroneous\n");
         return;
     }
     is_filled = calculate_list_possible_values();
@@ -487,8 +525,8 @@ void autofill(){
         for (i = 0; i < curr_board->len ; ++i) {
             for (j = 0; j < curr_board->len ; ++j) {
                 if (curr_board->board[i][j].list_poss_values_len == 1 && !curr_board->board[i][j].is_fixed && curr_board->board[i][j].value==0){
-                    command_data[0] = j;
-                    command_data[1] = i;
+                    command_data[0] = i;
+                    command_data[1] = j;
                     command_data[2] = curr_board->board[i][j].list_poss_values[0];
                     cell_data.value = curr_board->board[i][j].value;
                     cell_data.is_fixed = curr_board->board[i][j].is_fixed;
@@ -499,12 +537,12 @@ void autofill(){
                         curr_board->board[i][j].is_erroneous = 0;
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
                     printf("single possible value for <%d,%d> updated: %d\n",j+1,i+1,curr_board->board[i][j].value);
-                    insert_into_undo_lst(15, command_data, cell_data);
-                    command_data = malloc(sizeof(int) * 3);
-                    if (command_data == NULL){
-                        memory_error("malloc");
-                    }
+                insert_into_undo_lst(15, command_data, cell_data);
+                command_data = malloc(sizeof(int) * 3);
+                if (command_data == NULL){
+                    memory_error("malloc");
                 }
+            }
             }
         }
         insert_into_undo_lst(-1, command_data, cell_data);
@@ -513,7 +551,7 @@ void autofill(){
         free(command_data);
     } else{
         free(command_data);
-        printf("nothing to autofill\n");
+        printf("Error: nothing to autofill\n");
     }
 
 }

@@ -11,33 +11,6 @@ void memory_error(char* func){
     my_exit();
 }
 
-void update_list_pos_vals(int i, int j, int num){
-    int k, flag = 0, cnt = 0;
-    int* new_list_poss;
-    for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
-        if (curr_board->board[i][j].list_poss_values[k] == num){
-            curr_board->board[i][j].list_poss_values[k] = 0;
-            flag = 1;
-            break;
-        }
-    }
-    if (flag){
-        new_list_poss = malloc((curr_board->board[i][j].list_poss_values_len-1)*sizeof(int));
-        if (new_list_poss == NULL){
-            memory_error("malloc");
-        }
-        for (k = 0; k < curr_board->board[i][j].list_poss_values_len; ++k) {
-            if (curr_board->board[i][j].list_poss_values[k] == 0) {
-                continue;
-            } else {
-                new_list_poss[cnt] = curr_board->board[i][j].list_poss_values[k];
-                cnt ++;
-            }
-        }
-        curr_board->board[i][j].list_poss_values_len --;
-        curr_board->board[i][j].list_poss_values = new_list_poss;
-    }
-}
 
 void init_temp_board(){
     int i;
@@ -80,8 +53,11 @@ void copy_temp_board_to_curr(){
 }
 
 void restart_to_init(){
-    state = Init;
     free_mem_board();
+    clear_list(end_list);
+    end_list = NULL;
+    start_list = NULL;
+    state = Init;
 }
 
 int check_erroneous_board(){
@@ -126,25 +102,53 @@ int set_random_val(int row, int col){
         }
     }
     if (num_pos == 0){
+        free(pos_val);
         return 0;
     }
-    val = rand() % num_pos;
+    val = rand() % num_pos; /* randomly pick an index between 0 to num_pos-1*/
     for (v = 0; v < curr_board->len; ++ v) {
         if (pos_val[v] == 1){
-            if (cnt == val){
-                curr_board->board[row][col].value = val;
+            if (cnt == val){ /* cnt is the index of the 1's in the pos_val array */
+                curr_board->board[row][col].value = v+1;
                 curr_board->board[row][col].is_fixed = 0;
                 break;
             }
             cnt++;
         }
     }
+    free(pos_val);
     return 1;
+}
+
+void first_set_cond_check_param(int x, int y){
+    if (x < 1) {
+        printf("Error: the first parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else if (y < 1) {
+        printf("Error: the second parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else {
+        printf("Error: the third parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    }
+}
+
+void second_set_cond_check_param(int x, int y){
+    if (x > curr_board->len) {
+        printf("Error: the first parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else if (y > curr_board->len) {
+        printf("Error: the second parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    } else {
+        printf("Error: the third parameter is out of range (1,%d)!\n", curr_board->len);
+        return;
+    }
 }
 
 void find_random_empty_cell(int* row, int* col, int num_empty){
     int ** all_empty_cells;
-    int i, j, cnt = 0;
+    int i, j, cnt = 0; /* cnt iterates from 0 to the number of empty cells */
     all_empty_cells = (int**)malloc(num_empty*sizeof(int*));
     if (all_empty_cells == NULL){
         memory_error("malloc");
@@ -157,16 +161,21 @@ void find_random_empty_cell(int* row, int* col, int num_empty){
     }
     for (i = 0; i < curr_board->len; ++i) {
         for (j = 0; j < curr_board->len; ++j) {
-            if (curr_board->board[i][j].value == 0){
+            if (curr_board->board[i][j].value == 0){ /* if the cell is empty */
                 all_empty_cells[cnt][0] = i;
                 all_empty_cells[cnt][1] = j;
                 cnt ++;
             }
         }
     }
+
     cnt = rand() % num_empty;
     *row = all_empty_cells[cnt][0];
     *col = all_empty_cells[cnt][1];
+    for (i = 0; i < num_empty; ++i) {
+        free(all_empty_cells[i]);
+    }
+    free(all_empty_cells);
 }
 
 
@@ -177,10 +186,11 @@ int fill_board_random(int x){
     int col, row, num;
     num = check_num_of_empty_cells();
     if (num < x){
-        printf("There are less then %d empty cells, generate can't finish\n",x);
+        printf("Error: There are less then %d empty cells, generate can't finish\n",x);
         return -1;
     }
     while (x>0){
+        num = check_num_of_empty_cells();
         find_random_empty_cell(&row,&col,num);
         /* Find all possible values in this position*/
         if (set_random_val(row,col) == 0){
@@ -522,8 +532,8 @@ void fill_undo_lst_by_cmp_board(int command_code){
                 cell_data.value = undo_board->board[i][j].value;
                 cell_data.is_fixed = undo_board->board[i][j].is_fixed;
                 cell_data.is_erroneous = undo_board->board[i][j].is_erroneous;
-                command_data[0] = j;
-                command_data[1] = i;
+                command_data[0] = i;
+                command_data[1] = j;
                 command_data[2] = curr_board->board[i][j].value;
                 insert_into_undo_lst(command_code, command_data, cell_data);
                 command_data = malloc(sizeof(int) * 3);
