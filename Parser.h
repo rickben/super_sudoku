@@ -12,8 +12,8 @@ bool is_valid_path(char* path);
 int my_pow(int a, int b);
 int is_integer(char* s);
 bool is_double(char* s);
-bool is_valid_param(int command_code, char** command_data);
+bool is_valid_param(int command_code, char command_data[4][258]);
 int command_to_code(char* input) ;
 void interpret_command();
-void execute_command(int command_code, char** command_data);
+void execute_command(int command_code, char command_data[4][258]);
 #endif

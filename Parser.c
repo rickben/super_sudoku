@@ -71,7 +71,7 @@ bool is_double(char* s){
     return false;
 }
 
-bool is_valid_param(int command_code, char** command_data){
+bool is_valid_param(int command_code, char command_data[4][258]){
     if(command_code==5){
         if(strlen(command_data[3])>0){
             printf("To many parameters given\n");
@@ -158,23 +158,14 @@ void interpret_command(){
     int input_len = 257;
     char* input;
     char *token;
-    char *rest;
     int command_code = 0;
     int j = 0;
-    char **command_data;
+    char command_data[4][258];
     input = malloc(input_len* sizeof(char));
     if (input == NULL){
         memory_error("malloc");
     }
-    command_data = malloc(sizeof(char*) * 4);
-    if (command_data == NULL){
-        memory_error("malloc");
-    }
     for (; j < 4; ++j) {
-        command_data[j] = malloc(sizeof(char) * input_len);
-        if (command_data[j] == NULL){
-            memory_error("malloc");
-        }
         command_data[j][0]='\0';
     }
     j=0;
@@ -194,14 +185,14 @@ void interpret_command(){
         /* fix input*/
         if (len > 0 && input[len - 1] == '\n') input[--len] = '\0';
 
-        /*copy input so we won't ruin it*/
+        /*copy input so we won't ruin it
         rest = malloc(sizeof(char) * (strlen(input) + 1));
         if (rest == NULL){
             memory_error("malloc");
         }
-        strcpy(rest, input);
+        strcpy(rest, input);*/
 
-        token = strtok_r(rest, " \t\r", &rest);
+        token = strtok_r(input, " \t\r", &input);
 
         if(token!=NULL){
             command_code = command_to_code(token);
@@ -209,28 +200,22 @@ void interpret_command(){
             memory_error("strtok_r");
             return;}
         /*this way the parser ignores empty commands*/
-        token = strtok_r(rest, " \t\r", &rest);
+        token = strtok_r(input, " \t\r", &input);
         while (token!=NULL&& j<4){
-            command_data[j]=token;
-            token = strtok_r(rest, " \t\r", &rest);
+            strcpy(command_data[j], token);
+            token = strtok_r(input, " \t\r", &input);
             j++;
         }
         /* TODO: do i need to check if token == NULL -> memory_error? */
         j=0;
-
     }
     else{
         my_exit();
     }
     execute_command(command_code, command_data);
-    /*free(input);
-    for (j=0; j < 4; ++j) {
-        free(command_data[j]);
-    }
-    free(command_data);*/
 }
 
-void execute_command(int command_code, char** command_data) {
+void execute_command(int command_code, char command_data[4][258]) {
     int x=0,y=0,z=0;
     double d;
     char* stop_string;
