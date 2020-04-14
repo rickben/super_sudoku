@@ -4,6 +4,7 @@
 #include "Solver.h"
 #include "Stack.h"
 #include <stdbool.h>
+#include "ListActions.h"
 
 /**
  *MainAux Summary:
@@ -194,55 +195,23 @@ bool find_empty_cell(int* row_pos, int* col_pos, cell** matrix );
  * @return True if it is valid, 0 otherwise
  */
 bool is_valid_board();
-
 /**
- * checks if the new_board's board is valid (for num_solutions)
- * @return True if it is valid, 0 otherwise
+ * copies gurobi's board values (after calling solver())
+ * to curr_board's board
  */
-bool is_valid_board_new_board();
+void copy_board_to_cur();
 
 /**
  * creates an empty board of size 9x9 (for empty edit command)
  */
 void create_board_size_9();
 
-/**
- * fill the undo_board as curr_board before the current command
- * will change it (only for : guess,generate);
- */
-void fill_undo_board();
 
 /**
- * free all memories allocated for undo_board
+ * checks if the new_board's board is valid (for num_solutions)
+ * @return True if it is valid, 0 otherwise
  */
-void free_undo_board();
-
-/**
- *
- * fill the undo_board as curr_board after the current command
- * changed it (only for successful : guess,generate)
- * @param command_code - the commands code number
- */
-void fill_undo_lst_by_cmp_board(int command_code);
-/**
- * inserts new node with the command's number and its data (only successful commands)
- * @param command_code - the number of the command
- * @param command_data - its data - the cell information
- * @param cell_data - the value the cell is changed to
- */
-void insert_into_undo_lst(int command_code, int* command_data, cell cell_data);
-
-/**
- * clears from memory all the nodes between end_list (pointer to the end of the linked list)
- * and curr_move (pointer to the last move executed)
- * that way we can add to the end of the list move moves
- */
-void clear_redo_gap();
-/**
- * copies gurobi's board values (after calling solver())
- * to curr_board's board
- */
-void copy_board_to_cur();
+bool is_valid_board_new_board();
 
 /**
  * makes all the non-empty cells in the board to be fixed

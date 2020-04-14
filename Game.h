@@ -1,7 +1,7 @@
 #ifndef HW3_GAME_H
 #define HW3_GAME_H
 #include <stdio.h>
-#include "ListActions.h"
+#include "List.h"
 
 /**
  * curr_board represents the current board game - whether its
