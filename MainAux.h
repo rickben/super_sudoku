@@ -224,4 +224,58 @@ void free_undo_board();
  * @param command_code - the commands code number
  */
 void fill_undo_lst_by_cmp_board(int command_code);
+/**
+ * inserts new node with the command's number and its data (only successful commands)
+ * @param command_code - the number of the command
+ * @param command_data - its data - the cell information
+ * @param cell_data - the value the cell is changed to
+ */
+void insert_into_undo_lst(int command_code, int* command_data, cell cell_data);
+
+/**
+ * clears from memory all the nodes between end_list (pointer to the end of the linked list)
+ * and curr_move (pointer to the last move executed)
+ * that way we can add to the end of the list move moves
+ */
+void clear_redo_gap();
+/**
+ * copies gurobi's board values (after calling solver())
+ * to curr_board's board
+ */
+void copy_board_to_cur();
+
+/**
+ * makes all the non-empty cells in the board to be fixed
+ * @param my_board - the board given
+ */
+void save_all_curr_cells_fixed(cell** my_board);
+
+/**
+ * checks whether the board is full - means there are no empty cells
+ * @param my_board - the board given
+ * @return 1 if the board is full, 0 otherwise
+ */
+int check_board_full(cell** my_board);
+
+/**
+ * this function copies into new_board all of curr_board data
+ */
+void update_new_board_by_curr();
+/**
+ * this function pops a new_board from the stack
+ * pushes into the stack al the valid boards the can be created out of it
+ * @return number of solved new_boards that were popped in the current call of the function
+ */
+int update_stack(int count);
+
+/**
+ * for every cell in curr_board, calculates all the legal values the can be set in it,
+ * and assigns it in list_possible_values
+ * @return 1 iff exists a cell with 1 legal value
+ */
+int calculate_list_possible_values();
+/**
+ * for every cell in curr_board, frees list_possible_values
+ */
+void free_list_possible_values();
 #endif
