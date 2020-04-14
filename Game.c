@@ -6,7 +6,6 @@
 #include "MainAux.h"
 #include "FilesAux.h"
 
-
 void my_exit(){
     printf("Exiting...\n");
     if (state == Solve || state == Edit) {
@@ -410,6 +409,7 @@ void autofill(){
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
                     printf("single possible value for <%d,%d> updated: %d\n",j+1,i+1,curr_board->board[i][j].value);
                 insert_into_undo_lst(15, command_data, cell_data);
+                free(command_data);
                 command_data = malloc(sizeof(int) * 3);
                 if (command_data == NULL){
                     memory_error("malloc");
