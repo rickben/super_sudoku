@@ -415,6 +415,13 @@ void copy_curr_to_board() {
         }
     }
 }
+
+void free_gurobi_board(){
+    for (i = 0; i < DIM; ++i) {
+        free(board[i]);
+    }
+    free(board);
+}
 int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x, int y){
     DIM = curr_board->len;
     width = curr_board->block_width;
@@ -459,7 +466,7 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     if (names == NULL){
         memory_error("malloc");
     }
-    
+
     if (is_LP){
         all_poss_scores = (double*)malloc(sizeof(double)*DIM);
         if (all_poss_scores == NULL){
@@ -493,17 +500,17 @@ int solver(int is_LP, int is_guess, double thresholdX, int is_guess_hint, int x,
     free_model();
     free_env();
     free(lb);
+    free(ind);
+    free(ind_save);
+    free(namestorage);
     free(ub);
     free(obj);
     free(vtype);
     free(names);
+    free(val);
     if(is_LP) {
         free(all_poss_scores);
     }
-    /*free(board);
-    for (i = 0; i < DIM; ++i) {
-        free(board[i]);
-    }*/
     return 0;
 }
 
