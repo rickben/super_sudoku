@@ -83,6 +83,7 @@ void insert_into_undo_lst(int command_code, int* command_data, cell cell_data){
 void clear_redo_gap(){
     while(end_list->prev!=current_move){
         end_list = end_list->prev;
+        free(end_list->next->command_data);
         free(end_list->next);
     }
 }

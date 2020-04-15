@@ -49,17 +49,20 @@ void clear_list(Node* head){
 
     while (head->prev!=NULL){
         head = head->prev;
+        free(head->next->command_data);
         free(head->next);
     }
-
+    free(head->command_data);
     free(head);
 }
 
 
 void init_start_list(){
     cell cell_data = {0,0,0,0,NULL};
-    start_list = insert(start_list,-2, NULL, cell_data);
-    end_list = insert(start_list,2, NULL, cell_data);
+    int * command_data1 = calloc(3, sizeof(int));
+    int * command_data2 = calloc(3, sizeof(int));
+    start_list = insert(start_list,-2, command_data1, cell_data);
+    end_list = insert(start_list,2, command_data2, cell_data);
     current_move = start_list;
 }
 
