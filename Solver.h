@@ -33,6 +33,11 @@ int check_gurobi_board_full();
 void copy_curr_to_board();
 
 /**
+ * frees all memories allocated for gurobi's board
+ */
+void free_gurobi_board();
+
+/**
  * sets the objective function to be maximum
  * @return 1 if an error occurred, 0 otherwise
  */
