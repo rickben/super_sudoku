@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "Game.h"
 #include "Solver.h"
-#include "ListActions.h"
+#include "List.h"
 #include "MainAux.h"
 #include "FilesAux.h"
 

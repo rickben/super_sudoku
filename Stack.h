@@ -1,6 +1,6 @@
 #ifndef HW3_STACK_H
 #define HW3_STACK_H
-#include "ListActions.h"
+#include "List.h"
 
 /**
 *Stack Summary:
