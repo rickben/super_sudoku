@@ -146,9 +146,11 @@ int generate_loop(int x, int y){
             num = solver(0, 0, 0, 0, 0, 0);
             if (!check_gurobi_board_full() || !num) {
                 copy_temp_board_to_curr();
+                free_gurobi_board();
                 cnt++;
             } else {
                 copy_board_to_cur();
+                free_gurobi_board();
                 clear_cells_random(y);
                 print_board();
                 free_temp_board();
@@ -254,6 +256,7 @@ void guess(double x){
            return;
        }
        copy_board_to_cur();
+       free_gurobi_board();
        fill_undo_lst_by_cmp_board(7);
        free_undo_board();
        print_board();
@@ -292,9 +295,11 @@ void hint(int x, int y){
             num = solver(0,0,0,0,0,0);
             if(!check_gurobi_board_full() || !num){
                 printf("Error: This board is unsolvable!\n");
+                free_gurobi_board();
                 return;
             } else{
                 printf("The value of cell <%d,%d> = %d\n",x,y,board[y-1][x-1].value);
+                free_gurobi_board();
                 return;
             }
         }
@@ -331,8 +336,10 @@ void guess_hint(int x, int y){
         } else{
             if(!solver(1,0,0,1,y-1,x-1)) { /* prints the scores in solver */
                 printf("Error: This board is unsolvable!\n");
+                free_gurobi_board();
                 return;
             }
+            free_gurobi_board();
         }
 }
 
@@ -340,9 +347,11 @@ int check_validate(){
     int num;
     num = solver(0,0,0,0,0,0);
     if(!check_gurobi_board_full() || !num){
+        free_gurobi_board();
         return 0;
     }
     else{
+        free_gurobi_board();
         return 1;
     }
 }
