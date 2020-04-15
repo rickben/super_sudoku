@@ -14,7 +14,9 @@ Node* insert(Node* curr_node, int command_code, int* command_data, cell cell_dat
 
     /* 2. put in the data  */
     new_node->command_code = command_code;
-    new_node->command_data = command_data;
+    new_node->command_data[0] = command_data[0];
+    new_node->command_data[1] = command_data[1];
+    new_node->command_data[2] = command_data[2];
     new_node->cell_data = cell_data;
     new_node->next = NULL;
     new_node->prev = NULL;
@@ -49,18 +51,16 @@ void clear_list(Node* head){
 
     while (head->prev!=NULL){
         head = head->prev;
-        free(head->next->command_data);
         free(head->next);
     }
-    free(head->command_data);
     free(head);
 }
 
 
 void init_start_list(){
     cell cell_data = {0,0,0,0,NULL};
-    int * command_data1 = calloc(3, sizeof(int));
-    int * command_data2 = calloc(3, sizeof(int));
+    int command_data1 [3];
+    int command_data2 [3];
     start_list = insert(start_list,-2, command_data1, cell_data);
     end_list = insert(start_list,2, command_data2, cell_data);
     current_move = start_list;

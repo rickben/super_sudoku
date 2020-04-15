@@ -71,7 +71,7 @@ int global_mark_errors;
  * */
 typedef struct Node {
     int command_code;
-    int* command_data;
+    int command_data[3];
     cell cell_data;
     struct Node* next; /* Pointer to next node in DLL */
     struct Node* prev; /* Pointer to previous node in DLL */

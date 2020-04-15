@@ -22,11 +22,7 @@ void fill_undo_board(){
     undo_board->block_height = curr_board->block_height;
     for (i = 0; i < undo_board->len; i++) {
         for (j = 0; j < undo_board->len; j++) {
-            /*TODO unknown segmentation fault*/
-            /*undo_board->board[i][j].is_erroneous = curr_board->board[i][j].is_erroneous;
-            undo_board->board[i][j].is_fixed = curr_board->board[i][j].is_fixed;*/
             undo_board->board[i][j].value = curr_board->board[i][j].value;
-
         }
     }
 }
@@ -42,12 +38,8 @@ void free_undo_board(){
 
 void fill_undo_lst_by_cmp_board(int command_code){
     int i,j, is_filled = 0;
-    int *command_data;
+    int command_data[3];
     cell cell_data = {0,0,0,0, NULL};
-    command_data = malloc(sizeof(int) * 3);
-    if (command_data == NULL){
-        memory_error("malloc");
-    }
     clear_redo_gap();
     for(i=0;i<undo_board->len;i++){
         for(j=0;j<undo_board->len;j++){
@@ -62,16 +54,11 @@ void fill_undo_lst_by_cmp_board(int command_code){
                 command_data[1] = j;
                 command_data[2] = curr_board->board[i][j].value;
                 insert_into_undo_lst(command_code, command_data, cell_data);
-                command_data = malloc(sizeof(int) * 3);
-                if (command_data == NULL){
-                    memory_error("malloc");
-                }
             }
         }
     }
     if(is_filled>0)
         insert_into_undo_lst(-1, command_data, cell_data);
-    free(command_data);
 }
 void insert_into_undo_lst(int command_code, int* command_data, cell cell_data){
     Node* temp = end_list->prev;
@@ -83,7 +70,6 @@ void insert_into_undo_lst(int command_code, int* command_data, cell cell_data){
 void clear_redo_gap(){
     while(end_list->prev!=current_move){
         end_list = end_list->prev;
-        free(end_list->next->command_data);
         free(end_list->next);
     }
 }

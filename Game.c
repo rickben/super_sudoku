@@ -94,14 +94,16 @@ void undo(){
 }
 
 int redo_action(){
-    int* command_data;
+    int command_data[3];
     if(current_move->next == end_list){
         printf("Error: No more moves to redo\n");
         return 0;
     }
     current_move = current_move->next;
     if(current_move->command_code == 5){
-        command_data = current_move->command_data;
+        command_data[0] = current_move->command_data[0];
+        command_data[1] = current_move->command_data[1];
+        command_data[2] = current_move->command_data[2];
         curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
         printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,command_data[2]);
         return 1;
@@ -109,8 +111,9 @@ int redo_action(){
     if(current_move->command_code == -1){
         current_move = current_move->next;
         while (current_move->command_code != -1){
-            command_data = current_move->command_data;
-            curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
+            command_data[0] = current_move->command_data[0];
+            command_data[1] = current_move->command_data[1];
+            command_data[2] = current_move->command_data[2];            curr_board->board[command_data[0]][command_data[1]].value = command_data[2];
             printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,command_data[2]);
             current_move = current_move->next;
         }
@@ -193,12 +196,8 @@ void generate(int x, int y){
 }
 
 void execute_set_command(int x, int y, int z){
-    int *command_data;
+    int command_data[3];
     cell cell_data;
-    command_data = malloc(sizeof(int) * 3);
-    if (command_data == NULL){
-        memory_error("malloc");
-    }
     if(curr_board->board[y-1][x-1].value == z){
         print_board();
         return;
@@ -379,12 +378,8 @@ void num_solutions(){
 
 void autofill(){
     int i,j, is_filled=0;
-    int *command_data;
+    int command_data[3];
     cell cell_data = {0,0,0,0, NULL};
-    command_data = malloc(sizeof(int) * 3);
-    if (command_data == NULL){
-        memory_error("malloc");
-    }
     if(check_erroneous_board() || !is_valid_board()){
         printf("Error: The board is erroneous\n");
         return;
@@ -409,19 +404,13 @@ void autofill(){
                     curr_board->board[i][j].value = curr_board->board[i][j].list_poss_values[0];
                     printf("single possible value for <%d,%d> updated: %d\n",j+1,i+1,curr_board->board[i][j].value);
                 insert_into_undo_lst(15, command_data, cell_data);
-                command_data = malloc(sizeof(int) * 3);
-                if (command_data == NULL){
-                    memory_error("malloc");
-                }
             }
             }
         }
         insert_into_undo_lst(-1, command_data, cell_data);
         print_board();
         free_list_possible_values();
-        free(command_data);
     } else{
-        free(command_data);
         printf("Error: nothing to autofill\n");
     }
 
