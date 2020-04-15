@@ -8,10 +8,12 @@
 void push_ele(struct curr_board next_board)
 {   int i,j,k;
     struct rec_stack *m;
+    /* allocate memory for stack */
     m = (struct rec_stack*) malloc(sizeof( struct rec_stack));
     if (m == NULL) {
         memory_error("malloc");
     }
+    /* allocate memory for top board */
     m->top.board = (struct cell **) calloc(next_board.len, sizeof(struct cell *));
     if (m->top.board == NULL) {
         memory_error("calloc");

@@ -383,7 +383,9 @@ void num_solutions(){
     while (stack != NULL){
         count = update_stack(count);
     }
+    free_new_board();
     printf("The number of solutions for the current board is %ld\n",count);
+    free(stack);
 }
 
 void autofill(){

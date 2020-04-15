@@ -230,6 +230,12 @@ int check_board_full(cell** my_board);
  * this function copies into new_board all of curr_board data
  */
 void update_new_board_by_curr();
+
+/**
+ * frees all memory allocated for new_board
+ */
+void free_new_board();
+
 /**
  * this function pops a new_board from the stack
  * pushes into the stack al the valid boards the can be created out of it

@@ -542,6 +542,13 @@ void update_new_board_by_curr(){
     }
 }
 
+void free_new_board(){
+    int i;
+    for (i = 0; i < new_board.len; ++i) {
+        free(new_board.board[i]);
+    }
+    free(new_board.board);
+}
 
 int update_stack(int count){
     int row = 0, col = 0, i;
