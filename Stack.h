@@ -36,7 +36,7 @@ void push_ele(struct curr_board next_board);
  * pushes a new element to stack
  * @return curr_board - the top board in the stack
  */
-struct curr_board pop_ele();
+struct curr_board* pop_ele();
 
 
 #endif

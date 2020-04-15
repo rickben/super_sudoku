@@ -230,6 +230,10 @@ int check_board_full(cell** my_board);
  * this function copies into new_board all of curr_board data
  */
 void update_new_board_by_curr();
+/**
+ * this function copies into new_board all of my_board data
+ */
+void copy_into_new_board(struct curr_board* my_board);
 
 /**
  * frees all memory allocated for new_board

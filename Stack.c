@@ -37,16 +37,16 @@ void push_ele(struct curr_board next_board)
 
 /*Removing the elements using pop function*/
 
-struct curr_board pop_ele()
-{   struct curr_board* board;
+struct curr_board* pop_ele()
+{   struct curr_board* my_board;
     if (stack == NULL) {
         printf("The stack is Empty.");
-         board = (struct curr_board*)NULL;
-        return *board;
+        my_board = (struct curr_board*)NULL;
+        return my_board;
     }
     else {
-        struct curr_board board = stack->top;
+        my_board = &(stack->top);
         stack = stack->next_stack;
-        return board;
+        return my_board;
     }
 }

@@ -550,9 +550,34 @@ void free_new_board(){
     free(new_board.board);
 }
 
+void copy_into_new_board(struct curr_board* my_board){
+    int j,k;
+    new_board.len = my_board->len;
+    new_board.block_width = my_board->block_width;
+    new_board.block_height = my_board->block_height;
+    new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
+    if (new_board.board == NULL){
+        memory_error("calloc");
+    }
+    for (j = 0; j < new_board.len; ++j) {
+        new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));
+        if (new_board.board[j] == NULL){
+            memory_error("calloc");
+        }
+    }
+    for (j = 0; j < new_board.len; ++j) {
+        for (k = 0; k < new_board.len; ++k)
+            new_board.board[j][k] = my_board->board[j][k];
+    }
+}
+
 int update_stack(int count){
     int row = 0, col = 0, i;
-    new_board = pop_ele();
+    struct curr_board* temp = pop_ele();
+    copy_into_new_board(temp);
+    for(i =0;i<temp->len;i++)
+        free(temp->board[i]);
+    free(temp->board);
     if (find_empty_cell(&row,&col, new_board.board)){
         for(i = 1;i <= new_board.len ;i++){
             new_board.board[row][col].value = i;
@@ -562,7 +587,7 @@ int update_stack(int count){
         }
     }
     else {
-        if (is_valid_board(&new_board)){
+        if (is_valid_board_new_board()){
             count++;
         }
     }
