@@ -265,13 +265,13 @@ void execute_command(int command_code, char command_data[4][258]) {
             z = is_integer(command_data[2]);
             if(x == -1 || y == -1 || z == -1){
                 if (x == -1){
-                    printf("Error: The first parameter isn't legal (not int)\n");
+                    printf("Error: The first parameter isn't legal (not a positive number)\n");
                     break;
                 } else if (y == -1){
-                    printf("Error: The second parameter isn't legal (not int)\n");
+                    printf("Error: The second parameter isn't legal (not a positive number)\n");
                     break;
                 } else {
-                    printf("Error: The third parameter isn't legal (not int)\n");
+                    printf("Error: The third parameter isn't legal (not a positive number)\n");
                     break;
                 }
             }
@@ -294,7 +294,7 @@ void execute_command(int command_code, char command_data[4][258]) {
                 break;
             }
             if (!is_double(command_data[0])){
-                printf("Error: The parameter isn't legal (not double)\n");
+                printf("Error: The parameter isn't legal (not a positive double)\n");
                 break;
             }
             d = strtod(command_data[0], &stop_string);
@@ -313,10 +313,10 @@ void execute_command(int command_code, char command_data[4][258]) {
             y = is_integer(command_data[1]);
             if(x == -1 || y == -1){
                 if (x == -1){
-                    printf("Error: The first parameter isn't legal (not int)\n");
+                    printf("Error: The first parameter isn't legal (not a positive number)\n");
                     break;
                 } else {
-                    printf("Error: The second parameter isn't legal (not int)\n");
+                    printf("Error: The second parameter isn't legal (not a positive number)\n");
                     break;
                 }
             }
@@ -364,10 +364,10 @@ void execute_command(int command_code, char command_data[4][258]) {
             y = is_integer(command_data[1]);
             if(x == -1 || y == -1){
                 if (x == -1){
-                    printf("Error: The first parameter isn't legal (not int)\n");
+                    printf("Error: The first parameter isn't legal (not a positive number)\n");
                     break;
                 } else {
-                    printf("Error: The second parameter isn't legal (not int)\n");
+                    printf("Error: The second parameter isn't legal (not a positive number)\n");
                     break;
                 }
             }
@@ -386,10 +386,10 @@ void execute_command(int command_code, char command_data[4][258]) {
             y = is_integer(command_data[1]);
             if (x == -1 || y == -1){
                 if (x == -1){
-                    printf("Error: The first parameter isn't legal (not int)\n");
+                    printf("Error: The first parameter isn't legal (not a positive number)\n");
                     break;
                 } else {
-                    printf("Error: The second parameter isn't legal (not int)\n");
+                    printf("Error: The second parameter isn't legal (not a positive number)\n");
                     break;
                 }
             }
