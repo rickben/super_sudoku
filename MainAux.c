@@ -215,18 +215,29 @@ int fill_board_random(int x){
     return 1;
 }
 
+void  empty_temp_board(){
+    int i,j;
+    for (i = 0; i < curr_board->len; i++){
+        for (j = 0; j < curr_board->len; j++){
+            temp_board[i][j].value = 0;
+        }
+    }
+}
+
 void clear_cells_random(int y){
     int col, row;
-    y = (curr_board->len * curr_board->len) - y;
+    empty_temp_board();
     while (y>0){
         col = rand()%curr_board->len;
         row = rand()%curr_board->len;
         if (curr_board->board[row][col].value != 0) {
+            temp_board[row][col].value = curr_board->board[row][col].value;
             curr_board->board[row][col].value = 0;
-            curr_board->board[row][col].is_fixed = 0;
+            temp_board[row][col].is_fixed = 0;
             --y;
         }
     }
+    copy_temp_board_to_curr();
 }
 
 
