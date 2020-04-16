@@ -103,6 +103,11 @@ void second_set_cond_check_param(int x, int y);
 int fill_board_random(int x);
 
 /**
+ * sets all the cells in temp_board to 0 (for generate)
+ */
+void  empty_temp_board();
+
+/**
  * choose  NxN-y cells to make empty, so that the board will have only
  * y non-empty cells
  * @param y - the number of non-empty cells to be
