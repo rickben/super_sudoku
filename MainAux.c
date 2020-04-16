@@ -69,7 +69,14 @@ int check_erroneous_board(){
 }
 
 void print_start_program(){
-    printf("Welcome to Sudoku puzzle game!\n");
+    printf("********************************************\n");
+    printf("*                                          *\n");
+    printf("*                                          *\n");
+    printf("*      Welcome to Sudoku puzzle game!      *\n");
+    printf("*                                          *\n");
+    printf("*                                          *\n");
+    printf("********************************************\n");
+
 }
 
 int check_num_of_empty_cells(){
@@ -566,16 +573,6 @@ void copy_into_new_board(struct curr_board* my_board){
     new_board.len = my_board->len;
     new_board.block_width = my_board->block_width;
     new_board.block_height = my_board->block_height;
-    /*new_board.board = (struct cell **) calloc(new_board.len, sizeof(struct cell *));
-    if (new_board.board == NULL){
-        memory_error("calloc");
-    }
-    for (j = 0; j < new_board.len; ++j) {
-        new_board.board[j] = (struct cell *) calloc(new_board.len, sizeof(struct cell));
-        if (new_board.board[j] == NULL){
-            memory_error("calloc");
-        }
-    }*/
     for (j = 0; j < new_board.len; ++j) {
         for (k = 0; k < new_board.len; ++k)
             new_board.board[j][k] = my_board->board[j][k];
