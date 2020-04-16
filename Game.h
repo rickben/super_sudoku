@@ -1,6 +1,7 @@
 #ifndef HW3_GAME_H
 #define HW3_GAME_H
 #include <stdio.h>
+#include <stdbool.h>
 #include "List.h"
 
 /**
@@ -95,7 +96,7 @@ void print_board();
  * undo's the last action
  * @return 1 if successful, 0 otherwise
  */
-int undo_action();
+int undo_action(bool is_reset);
 
 /**
  * calls undo_action, and prints the board if the command

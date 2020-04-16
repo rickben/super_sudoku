@@ -59,7 +59,7 @@ void print_board(){
     board_print();
 }
 
-int undo_action(){
+int undo_action(bool is_reset){
     int* command_data;
     cell cell_data;
     if(current_move==start_list){
@@ -70,7 +70,8 @@ int undo_action(){
         command_data = current_move->command_data;
         cell_data = current_move->cell_data;
         curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-        printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
+        if(!is_reset)
+            printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
         current_move = current_move->prev;
         return 1;
     }
@@ -80,7 +81,8 @@ int undo_action(){
             command_data = current_move->command_data;
             cell_data = current_move->cell_data;
             curr_board->board[command_data[0]][command_data[1]].value = cell_data.value;
-            printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
+            if(!is_reset)
+                printf("Value for <%d,%d> updated to: %d\n",command_data[1]+1,command_data[0]+1,cell_data.value);
             current_move = current_move->prev;
         }
         current_move = current_move->prev;
@@ -89,7 +91,7 @@ int undo_action(){
     return 0;
 }
 void undo(){
-    if(undo_action())
+    if(undo_action(false))
         print_board();
 }
 
@@ -129,7 +131,7 @@ void redo() {
 void reset(){
     int b = 0;
     while(current_move!=start_list)
-        b += undo_action();
+        b += undo_action(true);
     if (b>0)
         print_board();
 }
