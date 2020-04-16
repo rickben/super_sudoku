@@ -5,8 +5,8 @@
 
 /*Inserting the elements using push function*/
 
-void push_ele(struct curr_board next_board)
-{   int i,j,k;
+void push_ele(struct curr_board next_board){
+    int i,j,k;
     struct rec_stack *m;
     /* allocate memory for stack */
     m = (struct rec_stack*) malloc(sizeof( struct rec_stack));
